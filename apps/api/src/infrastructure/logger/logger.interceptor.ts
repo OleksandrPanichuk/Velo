@@ -1,3 +1,4 @@
+import {AppClsService} from "@/infrastructure/cls";
 import {LoggerService} from "@/infrastructure/logger";
 import {CallHandler, ExecutionContext, Injectable, NestInterceptor,} from "@nestjs/common";
 import {Request, Response} from "express";
@@ -6,7 +7,10 @@ import {tap} from "rxjs/operators";
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {
-    constructor(private readonly logger: LoggerService) {
+    constructor(
+        private readonly logger: LoggerService,
+        private readonly cls: AppClsService,
+    ) {
         this.logger.setContext("HTTP");
     }
 
@@ -23,7 +27,8 @@ export class LoggerInterceptor implements NestInterceptor {
         this.logger.logWithMetadata("debug", `Incoming Request: ${method} ${url}`, {
             ip,
             userAgent,
-            //TODO: add userId
+            requestId: this.cls.requestId,
+            userId: this.cls.userId,
         });
 
         return next.handle().pipe(
