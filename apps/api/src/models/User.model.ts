@@ -20,7 +20,7 @@ export class UserModel extends BaseModel {
 
 	@BeforeInsert()
 	@BeforeUpdate()
-	async hashPassword() {
+	private async hashPassword() {
 		if (this.password) {
 			this.password = await argon2.hash(this.password);
 		}
