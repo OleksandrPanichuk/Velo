@@ -2,6 +2,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { DateTimeResolver, UUIDResolver } from "graphql-scalars";
 import {
 	CreateDateColumn,
+	DeleteDateColumn,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from "typeorm";
@@ -19,4 +20,8 @@ export abstract class BaseModel {
 	@Field(() => DateTimeResolver)
 	@UpdateDateColumn()
 	updatedAt!: Date;
+
+	@Field(() => DateTimeResolver, { nullable: true })
+	@DeleteDateColumn()
+	deletedAt?: Date;
 }
