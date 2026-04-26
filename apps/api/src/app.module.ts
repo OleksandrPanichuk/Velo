@@ -1,39 +1,40 @@
 import {
 	type Env,
 	envSchema,
-	getCacheConfig,
 	getGraphQLConfig,
 	getThrottlerConfig,
 	getTypeOrmConfig,
 } from "@/config";
-import { NodeEnv } from "@/constants";
+import { CacheModule } from "@/infrastructure/cache";
+import { AppClsModule } from "@/infrastructure/cls";
 import { DataLoaderInterceptor } from "@/infrastructure/dataloader";
+import { HealthModule } from "@/infrastructure/health";
 import { LoggerInterceptor, LoggerModule } from "@/infrastructure/logger";
+import { PubSubModule } from "@/infrastructure/pubsub";
+import { AuthModule } from "@/modules/auth/auth.module";
+import { UsersModule } from "@/modules/users/users.module";
 import { AppExceptionFilter } from "@/shared/filters";
 import { GqlThrottlerGuard } from "@/shared/guards";
 import { SecurityHeadersMiddleware } from "@/shared/middlewares";
 import { PaginationModule } from "@/shared/pagination";
 import { SanitizationPipe } from "@/shared/pipes";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
+import { CacheInterceptor } from "@nestjs/cache-manager";
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { NodeEnv } from "@repo/primitives";
+import { SentryModule } from "@sentry/nestjs/setup";
 import { CsrfFilter } from "ncsrf/dist";
-import { AuthModule } from "@/modules/auth/auth.module";
-import { UsersModule } from "@/modules/users/users.module";
 
 @Module({
 	imports: [
+		AppClsModule,
 		AuthModule,
-		CacheModule.registerAsync({
-			isGlobal: true,
-			useFactory: (config: ConfigService<Env>) => getCacheConfig(config),
-			inject: [ConfigService],
-		}),
+		CacheModule,
 		ConfigModule.forRoot({
 			envFilePath: `.env.${process.env.NODE_ENV || NodeEnv.DEVELOPMENT}`,
 			isGlobal: true,
@@ -43,8 +44,11 @@ import { UsersModule } from "@/modules/users/users.module";
 			driver: ApolloDriver,
 			useFactory: () => getGraphQLConfig(),
 		}),
+		HealthModule,
 		LoggerModule,
 		PaginationModule,
+		PubSubModule,
+		SentryModule.forRoot(),
 		ThrottlerModule.forRootAsync({
 			useFactory: (config: ConfigService<Env>) => getThrottlerConfig(config),
 			inject: [ConfigService],
@@ -62,7 +66,7 @@ import { UsersModule } from "@/modules/users/users.module";
 		},
 		{
 			provide: APP_INTERCEPTOR,
-			useClass: CacheInterceptor
+			useClass: CacheInterceptor,
 		},
 		{
 			provide: APP_GUARD,
@@ -87,7 +91,7 @@ import { UsersModule } from "@/modules/users/users.module";
 	],
 })
 export class AppModule implements NestModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(SecurityHeadersMiddleware).forRoutes("*");
+	public configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(SecurityHeadersMiddleware).forRoutes("*path");
 	}
 }
