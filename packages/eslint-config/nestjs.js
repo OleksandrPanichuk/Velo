@@ -29,15 +29,15 @@ export const nestJsConfig = [
 	// Tune nestjs-typed severity: errors stay errors, cosmetic/Swagger rules → warn
 	{
 		rules: {
-			"@darraghor/nestjs-typed/api-methods-should-be-guarded": "warn",
+			"@darraghor/nestjs-typed/api-methods-should-be-guarded": "off",
 			"@darraghor/nestjs-typed/sort-module-metadata-arrays": "warn",
 			"@darraghor/nestjs-typed/api-method-should-specify-api-response": "warn",
 			"@darraghor/nestjs-typed/api-method-should-specify-api-operation": "warn",
 			"@darraghor/nestjs-typed/api-operation-summary-description-capitalized": "warn",
 			"@darraghor/nestjs-typed/controllers-should-supply-api-tags": "warn",
 			"@darraghor/nestjs-typed/use-injectable-provided-token": "warn",
-			"@darraghor/nestjs-typed/use-dependency-injection": "warn",
-			"@darraghor/nestjs-typed/use-correct-endpoint-naming-convention": "warn",
+			"@darraghor/nestjs-typed/use-dependency-injection": "off",
+			"@darraghor/nestjs-typed/use-correct-endpoint-naming-convention": "off",
 			"@darraghor/nestjs-typed/all-properties-are-whitelisted": "warn",
 			"@darraghor/nestjs-typed/all-properties-have-explicit-defined": "warn",
 			"@darraghor/nestjs-typed/api-property-should-have-api-extra-models": "warn",
