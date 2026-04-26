@@ -1,3 +1,5 @@
+import "./instrument";
+
 import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
@@ -42,7 +44,7 @@ async function bootstrap() {
 	app.use(helmet(getHelmetConfig(config)));
 	app.use(nestCsrf());
 
-	app.setGlobalPrefix("api");
+	app.setGlobalPrefix("api", { exclude: ["health"] });
 
 	await app.listen(PORT, () => {
 		console.log(`Listening on port: ${PORT}`);

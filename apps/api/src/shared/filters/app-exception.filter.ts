@@ -7,13 +7,15 @@ import {
 	Logger,
 } from "@nestjs/common";
 import type { GqlContextType } from "@nestjs/graphql";
+import { SentryExceptionCaptured } from "@sentry/nestjs";
 import { QueryFailedError } from "typeorm";
 
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
 	private readonly logger = new Logger(AppExceptionFilter.name);
 
-	catch(exception: unknown, host: ArgumentsHost) {
+	@SentryExceptionCaptured()
+	public catch(exception: unknown, host: ArgumentsHost): void {
 		const type = host.getType<GqlContextType | "http">();
 
 		let status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -37,10 +39,7 @@ export class AppExceptionFilter implements ExceptionFilter {
 			}
 		} else if (exception instanceof Error) {
 			message = exception.message;
-			if (
-				process.env.NODE_ENV === "production" &&
-				status === HttpStatus.INTERNAL_SERVER_ERROR
-			) {
+			if (process.env.NODE_ENV === "production" && status === HttpStatus.INTERNAL_SERVER_ERROR) {
 				message = "Internal Server Error";
 			}
 		}
@@ -54,10 +53,7 @@ export class AppExceptionFilter implements ExceptionFilter {
 			if (exception instanceof HttpException) {
 				throw exception;
 			}
-			throw new HttpException(
-				{ statusCode: status, message, error: code },
-				status,
-			);
+			throw new HttpException({ statusCode: status, message, error: code }, status);
 		}
 
 		if (type === "http") {
