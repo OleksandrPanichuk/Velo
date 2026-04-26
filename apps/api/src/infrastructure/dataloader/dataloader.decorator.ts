@@ -1,28 +1,25 @@
 import {
-  createParamDecorator,
-  ExecutionContext,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
-import { NestDataLoaderContext } from './dataloader.interceptor';
+	createParamDecorator,
+	type ExecutionContext,
+	InternalServerErrorException,
+} from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
+import { type NestDataLoaderContext } from "./dataloader.typedefs";
 
-export const Loader = createParamDecorator(
-  (data: any, context: ExecutionContext) => {
-    const ctx = GqlExecutionContext.create(context).getContext<NestDataLoaderContext>();
+export const Loader = createParamDecorator((data: any, context: ExecutionContext) => {
+	const ctx = GqlExecutionContext.create(context).getContext<NestDataLoaderContext>();
 
-    if (!ctx || !ctx.getLoader) {
-      throw new InternalServerErrorException(
-        `DataLoaderInterceptor is not applied to this route/resolver. Make sure to bind it using @UseInterceptors() or globally app.useGlobalInterceptors()`,
-      );
-    }
+	if (!ctx?.getLoader) {
+		throw new InternalServerErrorException(
+			`DataLoaderInterceptor is not applied to this route/resolver. Make sure to bind it using @UseInterceptors() or globally app.useGlobalInterceptors()`,
+		);
+	}
 
-    if (!data) {
-      throw new InternalServerErrorException(
-        `@Loader parameter is missing the DataLoader definition class`,
-      );
-    }
+	if (!data) {
+		throw new InternalServerErrorException(
+			`@Loader parameter is missing the DataLoader definition class`,
+		);
+	}
 
-    return ctx.getLoader(data);
-  },
-);
-
+	return ctx.getLoader(data);
+});
