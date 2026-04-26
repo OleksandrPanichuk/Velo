@@ -3,10 +3,14 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package.json ./
+COPY packages/ ./packages/
+COPY apps/api/package.json ./apps/api/
 
 RUN npm install
 
-COPY . .
+COPY apps/api/ ./apps/api/
+
+WORKDIR /app/apps/api
 
 EXPOSE 8080
 

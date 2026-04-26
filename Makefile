@@ -33,33 +33,33 @@ clear:
 	docker compose down -v --remove-orphans
 
 up-infra:
-	docker compose up postgres redis
+	docker compose up postgres redis minio
 
 up-no-web:
-	docker compose up postgres redis $(API_SERVICE)
+	docker compose up postgres redis minio $(API_SERVICE)
 
 db:
 	docker compose exec $(DB_SERVICE) psql -U $(DB_USER) -d $(DB_NAME)
 
 db\:migrate:
-	docker compose run --rm $(API_SERVICE) bun run db:migrate
+	docker compose run --rm $(API_SERVICE) npm run db:migrate
 
 db\:migrate\:revert:
-	docker compose run --rm $(API_SERVICE) bun run db:migrate:revert
+	docker compose run --rm $(API_SERVICE) npm run db:migrate:revert
 
 db\:migrate\:show:
-	docker compose run --rm $(API_SERVICE) bun run db:migrate:show
+	docker compose run --rm $(API_SERVICE) npm run db:migrate:show
 
 db\:migration\:create:
 	@test -n "$(MIGRATION)" || (echo "Usage: make db:migration:create MIGRATION=CreateUsers" && exit 1)
-	docker compose run --rm $(API_SERVICE) bun run db:cli -- migration:create src/migrations/$(MIGRATION)
+	docker compose run --rm $(API_SERVICE) npm run db:cli -- migration:create migrations/$(MIGRATION)
 
 db\:migration\:generate:
 	@test -n "$(MIGRATION)" || (echo "Usage: make db:migration:generate MIGRATION=InitSchema" && exit 1)
-	docker compose run --rm $(API_SERVICE) bun run db:cli -- migration:generate src/migrations/$(MIGRATION)
+	docker compose run --rm $(API_SERVICE) npm run db:cli -- migration:generate migrations/$(MIGRATION)
 
 db\:schema\:log:
-	docker compose run --rm $(API_SERVICE) bun run db:schema:log
+	docker compose run --rm $(API_SERVICE) npm run db:schema:log
 
 db\:schema\:sync:
-	docker compose run --rm $(API_SERVICE) bun run db:schema:sync
+	docker compose run --rm $(API_SERVICE) npm run db:schema:sync
