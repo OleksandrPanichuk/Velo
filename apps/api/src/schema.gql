@@ -12,29 +12,57 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
-type PageInfo {
-  endCursor: String
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-}
+type Mutation {
+  """
+  Rotate the token pair using a valid refresh token cookie. Issues new access and refresh tokens and returns the current user. Requires a valid refresh_token cookie.
+  """
+  refresh: UserModel!
 
-type PaginatedUsersResult {
-  edges: [UserModelEdge!]
-  nodes: [UserModel!]
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
+  """
+  Authenticate with email and password. On success, sets HttpOnly access and refresh token cookies and returns the authenticated user.
+  """
+  signIn(input: SignInInput!): UserModel!
 
-input PaginationArgs {
-  after: String
-  first: Int = 10
+  """
+  Sign out the current user. Clears the refresh token from the database and removes all auth cookies. Requires a valid access_token cookie.
+  """
+  signOut: Boolean!
+
+  """
+  Register a new user account with email, username, and password. On success, sets HttpOnly access and refresh token cookies and returns the created user.
+  """
+  signUp(input: SignUpInput!): UserModel!
 }
 
 type Query {
+  """
+  Retrieve a specific user by his id. Requires authentication and necessary roles.
+  """
   getUserById(id: String!): UserModel
+
+  """Retrieve a list of all users. Requires authentication."""
   getUsers: [UserModel!]!
-  getUsersPaginated(pagination: PaginationArgs!): PaginatedUsersResult!
+}
+
+"""Credentials required to sign in to an existing account"""
+input SignInInput {
+  """The email address associated with the account"""
+  email: String!
+
+  """The account password (minimum 8 characters)"""
+  password: String!
+}
+
+"""Details required to register a new user account"""
+input SignUpInput {
+  """A unique, valid email address"""
+  email: String!
+
+  """A strong password of at least 8 characters"""
+  password: String!
+
+  """A unique display name between 3 and 35 characters"""
+  username: String!
 }
 
 """
@@ -49,9 +77,4 @@ type UserModel {
   id: UUID!
   updatedAt: DateTime!
   username: String!
-}
-
-type UserModelEdge {
-  cursor: String!
-  node: UserModel!
 }
