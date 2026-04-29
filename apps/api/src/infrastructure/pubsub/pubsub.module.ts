@@ -17,7 +17,7 @@ import { PUBSUB } from "./pubsub.constants";
 				};
 				return new RedisPubSub({
 					publisher: new Redis(options),
-					subscriber: new Redis(options),
+					subscriber: new Redis(options),					
 				});
 			},
 			inject: [ConfigService],
