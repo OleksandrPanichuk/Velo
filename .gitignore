@@ -8,9 +8,10 @@ node_modules
 # Local env files
 .env
 .env.local
-.env.development.local
+.env.development
 .env.test.local
 .env.production.local
+/**/.env.development
 
 # Testing
 coverage
@@ -18,7 +19,7 @@ coverage
 # Turbo
 .turbo
 
-# Vercel
+# Vercel`
 .vercel
 
 # Build Outputs
@@ -36,3 +37,10 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# IDEs
+.vscode/
+
+
+# Docs
+docs
