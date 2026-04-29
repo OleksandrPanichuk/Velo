@@ -22,5 +22,5 @@ export const getGraphQLConfig = (): Omit<ApolloDriverConfig, "driver"> => ({
 		"graphql-ws": {
 			path: "/graphql",
 		},
-	},
+	},     
 });

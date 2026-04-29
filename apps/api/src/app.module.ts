@@ -10,11 +10,12 @@ import { AppClsModule } from "@/infrastructure/cls";
 import { DataLoaderInterceptor } from "@/infrastructure/dataloader";
 import { HealthModule } from "@/infrastructure/health";
 import { LoggerInterceptor, LoggerModule } from "@/infrastructure/logger";
+import { MailerModule } from "@/infrastructure/mailer";
 import { PubSubModule } from "@/infrastructure/pubsub";
 import { AuthModule } from "@/modules/auth/auth.module";
 import { UsersModule } from "@/modules/users/users.module";
 import { AppExceptionFilter } from "@/shared/filters";
-import { GqlThrottlerGuard } from "@/shared/guards";
+import { GqlAuthGuard, GqlThrottlerGuard } from "@/shared/guards";
 import { SecurityHeadersMiddleware } from "@/shared/middlewares";
 import { PaginationModule } from "@/shared/pagination";
 import { SanitizationPipe } from "@/shared/pipes";
@@ -46,6 +47,7 @@ import { CsrfFilter } from "ncsrf/dist";
 		}),
 		HealthModule,
 		LoggerModule,
+		MailerModule,
 		PaginationModule,
 		PubSubModule,
 		SentryModule.forRoot(),
@@ -67,6 +69,10 @@ import { CsrfFilter } from "ncsrf/dist";
 		{
 			provide: APP_INTERCEPTOR,
 			useClass: CacheInterceptor,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: GqlAuthGuard,
 		},
 		{
 			provide: APP_GUARD,
