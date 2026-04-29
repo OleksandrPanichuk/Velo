@@ -1,0 +1,28 @@
+{{#> layout title="New sign-in to your account"}}
+  <h1>New sign-in detected</h1>
+  <p>
+    We noticed a new sign-in to your Velo account. Here are the details:
+  </p>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+    <tr>
+      <td style="padding:8px 0;color:#71717a;font-size:14px;width:40%;">Time</td>
+      <td style="padding:8px 0;font-size:14px;">{{time}}</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 0;color:#71717a;font-size:14px;">IP address</td>
+      <td style="padding:8px 0;font-size:14px;">{{ipAddress}}</td>
+    </tr>
+    <tr>
+      <td style="padding:8px 0;color:#71717a;font-size:14px;">Device</td>
+      <td style="padding:8px 0;font-size:14px;">{{userAgent}}</td>
+    </tr>
+  </table>
+  <p>
+    If this was you, no action is needed. If you don't recognise this sign-in,
+    please reset your password immediately.
+  </p>
+  <hr class="divider" />
+  <p class="footnote">
+    For your security, we never ask for your password by email.
+  </p>
+{{/layout}}

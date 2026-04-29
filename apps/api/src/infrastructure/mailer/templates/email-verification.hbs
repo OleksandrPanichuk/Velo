@@ -1,0 +1,16 @@
+{{#> layout title="Verify your email address"}}
+  <h1>Verify your email</h1>
+  <p>
+    Thanks for signing up! Please verify your email address to activate your account.
+  </p>
+  <a href="{{verificationUrl}}" class="btn">Verify email</a>
+  <p>
+    This link will expire in <strong>{{expiresIn}}</strong>. If you didn't sign up for Velo,
+    you can safely ignore this email.
+  </p>
+  <hr class="divider" />
+  <p class="footnote">
+    If the button above doesn't work, copy and paste this URL into your browser:<br />
+    <a href="{{verificationUrl}}">{{verificationUrl}}</a>
+  </p>
+{{/layout}}
