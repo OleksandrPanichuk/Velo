@@ -1,15 +1,24 @@
-import {Module} from '@nestjs/common';
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {UserModel} from "@/models/User.model";
-import {UsersRepository} from "@/modules/users/users.repository";
-import {UsersService} from "@/modules/users/users.service";
-import {UsersResolver} from "@/modules/users/users.resolver";
-import {UsersLoader} from "@/modules/users/users.loader";
+import { OAuthAccountModel } from "@/models/OAuthAccount.model";
+import { UserModel } from "@/models/User.model";
+import { UsersLoader } from "@/modules/users/users.loader";
+import { UsersRepository } from "@/modules/users/users.repository";
+import { UsersResolver } from "@/modules/users/users.resolver";
+import { UsersService } from "@/modules/users/users.service";
+import { GqlAuthGuard } from "@/shared/guards";
+import { CurrentUserPipe } from "@/shared/pipes";
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserModel])],
-    providers: [UsersResolver, UsersService, UsersRepository, UsersLoader],
-    exports: [UsersService, UsersLoader]
+	imports: [TypeOrmModule.forFeature([UserModel, OAuthAccountModel])],
+	providers: [
+		CurrentUserPipe,
+		GqlAuthGuard,
+		UsersLoader,
+		UsersRepository,
+		UsersResolver,
+		UsersService,
+	],
+	exports: [UsersLoader, UsersRepository, UsersService],
 })
-export class UsersModule {
-}
+export class UsersModule {}
