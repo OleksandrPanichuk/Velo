@@ -1,3 +1,4 @@
+import { Env } from "@/config";
 import {
 	type ArgumentsHost,
 	Catch,
@@ -6,13 +7,18 @@ import {
 	HttpStatus,
 	Logger,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import type { GqlContextType } from "@nestjs/graphql";
+import { NodeEnv } from "@repo/primitives";
 import { SentryExceptionCaptured } from "@sentry/nestjs";
+import type { Request, Response } from "express";
 import { QueryFailedError } from "typeorm";
 
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
 	private readonly logger = new Logger(AppExceptionFilter.name);
+
+	constructor(private readonly config: ConfigService<Env>) {}
 
 	@SentryExceptionCaptured()
 	public catch(exception: unknown, host: ArgumentsHost): void {
@@ -39,7 +45,10 @@ export class AppExceptionFilter implements ExceptionFilter {
 			}
 		} else if (exception instanceof Error) {
 			message = exception.message;
-			if (process.env.NODE_ENV === "production" && status === HttpStatus.INTERNAL_SERVER_ERROR) {
+			if (
+				this.config.get("NODE_ENV") === NodeEnv.PRODUCTION &&
+				status === HttpStatus.INTERNAL_SERVER_ERROR
+			) {
 				message = "Internal Server Error";
 			}
 		}
@@ -58,8 +67,8 @@ export class AppExceptionFilter implements ExceptionFilter {
 
 		if (type === "http") {
 			const ctx = host.switchToHttp();
-			const response = ctx.getResponse();
-			const request = ctx.getRequest();
+			const response = ctx.getResponse<Response>();
+			const request = ctx.getRequest<Request>();
 
 			response.status(status).json({
 				statusCode: status,

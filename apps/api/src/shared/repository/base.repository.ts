@@ -28,11 +28,11 @@ export abstract class BaseRepository<T extends BaseModel> {
 		return this.repo.save(entity);
 	}
 
-	public softDelete(id: string) {
+	public async softDelete(id: string) {
 		return this.repo.softDelete(id);
 	}
 
-	public createQueryBuilder(alias: string) {
+	public async createQueryBuilder(alias: string) {
 		return this.repo.createQueryBuilder(alias);
 	}
 }

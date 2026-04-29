@@ -1,1 +1,2 @@
-export * from "./sanitization.pipe"
+export * from "./current-user.pipe";
+export * from "./sanitization.pipe";
