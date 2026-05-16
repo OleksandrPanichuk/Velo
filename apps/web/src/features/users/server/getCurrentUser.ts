@@ -1,11 +1,11 @@
-import "server-only";
-
 import { cache } from "react";
 
-import { GetCurrentUserDocument } from "@/graphql";
+import { GetCurrentUserDocument, GetCurrentUserQuery } from "@/graphql";
 import { query } from "@/lib/apollo";
 
+import "server-only";
+
 export const getCurrentUser = cache(async () => {
-	const { data } = await query({ query: GetCurrentUserDocument });
-	return data.getCurrentUser ?? null;
+	const { data } = await query<GetCurrentUserQuery>({ query: GetCurrentUserDocument });
+	return data?.getCurrentUser ?? null;
 });
