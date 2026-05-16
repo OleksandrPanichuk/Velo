@@ -1,4 +1,4 @@
-import type { OAuthProvider } from "@/constants";
+import type { OAuthProvider } from "@/enums";
 import type { Request } from "express";
 export interface JwtPayload {
 	sub: string;
