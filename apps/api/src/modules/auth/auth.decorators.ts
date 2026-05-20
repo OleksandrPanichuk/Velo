@@ -42,3 +42,29 @@ export const SignOutMutation = (): MethodDecorator =>
 				"Requires a valid access_token cookie.",
 		}),
 	);
+
+export const VerifyEmailMutation = (): MethodDecorator =>
+	applyDecorators(
+		Mutation(() => Boolean, {
+			description:
+				"Verify a user's email address using the token sent to their inbox. " +
+				"Returns true on success.",
+		}),
+	);
+
+export const ForgotPasswordMutation = (): MethodDecorator =>
+	applyDecorators(
+		Mutation(() => Boolean, {
+			description:
+				"Request a password reset email. " + "Always returns true to prevent email enumeration.",
+		}),
+	);
+
+export const ResetPasswordMutation = (): MethodDecorator =>
+	applyDecorators(
+		Mutation(() => Boolean, {
+			description:
+				"Reset a user's password using the token from the reset email. " +
+				"Returns true on success.",
+		}),
+	);

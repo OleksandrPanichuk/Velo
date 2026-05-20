@@ -22,5 +22,6 @@ export class SignUpInput {
 	@Field({ description: "A strong password of at least 8 characters" })
 	@IsString()
 	@MinLength(8)
+	@MaxLength(128)
 	password!: string;
 }

@@ -50,7 +50,18 @@ export const envSchema = z
 		JWT_ACCESS_SECRET: z.string().min(8),
 		JWT_REFRESH_SECRET: z.string().min(8),
 		JWT_ACCESS_EXPIRATION: z.coerce.number().int().positive().default(seconds(15)),
-		JWT_REFRESH_EXPIRATION: z.coerce.number().int().positive().default(seconds(60 * 60 * 24 * 7)),
+		JWT_REFRESH_EXPIRATION: z.coerce
+			.number()
+			.int()
+			.positive()
+			.default(seconds(60 * 60 * 24 * 7)),
+
+		// Sentry
+		SENTRY_DSN: z.url().optional(),
+
+		// Client URLs for email links
+		CLIENT_EMAIL_VERIFICATION_URL: z.url(),
+		CLIENT_RESET_PASSWORD_URL: z.url(),
 
 		// OAuth
 		GOOGLE_CLIENT_ID: z.string(),

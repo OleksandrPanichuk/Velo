@@ -1,11 +1,11 @@
-import type { Env } from "@/config";
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, type OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as fs from "fs";
 import * as Handlebars from "handlebars";
 import type { Transporter } from "nodemailer";
 import * as nodemailer from "nodemailer";
 import * as path from "path";
+import type { Env } from "@/config";
 import { MAILER_SUBJECTS } from "./mailer.constants";
 import type {
 	EmailVerificationContext,
@@ -60,12 +60,17 @@ export class MailerService implements OnModuleInit {
 	}
 
 	public async sendPasswordReset(to: string, ctx: ResetPasswordContext): Promise<void> {
-		await this.send({
-			to,
-			subject: MAILER_SUBJECTS[MailTemplate.RESET_PASSWORD],
-			template: MailTemplate.RESET_PASSWORD,
-			context: ctx,
-		});
+		try {
+			console.log("SEND RESET PASSWORD");
+			await this.send({
+				to,
+				subject: MAILER_SUBJECTS[MailTemplate.RESET_PASSWORD],
+				template: MailTemplate.RESET_PASSWORD,
+				context: ctx,
+			});
+		} catch (error) {
+			this.logger.error(error);
+		}
 	}
 
 	public async sendEmailVerification(to: string, ctx: EmailVerificationContext): Promise<void> {
@@ -112,7 +117,9 @@ export class MailerService implements OnModuleInit {
 	}
 
 	private loadTemplates(): void {
-		const dir = path.join(__dirname, "templates");
+		const distDir = path.join(__dirname, "templates");
+		const srcDir = path.join(process.cwd(), "src", "infrastructure", "mailer", "templates");
+		const dir = fs.existsSync(distDir) ? distDir : srcDir;
 
 		Handlebars.registerHelper("year", () => new Date().getFullYear());
 
