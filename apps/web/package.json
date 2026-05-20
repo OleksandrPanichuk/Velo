@@ -1,28 +1,55 @@
 {
-	"name": "web",
-	"version": "0.1.0",
-	"type": "module",
-	"private": true,
-	"scripts": {
-		"dev": "next dev --webpack --port 3000",
-		"build": "next build",
-		"start": "next start",
-		"lint": "eslint --max-warnings 0",
-		"check-types": "next typegen && tsc --noEmit"
-	},
-	"dependencies": {
-		"@repo/ui": "*",
-		"next": "16.2.0",
-		"react": "^19.2.0",
-		"react-dom": "^19.2.0"
-	},
-	"devDependencies": {
-		"@repo/eslint-config": "*",
-		"@repo/typescript-config": "*",
-		"@types/node": "^22.15.3",
-		"@types/react": "19.2.2",
-		"@types/react-dom": "19.2.2",
-		"eslint": "^9.39.1",
-		"typescript": "5.9.2"
-	}
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "codegen": "graphql-codegen --config codegen.ts"
+  },
+  "dependencies": {
+    "@apollo/client": "^4.1.9",
+    "@apollo/client-integration-nextjs": "^0.14.5",
+    "@graphql-codegen/typescript-react-apollo": "^4.4.2",
+    "@repo/ui": "*",
+    "@tanstack/react-form": "^1.29.1",
+    "@tanstack/react-table": "^8.21.3",
+    "graphql": "^16.13.2",
+    "lucide-react": "^1.14.0",
+    "next": "16.2.4",
+    "next-env-safe": "^1.0.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "rxjs": "^7.8.2",
+    "zod": "^4.4.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "^7.0.0",
+    "@graphql-codegen/cli": "^7.0.0",
+    "@graphql-codegen/import-types-preset": "^4.0.1",
+    "@graphql-codegen/typescript": "^6.0.0",
+    "@graphql-codegen/typescript-operations": "^6.0.0",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^9",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
 }

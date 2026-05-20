@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "@repo/ui/styles/globals.css";
+
+/* Scan shared component library for Tailwind utility usage */
+@source "../../../../packages/ui/src";
