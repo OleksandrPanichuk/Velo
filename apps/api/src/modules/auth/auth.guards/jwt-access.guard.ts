@@ -7,7 +7,10 @@ import { AuthStrategies } from "../auth.constants";
 @Injectable()
 export class JwtAccessGuard extends AuthGuard(AuthStrategies.JWT_ACCESS) {
 	public override getRequest(context: ExecutionContext): Request {
-		const gqlCtx = GqlExecutionContext.create(context);
-		return gqlCtx.getContext<{ req: Request }>().req;
+		if (context.getType<string>() === "graphql") {
+			const gqlCtx = GqlExecutionContext.create(context);
+			return gqlCtx.getContext<{ req: Request }>().req;
+		}
+		return context.switchToHttp().getRequest<Request>();
 	}
 }

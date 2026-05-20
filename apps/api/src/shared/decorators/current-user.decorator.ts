@@ -1,5 +1,5 @@
 import type { UserModel } from "@/models/User.model";
-import { CurrentUserPipe } from "@/shared/pipes/current-user.pipe";
+import { CurrentUserPipe, OptionalCurrentUserPipe } from "@/shared/pipes/current-user.pipe";
 import { getGqlRequest } from "@/utils";
 import { createParamDecorator, type ExecutionContext, UnauthorizedException } from "@nestjs/common";
 
@@ -17,10 +17,23 @@ const GetUserId = createParamDecorator((_: unknown, ctx: ExecutionContext): stri
 );
 
 const GetUserData = createParamDecorator(
-	(key: SafeUserKey | undefined, ctx: ExecutionContext): { userId: string; key: SafeUserKey | undefined } => ({
+	(
+		key: SafeUserKey | undefined,
+		ctx: ExecutionContext,
+	): { userId: string; key: SafeUserKey | undefined } => ({
 		userId: extractUserId(ctx),
 		key,
 	}),
+);
+
+const GetOptionalUserData = createParamDecorator(
+	(
+		key: SafeUserKey | undefined,
+		ctx: ExecutionContext,
+	): { userId: string | null; key: SafeUserKey | undefined } => {
+		const req = getGqlRequest(ctx);
+		return { userId: req.user?.userId ?? null, key };
+	},
 );
 
 export function CurrentUser(key: "id"): ParameterDecorator;
@@ -29,4 +42,8 @@ export function CurrentUser<K extends Exclude<SafeUserKey, "id">>(key: K): Param
 export function CurrentUser(key?: SafeUserKey): ParameterDecorator {
 	if (key === "id") return GetUserId();
 	return GetUserData(key, CurrentUserPipe);
+}
+
+export function OptionalCurrentUser(): ParameterDecorator {
+	return GetOptionalUserData(undefined, OptionalCurrentUserPipe);
 }

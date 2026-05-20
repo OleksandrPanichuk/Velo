@@ -1,9 +1,10 @@
 import type { ExecutionContext } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
-import type { Request, Response } from "express";
+import type { Request } from "express";
+import type { ServerResponse } from "node:http";
 
 export const getGqlRequest = (ctx: ExecutionContext): Request =>
 	GqlExecutionContext.create(ctx).getContext<{ req: Request }>().req;
 
-export const getGqlResponse = (ctx: ExecutionContext): Response =>
-	GqlExecutionContext.create(ctx).getContext<{ res: Response }>().res;
+export const getGqlResponse = (ctx: ExecutionContext): ServerResponse =>
+	GqlExecutionContext.create(ctx).getContext<{ res: ServerResponse }>().res;

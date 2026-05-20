@@ -5,7 +5,7 @@ import { Reflector } from "@nestjs/core";
 import type { Observable } from "rxjs";
 
 @Injectable()
-export class GqlAuthGuard extends JwtAccessGuard {
+export class AppAuthGuard extends JwtAccessGuard {
 	constructor(private readonly reflector: Reflector) {
 		super();
 	}
@@ -19,7 +19,7 @@ export class GqlAuthGuard extends JwtAccessGuard {
 		]);
 
 		if (isPublic) {
-			return true;
+			return Promise.resolve(super.canActivate(context)).then(() => true).catch(() => true);
 		}
 
 		return super.canActivate(context);

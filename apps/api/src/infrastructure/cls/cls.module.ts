@@ -1,7 +1,8 @@
-import { Global, Module } from "@nestjs/common";
+import { type ExecutionContext, Global, Module } from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
+import type { Request } from "express";
 import { ClsModule } from "nestjs-cls";
 import { randomUUID } from "node:crypto";
-import type { Request } from "express";
 import { AppClsService } from "./cls.service";
 
 @Global()
@@ -9,11 +10,16 @@ import { AppClsService } from "./cls.service";
 	imports: [
 		ClsModule.forRoot({
 			global: true,
-			middleware: {
-				mount: true,
+			guard: {
+				mount: false,
 				generateId: true,
-				idGenerator: (req: Request) =>
-					(req.headers["x-request-id"] as string | undefined) ?? randomUUID(),
+				idGenerator: (ctx: ExecutionContext) => {
+					const req =
+						ctx.getType<string>() === "graphql"
+							? GqlExecutionContext.create(ctx).getContext<{ req?: Request }>().req
+							: ctx.switchToHttp().getRequest<Request>();
+					return (req?.headers?.["x-request-id"] as string | undefined) ?? randomUUID();
+				},
 			},
 		}),
 	],

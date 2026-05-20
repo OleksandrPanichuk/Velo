@@ -12,9 +12,7 @@ const scalarResolvers = {
 export const getGraphQLConfig = (): Omit<ApolloDriverConfig, "driver"> => ({
 	autoSchemaFile: join(process.cwd(), "src/schema.gql"),
 	sortSchema: true,
-	context: ({ req, extra }: { req?: Request; extra?: { request?: Request } }) => ({
-		req: req ?? extra?.request,
-	}),
+	context: ({ req, res }) => ({ req, res }),
 	resolvers: scalarResolvers,
 	playground: false,
 	plugins: [ApolloServerPluginLandingPageLocalDefault()],
@@ -22,5 +20,5 @@ export const getGraphQLConfig = (): Omit<ApolloDriverConfig, "driver"> => ({
 		"graphql-ws": {
 			path: "/graphql",
 		},
-	},     
+	},
 });

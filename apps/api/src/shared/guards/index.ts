@@ -1,2 +1,3 @@
-export * from "./gql-auth.guard";
-export * from "./gql-throttler.guard";
+export * from "./app-auth.guard";
+export * from "./app-throttler.guard";
+
