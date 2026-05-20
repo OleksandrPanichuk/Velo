@@ -1,12 +1,11 @@
-import js from "@eslint/js";
-import { globalIgnores } from "eslint/config";
-import eslintConfigPrettier from "eslint-config-prettier";
-import tseslint from "typescript-eslint";
+import {globalIgnores} from "eslint/config";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginReact from "eslint-plugin-react";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import globals from "globals";
 import pluginNext from "@next/eslint-plugin-next";
-import { config as baseConfig } from "./base.js";
+import {config as baseConfig, prettierOptions} from "./base.js";
 
 /**
  * A custom ESLint configuration for libraries that use Next.js.
@@ -15,11 +14,7 @@ import { config as baseConfig } from "./base.js";
  * */
 export const nextJsConfig = [
   ...baseConfig,
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
@@ -50,8 +45,50 @@ export const nextJsConfig = [
     settings: { react: { version: "detect" } },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
-      // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
+    },
+  },
+  {
+    plugins: {
+      "no-relative-import-paths": noRelativeImportPaths,
+    },
+    rules: {
+      "no-relative-import-paths/no-relative-import-paths": [
+        "error",
+        { allowSameFolder: true, rootDir: "src", prefix: "@" },
+      ],
+    },
+  },
+  {
+    plugins: {
+      "simple-import-sort": simpleImportSort,
+    },
+    rules: {
+      "simple-import-sort/imports": [
+        "error",
+        {
+          groups: [
+            ["^react$", "^react/"],
+            ["^next$", "^next/"],
+            ["^@?\\w"],
+            ["^@/"],
+            ["^\\."],
+            ["^\\u0000"],
+          ],
+        },
+      ],
+      "simple-import-sort/exports": "error",
+    },
+  },
+  {
+    rules: {
+      "prettier/prettier": [
+        "error",
+        {
+          ...prettierOptions,
+          plugins: ["prettier-plugin-tailwindcss"],
+        },
+      ],
     },
   },
 ];

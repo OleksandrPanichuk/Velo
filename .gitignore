@@ -28,6 +28,9 @@ out/
 build
 dist
 
+# Generated
+apps/web/src/graphql/generated/
+
 
 # Debug
 npm-debug.log*
@@ -38,9 +41,10 @@ yarn-error.log*
 .DS_Store
 *.pem
 
-# IDEs
-.vscode/
-
 
 # Docs
 docs
+
+# IDE
+/.zed
+/.vscode
