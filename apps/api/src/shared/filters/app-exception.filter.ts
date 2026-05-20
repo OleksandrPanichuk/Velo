@@ -10,7 +10,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import type { GqlContextType } from "@nestjs/graphql";
 import { NodeEnv } from "@repo/primitives";
-import { SentryExceptionCaptured } from "@sentry/nestjs";
+import * as Sentry from "@sentry/nestjs";
 import type { Request, Response } from "express";
 import { QueryFailedError } from "typeorm";
 
@@ -20,7 +20,6 @@ export class AppExceptionFilter implements ExceptionFilter {
 
 	constructor(private readonly config: ConfigService<Env>) {}
 
-	@SentryExceptionCaptured()
 	public catch(exception: unknown, host: ArgumentsHost): void {
 		const type = host.getType<GqlContextType | "http">();
 
@@ -51,6 +50,11 @@ export class AppExceptionFilter implements ExceptionFilter {
 			) {
 				message = "Internal Server Error";
 			}
+		}
+
+		const isServerError = status >= HttpStatus.INTERNAL_SERVER_ERROR;
+		if (isServerError) {
+			Sentry.captureException(exception);
 		}
 
 		this.logger.error(

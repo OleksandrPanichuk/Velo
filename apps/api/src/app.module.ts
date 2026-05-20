@@ -5,7 +5,7 @@ import {
 	getThrottlerConfig,
 	getTypeOrmConfig,
 } from "@/config";
-import { CacheModule } from "@/infrastructure/cache";
+import { CacheInterceptor, CacheModule } from "@/infrastructure/cache";
 import { AppClsModule } from "@/infrastructure/cls";
 import { DataLoaderInterceptor } from "@/infrastructure/dataloader";
 import { HealthModule } from "@/infrastructure/health";
@@ -14,13 +14,14 @@ import { MailerModule } from "@/infrastructure/mailer";
 import { PubSubModule } from "@/infrastructure/pubsub";
 import { AuthModule } from "@/modules/auth/auth.module";
 import { UsersModule } from "@/modules/users/users.module";
+import { WorkspacesModule } from "@/modules/workspaces/workspaces.module";
 import { AppExceptionFilter } from "@/shared/filters";
-import { GqlAuthGuard, GqlThrottlerGuard } from "@/shared/guards";
+import { AppAuthGuard, AppThrottlerGuard } from "@/shared/guards";
+import { ResponseCaptureInterceptor } from "@/shared/interceptors";
 import { SecurityHeadersMiddleware } from "@/shared/middlewares";
 import { PaginationModule } from "@/shared/pagination";
 import { SanitizationPipe } from "@/shared/pipes";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { CacheInterceptor } from "@nestjs/cache-manager";
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
@@ -30,6 +31,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { NodeEnv } from "@repo/primitives";
 import { SentryModule } from "@sentry/nestjs/setup";
 import { CsrfFilter } from "ncsrf/dist";
+import { ClsGuard } from "nestjs-cls";
 
 @Module({
 	imports: [
@@ -60,8 +62,17 @@ import { CsrfFilter } from "ncsrf/dist";
 			inject: [ConfigService],
 		}),
 		UsersModule,
+		WorkspacesModule,
 	],
 	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: ClsGuard,
+		},
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: ResponseCaptureInterceptor,
+		},
 		{
 			provide: APP_INTERCEPTOR,
 			useClass: LoggerInterceptor,
@@ -69,14 +80,6 @@ import { CsrfFilter } from "ncsrf/dist";
 		{
 			provide: APP_INTERCEPTOR,
 			useClass: CacheInterceptor,
-		},
-		{
-			provide: APP_GUARD,
-			useClass: GqlAuthGuard,
-		},
-		{
-			provide: APP_GUARD,
-			useClass: GqlThrottlerGuard,
 		},
 		{
 			provide: APP_INTERCEPTOR,
@@ -88,16 +91,24 @@ import { CsrfFilter } from "ncsrf/dist";
 		},
 		{
 			provide: APP_FILTER,
-			useClass: AppExceptionFilter,
+			useClass: CsrfFilter,
 		},
 		{
 			provide: APP_FILTER,
-			useClass: CsrfFilter,
+			useClass: AppExceptionFilter,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: AppAuthGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: AppThrottlerGuard,
 		},
 	],
 })
 export class AppModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer): void {
-		consumer.apply(SecurityHeadersMiddleware).forRoutes("*path");
+		consumer.apply(SecurityHeadersMiddleware).forRoutes(":path");
 	}
 }

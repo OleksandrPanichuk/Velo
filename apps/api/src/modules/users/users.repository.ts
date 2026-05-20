@@ -4,6 +4,7 @@ import type { OAuthUserData } from "@/modules/auth/auth.typedefs";
 import { BaseRepository } from "@/shared/repository";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { hash } from "argon2";
 import { DataSource, Repository } from "typeorm";
 
 @Injectable()
@@ -19,6 +20,18 @@ export class UsersRepository extends BaseRepository<UserModel> {
 
 	public async findByEmail(email: string): Promise<UserModel | null> {
 		return this.repo.findOne({ where: { email } });
+	}
+
+	public async findByEmailVerificationToken(token: string): Promise<UserModel | null> {
+		return this.repo
+			.createQueryBuilder("user")
+			.addSelect("user.emailVerificationToken")
+			.where("user.emailVerificationToken = :token", { token })
+			.getOne();
+	}
+
+	public async verifyEmail(userId: string): Promise<void> {
+		await this.repo.update(userId, { isEmailVerified: true, emailVerificationToken: null });
 	}
 
 	public async findByEmailWithPassword(email: string): Promise<UserModel | null> {
@@ -38,17 +51,36 @@ export class UsersRepository extends BaseRepository<UserModel> {
 	}
 
 	public async setRefreshToken(id: string, rawToken: string): Promise<void> {
-		const user = await this.findById(id);
-		if (!user) return;
-		user.refreshToken = rawToken;
-		await this.repo.save(user);
+		await this.repo.update(id, { refreshToken: await hash(rawToken) });
 	}
 
 	public async clearRefreshToken(id: string): Promise<void> {
 		await this.repo.update(id, { refreshToken: null });
 	}
 
-	// ── OAuth ────────────────────────────────────────────────────────────────
+	public async findByPasswordResetToken(token: string): Promise<UserModel | null> {
+		return this.repo
+			.createQueryBuilder("user")
+			.addSelect("user.passwordResetToken")
+			.addSelect("user.passwordResetTokenExpiresAt")
+			.where("user.passwordResetToken = :token", { token })
+			.getOne();
+	}
+
+	public async setPasswordResetToken(id: string, token: string, expiresAt: Date): Promise<void> {
+		await this.repo.update(id, {
+			passwordResetToken: token,
+			passwordResetTokenExpiresAt: expiresAt,
+		});
+	}
+
+	public async clearPasswordResetToken(id: string): Promise<void> {
+		await this.repo.update(id, { passwordResetToken: null, passwordResetTokenExpiresAt: null });
+	}
+
+	public async updatePassword(id: string, password: string): Promise<void> {
+		await this.repo.update(id, { password: await hash(password) });
+	}
 
 	public async findOAuthAccount(
 		provider: string,
@@ -97,14 +129,23 @@ export class UsersRepository extends BaseRepository<UserModel> {
 	}
 
 	private async generateUsername(email: string): Promise<string> {
-		const base = email.split("@")[0]!.replace(/[^a-z0-9_]/gi, "").slice(0, 28).toLowerCase();
-		let candidate = base;
+		const base = email
+			.split("@")[0]!
+			.replace(/[^a-z0-9_]/gi, "")
+			.slice(0, 28)
+			.toLowerCase();
+
+		const rows = await this.repo
+			.createQueryBuilder("user")
+			.select("user.username")
+			.where("user.username LIKE :prefix", { prefix: `${base}%` })
+			.getMany();
+
+		const taken = new Set(rows.map((u) => u.username));
+		if (!taken.has(base)) return base;
+
 		let suffix = 1;
-
-		while (await this.repo.findOne({ where: { username: candidate } })) {
-			candidate = `${base}${suffix++}`;
-		}
-
-		return candidate;
+		while (taken.has(`${base}${suffix}`)) suffix++;
+		return `${base}${suffix}`;
 	}
 }

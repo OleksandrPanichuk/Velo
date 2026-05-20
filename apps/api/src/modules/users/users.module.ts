@@ -4,8 +4,8 @@ import { UsersLoader } from "@/modules/users/users.loader";
 import { UsersRepository } from "@/modules/users/users.repository";
 import { UsersResolver } from "@/modules/users/users.resolver";
 import { UsersService } from "@/modules/users/users.service";
-import { GqlAuthGuard } from "@/shared/guards";
-import { CurrentUserPipe } from "@/shared/pipes";
+import { AppAuthGuard } from "@/shared/guards";
+import { CurrentUserPipe, OptionalCurrentUserPipe } from "@/shared/pipes";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
@@ -13,7 +13,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 	imports: [TypeOrmModule.forFeature([UserModel, OAuthAccountModel])],
 	providers: [
 		CurrentUserPipe,
-		GqlAuthGuard,
+		OptionalCurrentUserPipe,
+		AppAuthGuard,
 		UsersLoader,
 		UsersRepository,
 		UsersResolver,

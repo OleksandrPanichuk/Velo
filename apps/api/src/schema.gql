@@ -12,11 +12,39 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
+type FileModel {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: UUID!
+  mimeType: String!
+  originalName: String!
+  size: Int!
+  updatedAt: DateTime!
+  uploadedBy: UUID
+  url: String!
+}
+
+"""Email to send a password reset link to"""
+input ForgotPasswordInput {
+  """The email address associated with the account"""
+  email: String!
+}
+
 type Mutation {
+  """
+  Request a password reset email. Always returns true to prevent email enumeration.
+  """
+  forgotPassword(input: ForgotPasswordInput!): Boolean!
+
   """
   Rotate the token pair using a valid refresh token cookie. Issues new access and refresh tokens and returns the current user. Requires a valid refresh_token cookie.
   """
   refresh: UserModel!
+
+  """
+  Reset a user's password using the token from the reset email. Returns true on success.
+  """
+  resetPassword(input: ResetPasswordInput!): Boolean!
 
   """
   Authenticate with email and password. On success, sets HttpOnly access and refresh token cookies and returns the authenticated user.
@@ -32,16 +60,52 @@ type Mutation {
   Register a new user account with email, username, and password. On success, sets HttpOnly access and refresh token cookies and returns the created user.
   """
   signUp(input: SignUpInput!): UserModel!
+
+  """
+  Verify a user's email address using the token sent to their inbox. Returns true on success.
+  """
+  verifyEmail(token: String!): Boolean!
+}
+
+type OAuthAccountModel {
+  createdAt: DateTime!
+  id: UUID!
+  provider: OAuthProvider!
+  providerId: String!
+}
+
+enum OAuthProvider {
+  GITHUB
+  GOOGLE
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
 }
 
 type Query {
+  """Retrieve the current user. Requires authentication."""
+  getCurrentUser: UserModel
+
   """
   Retrieve a specific user by his id. Requires authentication and necessary roles.
   """
   getUserById(id: String!): UserModel
 
-  """Retrieve a list of all users. Requires authentication."""
-  getUsers: [UserModel!]!
+  """Retrieve a paginated list of users. Requires authentication."""
+  getUsers(after: String, first: Int = 10): UserPaginatedModel!
+}
+
+"""New password and the reset token from the email link"""
+input ResetPasswordInput {
+  """The new password (minimum 8 characters)"""
+  password: String!
+
+  """The password reset token from the email link"""
+  token: String!
 }
 
 """Credentials required to sign in to an existing account"""
@@ -58,11 +122,36 @@ input SignUpInput {
   """A unique, valid email address"""
   email: String!
 
+  """Full display name"""
+  fullName: String!
+
   """A strong password of at least 8 characters"""
   password: String!
 
   """A unique display name between 3 and 35 characters"""
   username: String!
+}
+
+type TeamMemberModel {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: UUID!
+  joinedAt: DateTime!
+  team: TeamModel!
+  updatedAt: DateTime!
+  user: UserModel!
+}
+
+type TeamModel {
+  color: String!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: UUID!
+  identifier: String!
+  members: [TeamMemberModel!]!
+  name: String!
+  updatedAt: DateTime!
+  workspace: WorkspaceModel!
 }
 
 """
@@ -71,10 +160,59 @@ A field whose value is a generic Universally Unique Identifier: https://en.wikip
 scalar UUID
 
 type UserModel {
+  avatarUrl: String
   createdAt: DateTime!
   deletedAt: DateTime
   email: EmailAddress!
+  fullName: String!
   id: UUID!
+  isEmailVerified: Boolean!
+  locale: String!
+  oauthAccounts: [OAuthAccountModel!]!
+  teamMembers: [TeamMemberModel!]!
+  timezone: String!
   updatedAt: DateTime!
   username: String!
+  workspaceMembers: [WorkspaceMemberModel!]!
+}
+
+type UserModelEdge {
+  cursor: String!
+  node: UserModel!
+}
+
+type UserPaginatedModel {
+  edges: [UserModelEdge!]
+  nodes: [UserModel!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type WorkspaceMemberModel {
+  createdAt: DateTime!
+  id: UUID!
+  joinedAt: DateTime!
+  role: WorkspaceMemberRole!
+  updatedAt: DateTime!
+  user: UserModel!
+  workspace: WorkspaceModel!
+}
+
+enum WorkspaceMemberRole {
+  ADMIN
+  GUEST
+  MEMBER
+  OWNER
+}
+
+type WorkspaceModel {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: UUID!
+  logo: FileModel
+  members: [WorkspaceMemberModel!]!
+  name: String!
+  slug: String!
+  teams: [TeamModel!]!
+  updatedAt: DateTime!
 }

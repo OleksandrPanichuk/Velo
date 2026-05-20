@@ -7,4 +7,3 @@ import { PaginationService } from "./pagination.service";
 	exports: [PaginationService],
 })
 export class PaginationModule {}
-
