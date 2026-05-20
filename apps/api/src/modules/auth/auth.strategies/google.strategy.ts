@@ -1,5 +1,5 @@
 import type { Env } from "@/config";
-import { OAuthProvider } from "@/constants";
+import { OAuthProvider } from "@/enums";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
@@ -19,11 +19,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, AuthStrategies.GO
 		});
 	}
 
-	public validate(
-		accessToken: string,
-		refreshToken: string,
-		profile: Profile,
-	): OAuthUserData {
+	public validate(accessToken: string, refreshToken: string, profile: Profile): OAuthUserData {
 		return {
 			provider: OAuthProvider.GOOGLE,
 			providerId: profile.id,

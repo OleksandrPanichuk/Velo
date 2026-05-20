@@ -24,7 +24,7 @@ export class AuthController {
 	@UseGuards(AuthGuard(AuthStrategies.GOOGLE))
 	public async googleCallback(@Req() req: OAuthRequest, @Res() res: Response): Promise<void> {
 		try {
-			await this.authService.oauthSignIn(req.user, res);
+			await this.authService.oauthSignIn(req.user);
 			res.redirect(this.config.getOrThrow<string>("OAUTH_SUCCESS_REDIRECT"));
 		} catch {
 			res.redirect(this.config.getOrThrow<string>("OAUTH_FAILURE_REDIRECT"));
@@ -39,7 +39,7 @@ export class AuthController {
 	@UseGuards(AuthGuard(AuthStrategies.GITHUB))
 	public async githubCallback(@Req() req: OAuthRequest, @Res() res: Response): Promise<void> {
 		try {
-			await this.authService.oauthSignIn(req.user, res);
+			await this.authService.oauthSignIn(req.user);
 			res.redirect(this.config.getOrThrow<string>("OAUTH_SUCCESS_REDIRECT"));
 		} catch {
 			res.redirect(this.config.getOrThrow<string>("OAUTH_FAILURE_REDIRECT"));

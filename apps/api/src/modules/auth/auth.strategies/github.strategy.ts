@@ -1,5 +1,5 @@
 import type { Env } from "@/config";
-import { OAuthProvider } from "@/constants";
+import { OAuthProvider } from "@/enums";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
@@ -19,19 +19,14 @@ export class GithubStrategy extends PassportStrategy(Strategy, AuthStrategies.GI
 		});
 	}
 
-	public validate(
-		accessToken: string,
-		refreshToken: string,
-		profile: Profile,
-	): OAuthUserData {
-		const primaryEmail =
-			profile.emails?.[0]?.value ?? `${profile.id}@users.noreply.github.com`;
+	public validate(accessToken: string, refreshToken: string, profile: Profile): OAuthUserData {
+		const primaryEmail = profile.emails?.[0]?.value ?? `${profile.id}@users.noreply.github.com`;
 
 		return {
 			provider: OAuthProvider.GITHUB,
 			providerId: profile.id,
 			email: primaryEmail,
-			fullName: profile.displayName || profile.username || primaryEmail.split("@")[0] as string,
+			fullName: profile.displayName || profile.username || (primaryEmail.split("@")[0] as string),
 			avatarUrl: profile.photos?.[0]?.value,
 			accessToken,
 			oauthRefreshToken: refreshToken ?? undefined,

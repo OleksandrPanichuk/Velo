@@ -1,13 +1,20 @@
 import { AppClsService } from "@/infrastructure/cls/cls.service";
 import type { UserModel } from "@/models/User.model";
-import { GqlRes } from "@/shared/decorators";
+import { Public } from "@/shared/decorators";
 import { Args, Resolver } from "@nestjs/graphql";
-import type { Response } from "express";
-import { RefreshMutation, SignInMutation, SignOutMutation, SignUpMutation } from "./auth.decorators";
-import { SignInInput } from "./auth.dto/sign-in.dto";
-import { SignUpInput } from "./auth.dto/sign-up.dto";
+import {
+	ForgotPasswordMutation,
+	RefreshMutation,
+	ResetPasswordMutation,
+	SignInMutation,
+	SignOutMutation,
+	SignUpMutation,
+	VerifyEmailMutation,
+} from "./auth.decorators";
+import { ForgotPasswordInput, ResetPasswordInput, SignInInput, SignUpInput } from "./auth.dto";
 import { AuthService } from "./auth.service";
 
+@Public()
 @Resolver()
 export class AuthResolver {
 	constructor(
@@ -16,23 +23,38 @@ export class AuthResolver {
 	) {}
 
 	@SignUpMutation()
-	public async signUp(@Args("input") input: SignUpInput, @GqlRes() res: Response): Promise<UserModel> {
-		return this.authService.signUp(input, res);
+	public async signUp(@Args("input") input: SignUpInput): Promise<UserModel> {
+		return this.authService.signUp(input);
 	}
 
 	@SignInMutation()
-	public async signIn(@Args("input") input: SignInInput, @GqlRes() res: Response): Promise<UserModel> {
-		return this.authService.signIn(input, res);
+	public async signIn(@Args("input") input: SignInInput): Promise<UserModel> {
+		return this.authService.signIn(input);
 	}
 
 	@RefreshMutation()
-	public async refresh(@GqlRes() res: Response): Promise<UserModel> {
-		return this.authService.refresh(this.cls.userId as string, res);
+	public async refresh(): Promise<UserModel> {
+		return this.authService.refresh(this.cls.userId as string);
 	}
 
 	@SignOutMutation()
-	public async signOut(@GqlRes() res: Response): Promise<boolean> {
-		await this.authService.signOut(this.cls.userId as string, res);
+	public async signOut(): Promise<boolean> {
+		await this.authService.signOut(this.cls.userId as string);
 		return true;
+	}
+
+	@VerifyEmailMutation()
+	public async verifyEmail(@Args("token") token: string): Promise<boolean> {
+		return this.authService.verifyEmail(token);
+	}
+
+	@ForgotPasswordMutation()
+	public async forgotPassword(@Args("input") input: ForgotPasswordInput): Promise<boolean> {
+		return this.authService.forgotPassword(input);
+	}
+
+	@ResetPasswordMutation()
+	public async resetPassword(@Args("input") input: ResetPasswordInput): Promise<boolean> {
+		return this.authService.resetPassword(input);
 	}
 }
