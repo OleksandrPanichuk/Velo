@@ -1,13 +1,15 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { hash } from "argon2";
 import { EmailAddressResolver } from "graphql-scalars";
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
-import { BaseModel } from "./Base.model";
+import { BeforeInsert, Column, Entity, OneToMany, type Relation } from "typeorm";
+import { BaseModelWithDeletedAt } from "./Base.model";
 import { OAuthAccountModel } from "./OAuthAccount.model";
+import { WorkspaceMemberModel } from "./WorkspaceMember.model";
+import { TeamMemberModel } from "./TeamMember.model";
 
 @ObjectType()
 @Entity("users")
-export class UserModel extends BaseModel {
+export class UserModel extends BaseModelWithDeletedAt {
 	@Field(() => EmailAddressResolver)
 	@Column({ unique: true, length: 150 })
 	email!: string;
@@ -20,7 +22,7 @@ export class UserModel extends BaseModel {
 	@Column({ length: 100 })
 	fullName!: string;
 
-	@Field({ nullable: true })
+	@Field(() => String, { nullable: true })
 	@Column({ type: "varchar", nullable: true })
 	avatarUrl!: string | null;
 
@@ -42,12 +44,28 @@ export class UserModel extends BaseModel {
 	@Column({ type: "varchar", nullable: true, select: false })
 	refreshToken!: string | null;
 
+	@Column({ type: "varchar", nullable: true, select: false })
+	emailVerificationToken!: string | null;
+
+	@Column({ type: "varchar", nullable: true, select: false })
+	passwordResetToken!: string | null;
+
+	@Column({ type: "timestamptz", nullable: true })
+	passwordResetTokenExpiresAt!: Date | null;
+
 	@Field(() => [OAuthAccountModel])
 	@OneToMany(() => OAuthAccountModel, (account) => account.user)
-	oauthAccounts!: OAuthAccountModel[];
+	oauthAccounts!: Relation<OAuthAccountModel[]>;
+
+	@Field(() => [WorkspaceMemberModel])
+	@OneToMany(() => WorkspaceMemberModel, (m) => m.user)
+	workspaceMembers!: Relation<WorkspaceMemberModel[]>;
+
+	@Field(() => [TeamMemberModel])
+	@OneToMany(() => TeamMemberModel, (m) => m.user)
+	teamMembers!: Relation<TeamMemberModel[]>
 
 	@BeforeInsert()
-	@BeforeUpdate()
 	private async hashPassword() {
 		if (this.password) {
 			this.password = await hash(this.password);
@@ -55,7 +73,6 @@ export class UserModel extends BaseModel {
 	}
 
 	@BeforeInsert()
-	@BeforeUpdate()
 	private async hashRefreshToken() {
 		if (this.refreshToken) {
 			this.refreshToken = await hash(this.refreshToken);

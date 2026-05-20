@@ -1,4 +1,4 @@
-import { OAuthProvider } from "@/constants";
+import { OAuthProvider } from "@/enums";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { DateTimeResolver, UUIDResolver } from "graphql-scalars";
 import {
@@ -23,8 +23,8 @@ export class OAuthAccountModel {
 	@Column()
 	userId!: string;
 
-	@Field(() => String)
-	@Column({ type: "varchar" })
+	@Field(() => OAuthProvider)
+	@Column({ type: "enum", enum: OAuthProvider })
 	provider!: OAuthProvider;
 
 	@Field()

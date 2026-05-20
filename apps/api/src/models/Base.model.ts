@@ -20,8 +20,11 @@ export abstract class BaseModel {
 	@Field(() => DateTimeResolver)
 	@UpdateDateColumn()
 	updatedAt!: Date;
+}
 
+@ObjectType({ isAbstract: true })
+export abstract class BaseModelWithDeletedAt extends BaseModel {
 	@Field(() => DateTimeResolver, { nullable: true })
-	@DeleteDateColumn()
-	deletedAt?: Date;
+	@DeleteDateColumn({ nullable: true })
+	deletedAt!: Date | null;
 }
