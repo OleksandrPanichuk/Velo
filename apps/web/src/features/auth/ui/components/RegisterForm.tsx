@@ -11,7 +11,7 @@ import { Mail, User } from "lucide-react";
 
 import { OAuthProvider, ROUTES } from "@/constants";
 import { type RegisterInput, RegisterInputSchema } from "@/features/auth/schemas";
-import { useSignUpMutation } from "@/graphql";
+import { useSignUpMutation } from "@/graphql/hooks";
 
 import { OAuthButton } from "./OAuthButton";
 

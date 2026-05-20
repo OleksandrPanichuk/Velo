@@ -1,0 +1,83 @@
+@keyframes xCircleDraw {
+	from {
+		stroke-dashoffset: 170;
+	}
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes xPathDraw {
+	from {
+		stroke-dashoffset: 30;
+	}
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes shake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	15% {
+		transform: translateX(-4px);
+	}
+	30% {
+		transform: translateX(4px);
+	}
+	45% {
+		transform: translateX(-3px);
+	}
+	60% {
+		transform: translateX(3px);
+	}
+	75% {
+		transform: translateX(-2px);
+	}
+	90% {
+		transform: translateX(2px);
+	}
+}
+
+.xCirclePath {
+	stroke-dasharray: 170;
+	stroke-dashoffset: 170;
+	animation: xCircleDraw 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+}
+
+.xPath1 {
+	stroke-dasharray: 30;
+	stroke-dashoffset: 30;
+	animation: xPathDraw 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.7s forwards;
+}
+
+.xPath2 {
+	stroke-dasharray: 30;
+	stroke-dashoffset: 30;
+	animation: xPathDraw 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.85s forwards;
+}
+
+.failureIcon {
+	animation: shake 0.5s ease 1.1s both;
+}
+
+.textBlock {
+	animation: fadeUp 0.5s ease 0.8s both;
+}
+
+.actionsBlock {
+	animation: fadeUp 0.5s ease 1s both;
+}

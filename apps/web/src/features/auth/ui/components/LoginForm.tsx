@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 
 import { Button, ButtonSizes, Input, PasswordInput } from "@repo/ui";
 import { useForm } from "@tanstack/react-form";
-import { MailIcon } from "lucide-react";
+import { Mail } from "lucide-react";
 
 import { OAuthProvider, ROUTES } from "@/constants";
 import { LoginInputSchema } from "@/features/auth/schemas";
-import { useSignInMutation } from "@/graphql";
+import { useSignInMutation } from "@/graphql/hooks";
 
 import { OAuthButton } from "./OAuthButton";
 
@@ -72,7 +72,7 @@ export function LoginForm() {
 							type="email"
 							placeholder="you@example.com"
 							autoComplete="email"
-							startAdornment={<MailIcon />}
+							startAdornment={<Mail />}
 							value={field.state.value}
 							onBlur={field.handleBlur}
 							onChange={(e) => field.handleChange(e.target.value)}

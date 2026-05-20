@@ -1,0 +1,33 @@
+mutation SignIn($input: SignInInput!) {
+  signIn(input: $input) {
+    ...UserFields
+  }
+}
+
+mutation SignUp($input: SignUpInput!) {
+  signUp(input: $input) {
+    ...UserFields
+  }
+}
+
+mutation Refresh {
+  refresh {
+    ...UserFields
+  }
+}
+
+mutation SignOut {
+  signOut
+}
+
+mutation VerifyEmail($token: String!) {
+  verifyEmail(token: $token)
+}
+
+mutation ForgotPassword($input: ForgotPasswordInput!) {
+  forgotPassword(input: $input)
+}
+
+mutation ResetPassword($input: ResetPasswordInput!) {
+  resetPassword(input: $input)
+}

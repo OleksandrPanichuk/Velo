@@ -1,0 +1,26 @@
+query GetUsers {
+    getUsers {
+        nodes {
+            ...UserFields
+        }
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+        }
+        totalCount
+    }
+}
+
+query GetUserById($id: String!) {
+    getUserById(id: $id) {
+        ...UserFields
+    }
+}
+
+query GetCurrentUser {
+    getCurrentUser {
+        ...UserFields
+    }
+}

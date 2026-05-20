@@ -1,0 +1,12 @@
+fragment UserFields on UserModel {
+  id
+  email
+  username
+  fullName
+  avatarUrl
+  timezone
+  locale
+  isEmailVerified
+  createdAt
+  updatedAt
+}

@@ -2,8 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import type { Metadata } from "next";
 
-import { GetCurrentUserDocument } from "@/graphql";
-import { PreloadQuery } from "@/lib/apollo";
+import { getCurrentUserFn } from "@/features/users/server";
 import { createMetadata } from "@/lib/metadata";
 import { ApolloProvider } from "@/providers";
 
@@ -21,17 +20,17 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = createMetadata();
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const currentUser = await getCurrentUserFn();
+	console.log("layout", { currentUser });
 	return (
 		<html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
 			<body className="flex min-h-full flex-col">
-				<ApolloProvider>
-					<PreloadQuery query={GetCurrentUserDocument}>{children}</PreloadQuery>
-				</ApolloProvider>
+				<ApolloProvider>{children}</ApolloProvider>
 			</body>
 		</html>
 	);

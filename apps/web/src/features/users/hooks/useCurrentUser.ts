@@ -1,9 +1,8 @@
 "use client";
 
-import { useGetCurrentUserSuspenseQuery } from "@/graphql";
+import { useGetCurrentUserQuery } from "@/graphql/hooks";
 
-// Requires an authenticated session. Only use inside layouts protected by src/proxy.ts.
 export function useCurrentUser() {
-	const { data } = useGetCurrentUserSuspenseQuery();
+	const { data } = useGetCurrentUserQuery({ errorPolicy: "all" });
 	return data?.getCurrentUser ?? null;
 }

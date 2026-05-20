@@ -1,0 +1,226 @@
+/*
+ * Velo design system tokens.
+ * Import this file AFTER @import "tailwindcss" in your app's CSS.
+ *
+ *   bg-neutral-950       → static palette utility
+ *   bg-brand-500         → static violet swatch
+ *   bg-surface           → dynamic (var(--surface), switches with .dark)
+ *   text-text-primary    → dynamic (var(--text-primary), switches with .dark)
+ */
+
+/* ─── 1. Static palette ─────────────────────────────────────────────────── */
+@theme {
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Fira Code", monospace;
+
+  /* Border radius */
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-2xl:  16px;
+  --radius-full: 9999px;
+
+  /* Neutral (zinc) */
+  --color-neutral-0:    #ffffff;
+  --color-neutral-50:   #fafafa;
+  --color-neutral-100:  #f4f4f5;
+  --color-neutral-150:  #ececee;
+  --color-neutral-200:  #e4e4e7;
+  --color-neutral-300:  #d4d4d8;
+  --color-neutral-400:  #a1a1aa;
+  --color-neutral-500:  #71717a;
+  --color-neutral-600:  #52525b;
+  --color-neutral-700:  #3f3f46;
+  --color-neutral-750:  #323238;
+  --color-neutral-800:  #27272a;
+  --color-neutral-850:  #1e1e21;
+  --color-neutral-900:  #18181b;
+  --color-neutral-950:  #0f0f11;
+  --color-neutral-1000: #09090b;
+
+  /* Brand / violet */
+  --color-brand-50:  #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+  --color-brand-950: #2e1065;
+
+  /* Red */
+  --color-red-50:  #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+  --color-red-950: #450a0a;
+
+  /* Orange */
+  --color-orange-50:  #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-200: #fed7aa;
+  --color-orange-300: #fdba74;
+  --color-orange-400: #fb923c;
+  --color-orange-500: #f97316;
+  --color-orange-600: #ea580c;
+  --color-orange-700: #c2410c;
+  --color-orange-800: #9a3412;
+  --color-orange-900: #7c2d12;
+  --color-orange-950: #431407;
+
+  /* Yellow */
+  --color-yellow-50:  #fefce8;
+  --color-yellow-100: #fef9c3;
+  --color-yellow-200: #fef08a;
+  --color-yellow-300: #fde047;
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+  --color-yellow-600: #ca8a04;
+  --color-yellow-700: #a16207;
+  --color-yellow-800: #854d0e;
+  --color-yellow-900: #713f12;
+  --color-yellow-950: #422006;
+
+  /* Green */
+  --color-green-50:  #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #bbf7d0;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-green-700: #15803d;
+  --color-green-800: #166534;
+  --color-green-900: #14532d;
+  --color-green-950: #052e16;
+
+  /* Blue */
+  --color-blue-50:  #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+  --color-blue-900: #1e3a8a;
+  --color-blue-950: #172554;
+
+  /* Priority (static — same in light and dark) */
+  --color-priority-urgent: #ef4444;
+  --color-priority-high:   #f97316;
+  --color-priority-medium: #eab308;
+  --color-priority-low:    #3b82f6;
+  --color-priority-none:   #a1a1aa;
+
+  /* Issue state type (static) */
+  --color-state-backlog:   #a1a1aa;
+  --color-state-unstarted: #71717a;
+  --color-state-started:   #3b82f6;
+  --color-state-completed: #22c55e;
+  --color-state-cancelled: #52525b;
+
+  /* Animations */
+  --animate-ripple: ripple 500ms linear;
+
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+}
+
+/* ─── 2. Semantic tokens (dynamic — respond to .dark via CSS vars) ───────── */
+/* `inline` tells Tailwind to emit var() references rather than resolving    */
+/* the value at build time, so the utilities switch with the .dark class.     */
+@theme inline {
+  /* Surfaces */
+  --color-surface:          var(--surface);
+  --color-surface-subtle:   var(--surface-subtle);
+  --color-surface-muted:    var(--surface-muted);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-overlay:  var(--surface-overlay);
+
+  /* Borders */
+  --color-border:        var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /* Text */
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary:  var(--text-tertiary);
+  --color-text-disabled:  var(--text-disabled);
+  --color-text-inverse:   var(--text-inverse);
+
+  /* Brand interactive */
+  --color-brand-subtle:  var(--brand-subtle);
+  --color-brand-muted:   var(--brand-muted);
+  --color-brand-default: var(--brand-default);
+  --color-brand-strong:  var(--brand-strong);
+  --color-brand-on:      var(--brand-on);
+}
+
+/* ─── 3. CSS custom properties ───────────────────────────────────────────── */
+:root {
+  --surface:          #ffffff;
+  --surface-subtle:   #fafafa;
+  --surface-muted:    #f4f4f5;
+  --surface-elevated: #ffffff;
+  --surface-overlay:  #ffffff;
+
+  --border:        #e4e4e7;
+  --border-strong: #d4d4d8;
+
+  --text-primary:   #0f0f11;
+  --text-secondary: #52525b;
+  --text-tertiary:  #a1a1aa;
+  --text-disabled:  #d4d4d8;
+  --text-inverse:   #ffffff;
+
+  --brand-subtle:  #f5f3ff;
+  --brand-muted:   #ede9fe;
+  --brand-default: #8b5cf6;
+  --brand-strong:  #7c3aed;
+  --brand-on:      #ffffff;
+}
+
+.dark {
+  --surface:          #0f0f11;
+  --surface-subtle:   #18181b;
+  --surface-muted:    #27272a;
+  --surface-elevated: #1e1e21;
+  --surface-overlay:  #27272a;
+
+  --border:        #27272a;
+  --border-strong: #3f3f46;
+
+  --text-primary:   #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary:  #52525b;
+  --text-disabled:  #3f3f46;
+  --text-inverse:   #0f0f11;
+
+  --brand-subtle:  #2e1065;
+  --brand-muted:   #4c1d95;
+  --brand-default: #8b5cf6;
+  --brand-strong:  #a78bfa;
+  --brand-on:      #ffffff;
+}
