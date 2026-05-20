@@ -12,7 +12,7 @@ COPY packages/primitives/package.json ./packages/primitives/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 
-RUN bun install --frozen-lockfile
+RUN env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy bun install --frozen-lockfile
 
 COPY apps/web ./apps/web
 COPY packages ./packages

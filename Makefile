@@ -1,6 +1,7 @@
 DB_SERVICE ?= postgres
 API_SERVICE ?= api
 WEB_SERVICE ?= web
+NGINX_SERVICE ?= nginx
 DB_USER ?= postgres
 DB_NAME ?= postgres
 MIGRATION ?= user-setup
@@ -38,6 +39,15 @@ up-infra:
 up-no-web:
 	docker compose up postgres redis minio $(API_SERVICE)
 
+# Access services
+nginx:
+	docker compose exec -it nginx sh
+
+api:
+	docker compose exec #(API_SERVICE) sh
+
+
+# Database commands
 db:
 	docker compose exec $(DB_SERVICE) psql -U $(DB_USER) -d $(DB_NAME)
 
@@ -63,3 +73,17 @@ db\:schema\:log:
 
 db\:schema\:sync:
 	docker compose run --rm $(API_SERVICE) npm run db:schema:sync
+
+
+# Logs
+logs:
+	docker compose logs -f
+
+logs-nginx:
+	docker compose logs -f $(NGINX_SERVICE)
+
+logs-api:
+	docker compose logs -f $(API_SERVICE)
+
+logs-web:
+	docker compose logs -f $(WEB_SERVICE)
