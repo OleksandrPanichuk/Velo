@@ -1,6 +1,6 @@
-import { Button, ButtonSizes } from "@repo/ui";
+import { Button, ButtonSizes, Spinner } from "@repo/ui";
 
-import { VeloMark } from "@/components/icons";
+import { AnimatedCheckIcon, VeloMark } from "@/components/icons";
 import {
 	MOCK_ISSUES,
 	STATUS_COLORS,
@@ -10,11 +10,22 @@ import styles from "@/features/onboarding/ui/views/OnboardingView/OnboardingView
 interface ReadyStepProps {
 	workspaceName: string;
 	workspaceSlug: string;
+	loading: boolean;
+	error?: string;
+	onComplete: () => void;
+	onBack: () => void;
 }
 
 const NAV_ITEMS = ["Issues", "Cycles", "Roadmap", "Members"] as const;
 
-export function ReadyStep({ workspaceName, workspaceSlug }: ReadyStepProps) {
+export function ReadyStep({
+	workspaceName,
+	workspaceSlug,
+	loading,
+	error,
+	onComplete,
+	onBack,
+}: ReadyStepProps) {
 	return (
 		<div className="flex flex-col items-center gap-8 text-center">
 			<div className="relative flex items-center justify-center">
@@ -25,34 +36,7 @@ export function ReadyStep({ workspaceName, workspaceSlug }: ReadyStepProps) {
 				<div className={`${styles.dot5} absolute size-2.5 rounded-sm`} aria-hidden />
 				<div className={`${styles.dot6} absolute size-2 rounded-full`} aria-hidden />
 
-				<div className={styles.completionIcon}>
-					<svg
-						width="72"
-						height="72"
-						viewBox="0 0 54 54"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-						aria-hidden
-					>
-						<circle
-							className={styles.circlePath}
-							cx="27"
-							cy="27"
-							r="25"
-							stroke="rgb(139 92 246)"
-							strokeWidth="1.75"
-							strokeLinecap="round"
-						/>
-						<path
-							className={styles.checkPath}
-							d="M16 27.5L23.5 35L38 20"
-							stroke="rgb(139 92 246)"
-							strokeWidth="2.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</svg>
-				</div>
+				<AnimatedCheckIcon className={styles.completionIcon} />
 			</div>
 
 			<div className="flex flex-col gap-2">
@@ -105,8 +89,21 @@ export function ReadyStep({ workspaceName, workspaceSlug }: ReadyStepProps) {
 				</div>
 			</div>
 
-			<Button size={ButtonSizes.Large} fullWidth>
-				Open workspace
+			{error && (
+				<div className="flex flex-col items-center gap-1.5">
+					<p className="text-sm text-red-500">{error}</p>
+					<button
+						type="button"
+						onClick={onBack}
+						className="text-brand-500 hover:text-brand-600 text-xs underline-offset-2 hover:underline"
+					>
+						Change workspace name
+					</button>
+				</div>
+			)}
+
+			<Button size={ButtonSizes.Large} fullWidth onClick={onComplete} disabled={loading}>
+				{loading ? <Spinner /> : "Open workspace"}
 			</Button>
 		</div>
 	);

@@ -7,7 +7,12 @@ export const ROLES = [
 	{ id: "other", label: "Other", Icon: Layers },
 ] as const;
 
-export const TEAM_SIZES = ["1–5", "6–20", "21–50", "50+"] as const;
+export const TEAM_SIZES = [
+	{ id: "small", label: "1–5" },
+	{ id: "medium", label: "6–20" },
+	{ id: "large", label: "21–50" },
+	{ id: "enterprise", label: "50+" },
+] as const;
 
 export const MOCK_ISSUES = [
 	{ status: "done", label: "Design system foundation", priority: "high" },
@@ -22,3 +27,9 @@ export const STATUS_COLORS: Record<string, string> = {
 	"in-progress": "bg-violet-500",
 	todo: "bg-neutral-400",
 };
+
+export enum OnboardingStep {
+	Workspace = 1,
+	About = 2,
+	Ready = 3,
+}

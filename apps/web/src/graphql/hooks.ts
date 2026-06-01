@@ -277,3 +277,62 @@ export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQ
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserSuspenseQueryHookResult = ReturnType<typeof useGetCurrentUserSuspenseQuery>;
 export type GetCurrentUserQueryResult = ApolloReactCommon.QueryResult<Operations.GetCurrentUserQuery, Operations.GetCurrentUserQueryVariables>;
+
+/**
+ * __useCreateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkspaceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<Operations.CreateWorkspaceMutation, Operations.CreateWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<Operations.CreateWorkspaceMutation, Operations.CreateWorkspaceMutationVariables>(Operations.CreateWorkspace, options);
+      }
+export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
+export type CreateWorkspaceMutationResult = ApolloReactCommon.MutationResult<Operations.CreateWorkspaceMutation>;
+
+/**
+ * __useGetWorkspacesQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspacesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspacesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>(Operations.GetWorkspaces, options);
+      }
+export function useGetWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>(Operations.GetWorkspaces, options);
+        }
+// @ts-ignore
+export function useGetWorkspacesSuspenseQuery(baseOptions?: ApolloReactHooks.SuspenseQueryHookOptions<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>;
+export function useGetWorkspacesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>): ApolloReactHooks.UseSuspenseQueryResult<Operations.GetWorkspacesQuery | undefined, Operations.GetWorkspacesQueryVariables>;
+export function useGetWorkspacesSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>(Operations.GetWorkspaces, options);
+        }
+export type GetWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspacesQuery>;
+export type GetWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspacesLazyQuery>;
+export type GetWorkspacesSuspenseQueryHookResult = ReturnType<typeof useGetWorkspacesSuspenseQuery>;
+export type GetWorkspacesQueryResult = ApolloReactCommon.QueryResult<Operations.GetWorkspacesQuery, Operations.GetWorkspacesQueryVariables>;

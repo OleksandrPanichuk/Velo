@@ -12,6 +12,9 @@ export const ROUTES = {
 	settings: {
 		profile: "/settings/profile",
 	},
+	workspace: {
+		root: (slug: string) => `/${slug}`,
+	},
 } as const;
 
 export const API_ROUTES = {

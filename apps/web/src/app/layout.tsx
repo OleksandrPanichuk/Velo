@@ -1,3 +1,5 @@
+import { PropsWithChildren } from "react";
+
 import { Geist, Geist_Mono } from "next/font/google";
 
 import type { Metadata } from "next";
@@ -20,13 +22,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = createMetadata();
 
-export default async function RootLayout({
-	children,
-}: Readonly<{
-	children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: PropsWithChildren) {
 	const currentUser = await getCurrentUserFn();
-	console.log("layout", { currentUser });
 	return (
 		<html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
 			<body className="flex min-h-full flex-col">

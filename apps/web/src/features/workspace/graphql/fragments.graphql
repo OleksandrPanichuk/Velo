@@ -1,0 +1,9 @@
+fragment WorkspaceBase on WorkspaceModel {
+    id
+    slug
+    name
+    logo {
+        url
+        originalName
+    }
+}

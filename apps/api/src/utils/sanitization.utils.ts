@@ -16,7 +16,7 @@ export class SanitizationUtil {
 		stripIgnoreTagBody: ["script", "style"],
 	};
 
-	public static sanitizeInput(input: string): string {
+	public static sanitizeInput(this: void, input: string): string {
 		if (!input || typeof input !== "string") {
 			return input;
 		}
@@ -24,7 +24,7 @@ export class SanitizationUtil {
 		return filterXSS(input, SanitizationUtil.xssOptions);
 	}
 
-	public static sanitizeArray<T = unknown>(arr: T[], visited = new WeakSet()): T[] {
+	public static sanitizeArray<T = unknown>(this: void, arr: T[], visited = new WeakSet()): T[] {
 		return arr.map((item) => {
 			if (typeof item === "string") {
 				return SanitizationUtil.sanitizeInput(item) as T;
@@ -42,7 +42,11 @@ export class SanitizationUtil {
 		});
 	}
 
-	public static sanitizeObject<T extends Record<string, unknown>>(obj: T, visited = new WeakSet()): T {
+	public static sanitizeObject<T extends Record<string, unknown>>(
+		this: void,
+		obj: T,
+		visited = new WeakSet(),
+	): T {
 		if (visited.has(obj)) {
 			return obj;
 		}

@@ -8,6 +8,5 @@ import "server-only";
 export const getCurrentUserFn = cache(async () => {
 	const { data } = await query<GetCurrentUserQuery>({ query: GetCurrentUser });
 
-	console.log("getCurrentUserFn", { data });
 	return data?.getCurrentUser ?? null;
 });

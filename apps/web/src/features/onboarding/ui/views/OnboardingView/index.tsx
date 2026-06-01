@@ -2,26 +2,34 @@
 
 import { useState } from "react";
 
+import { ChevronLeft } from "lucide-react";
+
 import { VeloMark } from "@/components/icons";
 import { AboutStep } from "@/features/onboarding/ui/components/AboutStep";
 import { ReadyStep } from "@/features/onboarding/ui/components/ReadyStep";
 import { StepIndicator } from "@/features/onboarding/ui/components/StepIndicator";
 import { WorkspaceStep } from "@/features/onboarding/ui/components/WorkspaceStep";
+import { OnboardingStep } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
+import { useOnboardingForm } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.hooks";
 
 import styles from "./OnboardingView.module.css";
 
-export type Step = 1 | 2 | 3;
-
 export function OnboardingView() {
-	const [step, setStep] = useState<Step>(1);
-	const [workspaceName, setWorkspaceName] = useState("");
-	const [selectedRole, setSelectedRole] = useState<string | null>(null);
-	const [selectedSize, setSelectedSize] = useState<string | null>(null);
+	const { form, loading, serverError, resetError } = useOnboardingForm();
+	const [step, setStep] = useState<OnboardingStep>(OnboardingStep.Workspace);
 
-	const workspaceSlug = workspaceName
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "-")
-		.replace(/^-|-$/g, "");
+	const handleStep1Continue = async () => {
+		const errors = await form.validateAllFields("submit");
+		if (!errors.some(Boolean)) {
+			setStep(OnboardingStep.About);
+		}
+	};
+
+	const handleBack = () => {
+		resetError();
+		if (step === OnboardingStep.About) setStep(OnboardingStep.Workspace);
+		else if (step === OnboardingStep.Ready) setStep(OnboardingStep.About);
+	};
 
 	return (
 		<div className="bg-surface relative flex min-h-screen flex-col overflow-hidden">
@@ -43,9 +51,22 @@ export function OnboardingView() {
 			/>
 
 			<header className="relative flex items-center justify-between px-8 py-6">
-				<div className="flex items-center gap-2.5">
-					<VeloMark className="size-7" />
-					<span className="text-text-primary text-base font-semibold tracking-tight">Velo</span>
+				<div className="flex w-24 items-center">
+					{step !== OnboardingStep.Workspace ? (
+						<button
+							type="button"
+							onClick={handleBack}
+							className="text-text-secondary hover:text-text-primary flex items-center gap-1 text-sm transition-colors duration-150"
+						>
+							<ChevronLeft className="size-4" strokeWidth={2} />
+							Back
+						</button>
+					) : (
+						<div className="flex items-center gap-2.5">
+							<VeloMark className="size-7" />
+							<span className="text-text-primary text-base font-semibold tracking-tight">Velo</span>
+						</div>
+					)}
 				</div>
 
 				<StepIndicator current={step} />
@@ -55,27 +76,23 @@ export function OnboardingView() {
 
 			<main className="relative flex flex-1 items-center justify-center px-4 py-12">
 				<div key={step} className={`${styles.stepContent} w-full max-w-md`}>
-					{step === 1 && (
-						<WorkspaceStep
-							workspaceName={workspaceName}
-							workspaceSlug={workspaceSlug}
-							onNameChange={setWorkspaceName}
-							onContinue={() => setStep(2)}
-						/>
+					{step === OnboardingStep.Workspace && (
+						<WorkspaceStep form={form} onContinue={handleStep1Continue} />
 					)}
-					{step === 2 && (
-						<AboutStep
-							selectedRole={selectedRole}
-							selectedSize={selectedSize}
-							onRoleSelect={setSelectedRole}
-							onSizeSelect={setSelectedSize}
-							onContinue={() => setStep(3)}
-						/>
+					{step === OnboardingStep.About && (
+						<AboutStep form={form} onContinue={() => setStep(OnboardingStep.Ready)} />
 					)}
-					{step === 3 && (
+					{step === OnboardingStep.Ready && (
 						<ReadyStep
-							workspaceName={workspaceName || "My Workspace"}
-							workspaceSlug={workspaceSlug || "my-workspace"}
+							workspaceName={form.state.values.name}
+							workspaceSlug={form.state.values.slug}
+							loading={loading}
+							error={serverError}
+							onComplete={() => form.handleSubmit()}
+							onBack={() => {
+								resetError();
+								setStep(OnboardingStep.Workspace);
+							}}
 						/>
 					)}
 				</div>

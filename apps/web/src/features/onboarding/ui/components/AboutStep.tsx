@@ -1,3 +1,5 @@
+"use client";
+
 import { Button, ButtonSizes, ButtonVariants } from "@repo/ui";
 import { Users } from "lucide-react";
 
@@ -5,22 +7,14 @@ import {
 	ROLES,
 	TEAM_SIZES,
 } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
+import type { OnboardingFormApi } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.hooks";
 
 interface AboutStepProps {
-	selectedRole: string | null;
-	selectedSize: string | null;
-	onRoleSelect: (v: string) => void;
-	onSizeSelect: (v: string) => void;
+	form: OnboardingFormApi;
 	onContinue: () => void;
 }
 
-export function AboutStep({
-	selectedRole,
-	selectedSize,
-	onRoleSelect,
-	onSizeSelect,
-	onContinue,
-}: AboutStepProps) {
+export function AboutStep({ form, onContinue }: AboutStepProps) {
 	return (
 		<div className="flex flex-col gap-8">
 			<div className="flex flex-col items-center gap-5 text-center">
@@ -45,69 +39,77 @@ export function AboutStep({
 			</div>
 
 			<div className="flex flex-col gap-6">
-				<div className="flex flex-col gap-2.5">
-					<p className="text-text-secondary text-xs font-medium tracking-wider uppercase">
-						Your role
-					</p>
-					<div className="grid grid-cols-2 gap-2.5">
-						{ROLES.map(({ id, label, Icon }) => {
-							const active = selectedRole === id;
-							return (
-								<button
-									key={id}
-									type="button"
-									onClick={() => onRoleSelect(id)}
-									className={`flex flex-col items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-150 ${
-										active
-											? "border-brand-500 bg-brand-500/8 ring-brand-500/20 ring-1"
-											: "border-border bg-surface hover:border-border-strong hover:bg-surface-subtle"
-									}`}
-								>
-									<div
-										className={`flex size-8 items-center justify-center rounded-lg transition-colors duration-150 ${
-											active ? "bg-brand-500/15" : "bg-surface-muted"
-										}`}
-									>
-										<Icon
-											className={`size-4 transition-colors duration-150 ${active ? "text-brand-500" : "text-text-secondary"}`}
-											strokeWidth={1.75}
-										/>
-									</div>
-									<span
-										className={`text-sm font-medium transition-colors duration-150 ${active ? "text-brand-500" : "text-text-primary"}`}
-									>
-										{label}
-									</span>
-								</button>
-							);
-						})}
-					</div>
-				</div>
+				<form.Field name="role">
+					{(field) => (
+						<div className="flex flex-col gap-2.5">
+							<p className="text-text-secondary text-xs font-medium tracking-wider uppercase">
+								Your role
+							</p>
+							<div className="grid grid-cols-2 gap-2.5">
+								{ROLES.map(({ id, label, Icon }) => {
+									const active = field.state.value === id;
+									return (
+										<button
+											key={id}
+											type="button"
+											onClick={() => field.handleChange(id)}
+											className={`flex flex-col items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-150 ${
+												active
+													? "border-brand-500 bg-brand-500/8 ring-brand-500/20 ring-1"
+													: "border-border bg-surface hover:border-border-strong hover:bg-surface-subtle"
+											}`}
+										>
+											<div
+												className={`flex size-8 items-center justify-center rounded-lg transition-colors duration-150 ${
+													active ? "bg-brand-500/15" : "bg-surface-muted"
+												}`}
+											>
+												<Icon
+													className={`size-4 transition-colors duration-150 ${active ? "text-brand-500" : "text-text-secondary"}`}
+													strokeWidth={1.75}
+												/>
+											</div>
+											<span
+												className={`text-sm font-medium transition-colors duration-150 ${active ? "text-brand-500" : "text-text-primary"}`}
+											>
+												{label}
+											</span>
+										</button>
+									);
+								})}
+							</div>
+						</div>
+					)}
+				</form.Field>
 
-				<div className="flex flex-col gap-2.5">
-					<p className="text-text-secondary text-xs font-medium tracking-wider uppercase">
-						Team size
-					</p>
-					<div className="flex gap-2">
-						{TEAM_SIZES.map((size) => {
-							const active = selectedSize === size;
-							return (
-								<button
-									key={size}
-									type="button"
-									onClick={() => onSizeSelect(size)}
-									className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-150 ${
-										active
-											? "border-brand-500 bg-brand-500/8 text-brand-500 ring-brand-500/20 ring-1"
-											: "border-border bg-surface text-text-secondary hover:border-border-strong hover:text-text-primary"
-									}`}
-								>
-									{size}
-								</button>
-							);
-						})}
-					</div>
-				</div>
+				<form.Field name="size">
+					{(field) => (
+						<div className="flex flex-col gap-2.5">
+							<p className="text-text-secondary text-xs font-medium tracking-wider uppercase">
+								Team size
+							</p>
+							<div className="flex gap-2">
+								{TEAM_SIZES.map(({ id, label }) => {
+									const active = field.state.value === id;
+									return (
+										<button
+											key={id}
+											type="button"
+											onClick={() => field.handleChange(id)}
+											className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-150 ${
+												active
+													? "border-brand-500 bg-brand-500/8 text-brand-500 ring-brand-500/20 ring-1"
+													: "border-border bg-surface text-text-secondary hover:border-border-strong hover:text-text-primary"
+											}`}
+										>
+											{label}
+										</button>
+									);
+								})}
+							</div>
+						</div>
+					)}
+				</form.Field>
 			</div>
 
 			<div className="flex flex-col gap-2.5">

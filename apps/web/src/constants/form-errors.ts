@@ -1,4 +1,18 @@
 export const FORM_ERRORS = {
+	workspace: {
+		name: {
+			required: "Workspace name is required",
+			min: "Name must be at least 3 characters",
+			max: "Name must be at most 64 characters",
+			format: "Name can only contain letters, numbers, and spaces",
+		},
+		slug: {
+			required: "Workspace URL is required",
+			min: "URL must be at least 3 characters",
+			max: "URL must be at most 32 characters",
+			format: "URL can only contain lowercase letters, numbers, and hyphens",
+		},
+	},
 	auth: {
 		email: {
 			required: "Email is required",
