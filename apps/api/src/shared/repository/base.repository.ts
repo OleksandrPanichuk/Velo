@@ -1,38 +1,54 @@
 import { type BaseModel } from "@/models/Base.model";
-import { type DeepPartial, type FindOptionsWhere, In, type Repository } from "typeorm";
+import { TransactionHost } from "@nestjs-cls/transactional";
+import { type TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";
+import { Inject } from "@nestjs/common";
+import {
+	type DeepPartial,
+	type EntityManager,
+	type FindOptionsWhere,
+	In,
+	type Repository,
+} from "typeorm";
 
 export abstract class BaseRepository<T extends BaseModel> {
+	@Inject(TransactionHost)
+	private readonly txHost!: TransactionHost<TransactionalAdapterTypeOrm>;
+
 	constructor(protected readonly repo: Repository<T>) {}
 
+	protected get em(): EntityManager {
+		return this.txHost.tx ?? this.repo.manager;
+	}
+
 	public async findAll(): Promise<T[]> {
-		return this.repo.find();
+		return this.em.find(this.repo.target);
 	}
 
 	public async findById(id: string): Promise<T | null> {
-		return this.repo.findOne({ where: { id } as FindOptionsWhere<T> });
+		return this.em.findOne(this.repo.target, { where: { id } as FindOptionsWhere<T> });
 	}
 
 	public async findByIds(ids: readonly string[]): Promise<T[]> {
-		return this.repo.find({ where: { id: In([...ids]) } as FindOptionsWhere<T> });
+		return this.em.find(this.repo.target, { where: { id: In([...ids]) } as FindOptionsWhere<T> });
 	}
 
 	public async create(data: DeepPartial<T>): Promise<T> {
-		const entity = this.repo.create(data);
-		return this.repo.save(entity);
+		const entity = this.em.create(this.repo.target, data);
+		return this.em.save(entity);
 	}
 
 	public async update(id: string, data: DeepPartial<T>): Promise<T | null> {
 		const entity = await this.findById(id);
 		if (!entity) return null;
 		Object.assign(entity, data);
-		return this.repo.save(entity);
+		return this.em.save(entity);
 	}
 
 	public async softDelete(id: string) {
-		return this.repo.softDelete(id);
+		return this.em.softDelete(this.repo.target, id);
 	}
 
 	public async createQueryBuilder(alias: string) {
-		return this.repo.createQueryBuilder(alias);
+		return this.em.createQueryBuilder(this.repo.target, alias);
 	}
 }

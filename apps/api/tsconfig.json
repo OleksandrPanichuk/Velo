@@ -8,6 +8,7 @@
 		"baseUrl": "./",
 		"incremental": true,
 		"strictNullChecks": true,
+		"types": ["vitest/globals", "node"],
 		"paths": {
 			"@/*": ["src/*"]
 		}

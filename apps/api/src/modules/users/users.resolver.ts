@@ -1,16 +1,13 @@
 import { Loader } from "@/infrastructure/dataloader";
 import { UserModel } from "@/models/User.model";
 import { OptionalCurrentUser, Public } from "@/shared/decorators";
-import { AppAuthGuard } from "@/shared/guards";
 import { IPaginatedType, PaginationArgs } from "@/shared/pagination";
-import { UseGuards } from "@nestjs/common";
 import { Args, Resolver } from "@nestjs/graphql";
 import DataLoader from "dataloader";
 import { GetCurrentUserQuery, GetUserByIdQuery, GetUsersQuery } from "./users.decorators";
 import { UsersLoader } from "./users.loader";
 import { UsersService } from "./users.service";
 
-@UseGuards(AppAuthGuard)
 @Resolver(() => UserModel)
 export class UsersResolver {
 	constructor(private readonly usersService: UsersService) {}

@@ -2,6 +2,7 @@ import { UserModel } from "@/models/User.model";
 import { UsersRepository } from "@/modules/users/users.repository";
 import { IPaginatedType, PaginationArgs, PaginationService } from "@/shared/pagination";
 import { Injectable } from "@nestjs/common";
+import { DeepPartial } from "typeorm";
 
 @Injectable()
 export class UsersService {
@@ -27,5 +28,9 @@ export class UsersService {
 	): Promise<IPaginatedType<UserModel>> {
 		const qb = await this.usersRepository.createQueryBuilder("user");
 		return this.paginationService.paginate(qb, paginationArgs);
+	}
+
+	public async update(id: string, data: DeepPartial<UserModel>): Promise<UserModel | null> {
+		return this.usersRepository.update(id, data);
 	}
 }
