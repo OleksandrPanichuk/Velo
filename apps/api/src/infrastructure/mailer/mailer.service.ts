@@ -60,17 +60,12 @@ export class MailerService implements OnModuleInit {
 	}
 
 	public async sendPasswordReset(to: string, ctx: ResetPasswordContext): Promise<void> {
-		try {
-			console.log("SEND RESET PASSWORD");
-			await this.send({
-				to,
-				subject: MAILER_SUBJECTS[MailTemplate.RESET_PASSWORD],
-				template: MailTemplate.RESET_PASSWORD,
-				context: ctx,
-			});
-		} catch (error) {
-			this.logger.error(error);
-		}
+		await this.send({
+			to,
+			subject: MAILER_SUBJECTS[MailTemplate.RESET_PASSWORD],
+			template: MailTemplate.RESET_PASSWORD,
+			context: ctx,
+		});
 	}
 
 	public async sendEmailVerification(to: string, ctx: EmailVerificationContext): Promise<void> {
@@ -91,7 +86,7 @@ export class MailerService implements OnModuleInit {
 		});
 	}
 
-	private async send(input: SendMailInput): Promise<void> {
+	public async send(input: SendMailInput): Promise<void> {
 		try {
 			const html = this.compile(input.template, input.context);
 			await this.transporter.sendMail({

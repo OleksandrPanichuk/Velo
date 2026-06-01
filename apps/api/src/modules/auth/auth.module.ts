@@ -1,4 +1,5 @@
 import { UsersModule } from "@/modules/users/users.module";
+import { MailQueueModule } from "@/queues/mail";
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
@@ -14,7 +15,7 @@ import {
 } from "./auth.strategies";
 
 @Module({
-	imports: [JwtModule.register({}), PassportModule, UsersModule],
+	imports: [JwtModule.register({}), MailQueueModule, PassportModule, UsersModule],
 	controllers: [AuthController],
 	providers: [
 		AuthResolver,

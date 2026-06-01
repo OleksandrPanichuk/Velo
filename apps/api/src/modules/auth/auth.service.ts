@@ -3,9 +3,9 @@ import { randomBytes } from "node:crypto";
 import type { Env } from "@/config";
 import { CookieNames, ErrorMessages } from "@/constants";
 import { AppClsService } from "@/infrastructure/cls";
-import { MailerService } from "@/infrastructure/mailer";
 import type { UserModel } from "@/models/User.model";
 import { UsersRepository } from "@/modules/users/users.repository";
+import { MailQueue } from "@/queues/mail";
 import {
 	BadRequestException,
 	ConflictException,
@@ -32,7 +32,7 @@ export class AuthService {
 		private readonly jwtService: JwtService,
 		private readonly config: ConfigService<Env>,
 		private readonly usersRepository: UsersRepository,
-		private readonly mailerService: MailerService,
+		private readonly mailQueue: MailQueue,
 		private readonly cls: AppClsService,
 	) {
 		this.accessSecret = config.getOrThrow<string>("JWT_ACCESS_SECRET");
@@ -59,9 +59,10 @@ export class AuthService {
 
 		const verificationUrl = `${this.config.getOrThrow<string>("CLIENT_EMAIL_VERIFICATION_URL")}?token=${emailVerificationToken}`;
 
-		this.mailerService
-			.sendEmailVerification(user.email, { verificationUrl, expiresIn: "7 days" })
-			.catch((err) => this.logger.error("Failed to send verification email", err));
+		await this.mailQueue.enqueueEmailVerification(user.email, {
+			verificationUrl,
+			expiresIn: "7 days",
+		});
 
 		return user;
 	}
@@ -123,9 +124,10 @@ export class AuthService {
 		await this.usersRepository.setPasswordResetToken(user.id, token, expiresAt);
 
 		const resetUrl = `${this.config.getOrThrow<string>("CLIENT_RESET_PASSWORD_URL")}?token=${token}`;
-		this.mailerService
-			.sendPasswordReset(user.email, { resetUrl, expiresIn: "1 hour" })
-			.catch((err) => this.logger.error("Failed to send password reset email", err));
+		await this.mailQueue.enqueuePasswordReset(user.email, {
+			resetUrl,
+			expiresIn: "1 hour",
+		});
 
 		return true;
 	}

@@ -33,6 +33,7 @@ import { NodeEnv } from "@repo/primitives";
 import { SentryModule } from "@sentry/nestjs/setup";
 import { CsrfFilter } from "ncsrf/dist";
 import { ClsGuard } from "nestjs-cls";
+import { QueueModule } from "@/infrastructure/queue";
 
 @Module({
 	imports: [
@@ -52,7 +53,9 @@ import { ClsGuard } from "nestjs-cls";
 		LoggerModule,
 		MailerModule,
 		PaginationModule,
+		PermissionsModule,
 		PubSubModule,
+		QueueModule,
 		SentryModule.forRoot(),
 		ThrottlerModule.forRootAsync({
 			useFactory: (config: ConfigService<Env>) => getThrottlerConfig(config),
@@ -64,7 +67,6 @@ import { ClsGuard } from "nestjs-cls";
 		}),
 		UsersModule,
 		WorkspacesModule,
-		PermissionsModule,
 	],
 	providers: [
 		{
