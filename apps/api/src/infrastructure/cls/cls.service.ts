@@ -1,3 +1,4 @@
+import type { WorkspaceContext } from "@/modules/permissions/permissions.types";
 import { Injectable } from "@nestjs/common";
 import type { ServerResponse } from "node:http";
 import { ClsService } from "nestjs-cls";
@@ -26,5 +27,13 @@ export class AppClsService {
 
 	public setResponse(res: ServerResponse): void {
 		this.cls.set(ClsKeys.RESPONSE, res);
+	}
+
+	public get workspaceContext(): WorkspaceContext | undefined {
+		return this.cls.get(ClsKeys.WORKSPACE_CONTEXT);
+	}
+
+	public setWorkspaceContext(context: WorkspaceContext): void {
+		this.cls.set(ClsKeys.WORKSPACE_CONTEXT, context);
 	}
 }

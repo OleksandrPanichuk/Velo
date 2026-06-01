@@ -15,6 +15,7 @@ import { PubSubModule } from "@/infrastructure/pubsub";
 import { AuthModule } from "@/modules/auth/auth.module";
 import { UsersModule } from "@/modules/users/users.module";
 import { WorkspacesModule } from "@/modules/workspaces/workspaces.module";
+import { PermissionsModule, PoliciesGuard, WorkspaceContextGuard } from "@/modules/permissions";
 import { AppExceptionFilter } from "@/shared/filters";
 import { AppAuthGuard, AppThrottlerGuard } from "@/shared/guards";
 import { ResponseCaptureInterceptor } from "@/shared/interceptors";
@@ -63,6 +64,7 @@ import { ClsGuard } from "nestjs-cls";
 		}),
 		UsersModule,
 		WorkspacesModule,
+		PermissionsModule,
 	],
 	providers: [
 		{
@@ -100,6 +102,14 @@ import { ClsGuard } from "nestjs-cls";
 		{
 			provide: APP_GUARD,
 			useClass: AppAuthGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useExisting: WorkspaceContextGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useExisting: PoliciesGuard,
 		},
 		{
 			provide: APP_GUARD,

@@ -11,7 +11,7 @@ const hasRole =
 		workspaceRole !== null && roles.includes(workspaceRole);
 
 /**
- * The permission matrix (spec §5). A missing/null role denies by construction
+ * The permission matrix. A missing/null role denies by construction
  * because `hasRole` rejects a null `workspaceRole`.
  *
  * To add an attribute-based (ABAC) rule later, write a predicate that inspects
