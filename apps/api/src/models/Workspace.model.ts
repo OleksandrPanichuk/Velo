@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { WorkspaceSize } from "@/enums";
 import { BaseModelWithDeletedAt } from "./Base.model";
 import { FileModel } from "./File.model";
 import { TeamModel } from "./Team.model";
@@ -15,6 +16,10 @@ export class WorkspaceModel extends BaseModelWithDeletedAt {
 	@Field()
 	@Column()
 	name!: string;
+
+	@Field(() => WorkspaceSize, { nullable: true })
+	@Column({ type: "enum", enum: WorkspaceSize, nullable: true })
+	size!: WorkspaceSize | null;
 
 	@Column({ type: "uuid", nullable: true })
 	logoId!: string | null;

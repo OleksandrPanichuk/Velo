@@ -2,6 +2,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { hash } from "argon2";
 import { EmailAddressResolver } from "graphql-scalars";
 import { BeforeInsert, Column, Entity, OneToMany, type Relation } from "typeorm";
+import { MemberJobRole } from "@/enums";
 import { BaseModelWithDeletedAt } from "./Base.model";
 import { OAuthAccountModel } from "./OAuthAccount.model";
 import { WorkspaceMemberModel } from "./WorkspaceMember.model";
@@ -38,6 +39,10 @@ export class UserModel extends BaseModelWithDeletedAt {
 	@Column({ default: false })
 	isEmailVerified!: boolean;
 
+	@Field(() => MemberJobRole, { nullable: true })
+	@Column({ type: "enum", enum: MemberJobRole, nullable: true })
+	jobRole!: MemberJobRole | null;
+
 	@Column({ type: "varchar", nullable: true, select: false })
 	password!: string | null;
 
@@ -63,7 +68,7 @@ export class UserModel extends BaseModelWithDeletedAt {
 
 	@Field(() => [TeamMemberModel])
 	@OneToMany(() => TeamMemberModel, (m) => m.user)
-	teamMembers!: Relation<TeamMemberModel[]>
+	teamMembers!: Relation<TeamMemberModel[]>;
 
 	@BeforeInsert()
 	private async hashPassword() {

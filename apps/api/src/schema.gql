@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Input for creating a workspace"""
+input CreateWorkspaceInput {
+  """The name of the workspace"""
+  name: String!
+
+  """The slug of the workspace"""
+  slug: String!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -31,6 +40,9 @@ input ForgotPasswordInput {
 }
 
 type Mutation {
+  """Create a new workspace for the current user. Requires authentication."""
+  createWorkspace(input: CreateWorkspaceInput!): WorkspaceModel!
+
   """
   Request a password reset email. Always returns true to prevent email enumeration.
   """
@@ -97,6 +109,11 @@ type Query {
 
   """Retrieve a paginated list of users. Requires authentication."""
   getUsers(after: String, first: Int = 10): UserPaginatedModel!
+
+  """
+  Retrieve a list of workspaces associated with the current user. Requires authentication.
+  """
+  getWorkspacesByUserId: [WorkspaceModel!]!
 }
 
 """New password and the reset token from the email link"""
