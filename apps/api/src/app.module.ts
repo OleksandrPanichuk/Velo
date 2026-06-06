@@ -12,10 +12,11 @@ import { HealthModule } from "@/infrastructure/health";
 import { LoggerInterceptor, LoggerModule } from "@/infrastructure/logger";
 import { MailerModule } from "@/infrastructure/mailer";
 import { PubSubModule } from "@/infrastructure/pubsub";
+import { QueueModule } from "@/infrastructure/queue";
 import { AuthModule } from "@/modules/auth/auth.module";
+import { PermissionsModule, PoliciesGuard, WorkspaceContextGuard } from "@/modules/permissions";
 import { UsersModule } from "@/modules/users/users.module";
 import { WorkspacesModule } from "@/modules/workspaces/workspaces.module";
-import { PermissionsModule, PoliciesGuard, WorkspaceContextGuard } from "@/modules/permissions";
 import { AppExceptionFilter } from "@/shared/filters";
 import { AppAuthGuard, AppThrottlerGuard } from "@/shared/guards";
 import { ResponseCaptureInterceptor } from "@/shared/interceptors";
@@ -26,6 +27,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -33,7 +35,6 @@ import { NodeEnv } from "@repo/primitives";
 import { SentryModule } from "@sentry/nestjs/setup";
 import { CsrfFilter } from "ncsrf/dist";
 import { ClsGuard } from "nestjs-cls";
-import { QueueModule } from "@/infrastructure/queue";
 
 @Module({
 	imports: [
@@ -44,6 +45,10 @@ import { QueueModule } from "@/infrastructure/queue";
 			envFilePath: `.env.${process.env.NODE_ENV || NodeEnv.DEVELOPMENT}`,
 			isGlobal: true,
 			validate: (config) => envSchema.parse(config),
+		}),
+		EventEmitterModule.forRoot({
+			wildcard: true,
+			delimiter: ".",
 		}),
 		GraphQLModule.forRootAsync<ApolloDriverConfig>({
 			driver: ApolloDriver,
