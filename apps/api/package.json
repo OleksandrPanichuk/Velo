@@ -18,7 +18,7 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:e2e": "vitest run --config ./test/vitest-e2e.config.ts",
-    "db:cli": "typeorm-ts-node-commonjs -d typeorm-cli.datasource.ts",
+    "db:cli": "NODE_OPTIONS=\"-r tsconfig-paths/register\" typeorm-ts-node-commonjs -d typeorm-cli.datasource.ts",
     "db:migrate": "npm run db:cli -- migration:run",
     "db:migrate:revert": "npm run db:cli -- migration:revert",
     "db:migrate:show": "npm run db:cli -- migration:show",
