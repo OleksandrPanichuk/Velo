@@ -1,9 +1,9 @@
-import "reflect-metadata";
-import { Permission } from "@/modules/permissions/permissions.constants";
 import { PoliciesGuard } from "@/modules/permissions/guards/policies.guard";
+import { Permission } from "@/modules/permissions/permissions.constants";
+import type { PermissionService } from "@/modules/permissions/permissions.service";
 import { ForbiddenException, type ExecutionContext } from "@nestjs/common";
 import type { Reflector } from "@nestjs/core";
-import type { PermissionService } from "@/modules/permissions/permissions.service";
+import "reflect-metadata";
 
 const executionContext = () =>
 	({
@@ -12,7 +12,9 @@ const executionContext = () =>
 	}) as unknown as ExecutionContext;
 
 const createGuard = (required: Permission[] | undefined) => {
-	const reflector = { getAllAndOverride: vi.fn().mockReturnValue(required) } as unknown as Reflector;
+	const reflector = {
+		getAllAndOverride: vi.fn().mockReturnValue(required),
+	} as unknown as Reflector;
 	const assert = vi.fn();
 	const permissions = { assert } as unknown as PermissionService;
 	return { guard: new PoliciesGuard(reflector, permissions), assert };

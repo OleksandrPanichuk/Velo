@@ -1,7 +1,7 @@
-import "reflect-metadata";
 import { WorkspaceMemberRole } from "@/enums";
 import { WorkspaceContextGuard } from "@/modules/permissions/guards/workspace-context.guard";
 import type { ExecutionContext } from "@nestjs/common";
+import "reflect-metadata";
 
 const { getGqlRequest } = vi.hoisted(() => ({ getGqlRequest: vi.fn() }));
 vi.mock("@/utils", () => ({ getGqlRequest }));

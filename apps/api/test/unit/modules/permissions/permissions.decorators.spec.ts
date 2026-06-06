@@ -1,9 +1,9 @@
-import "reflect-metadata";
 import { Permission } from "@/modules/permissions/permissions.constants";
 import {
 	REQUIRE_PERMISSION_KEY,
 	RequirePermission,
 } from "@/modules/permissions/permissions.decorators";
+import "reflect-metadata";
 
 describe("RequirePermission decorator", () => {
 	it("attaches the required permissions to a method", () => {
