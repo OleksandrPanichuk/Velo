@@ -5,8 +5,10 @@ NGINX_SERVICE ?= nginx
 DB_USER ?= postgres
 DB_NAME ?= postgres
 MIGRATION ?= user-setup
+APP_URL ?= http://velo.local
 
-.PHONY: help up down clear up-infra up-no-web db db\:migrate db\:migrate\:revert db\:migrate\:show db\:migration\:create db\:migration\:generate db\:schema\:log db\:schema\:sync
+.PHONY: help up down clear up-infra up-no-web db db\:migrate db\:migrate\:revert db\:migrate\:show db\:migration\:create db\:migration\:generate db\:schema\:log db\:schema\:sync \
+	k8s\:build k8s\:credentials k8s\:setup k8s\:deploy k8s\:down
 
 help:
 	@echo "Available targets:"
@@ -23,6 +25,12 @@ help:
 	@echo "  make db:migration:generate MIGRATION=Name    - Generate migration from entity changes"
 	@echo "  make db:schema:log               - Print SQL required to sync schema"
 	@echo "  make db:schema:sync              - Apply schema sync (use carefully)"
+	@echo ""
+	@echo "  make k8s:build                   - Build production images inside minikube"
+	@echo "  make k8s:credentials             - Create AWS credentials secret from env vars (never stored in files)"
+	@echo "  make k8s:setup                   - Apply namespace, configmap, and External Secrets"
+	@echo "  make k8s:deploy                  - Deploy api, web, and ingress"
+	@echo "  make k8s:down                    - Tear down the entire velo namespace"
 
 up:
 	docker compose up
@@ -87,3 +95,51 @@ logs-api:
 
 logs-web:
 	docker compose logs -f $(WEB_SERVICE)
+
+
+# Kubernetes (minikube)
+# ---------------------
+# Prerequisites:
+#   minikube start
+#   minikube addons enable ingress
+#   helm repo add external-secrets https://charts.external-secrets.io
+#   helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
+
+k8s\:build:
+	@echo "Pointing docker to minikube daemon and building production images..."
+	eval $$(minikube docker-env) && \
+		docker build -f apps/api/Dockerfile.prod -t velo-api:latest . && \
+		docker build -f apps/web/Dockerfile.prod \
+			--build-arg NEXT_PUBLIC_API_URL=$(APP_URL) \
+			--build-arg NEXT_PUBLIC_APP_URL=$(APP_URL) \
+			-t velo-web:latest .
+
+k8s\:credentials:
+	@test -n "$$AWS_ACCESS_KEY_ID" || (echo "Error: AWS_ACCESS_KEY_ID is not set" && exit 1)
+	@test -n "$$AWS_SECRET_ACCESS_KEY" || (echo "Error: AWS_SECRET_ACCESS_KEY is not set" && exit 1)
+	kubectl create secret generic aws-credentials \
+		--from-literal=access-key-id="$$AWS_ACCESS_KEY_ID" \
+		--from-literal=secret-access-key="$$AWS_SECRET_ACCESS_KEY" \
+		-n velo \
+		--dry-run=client -o yaml | kubectl apply -f -
+	@echo "AWS credentials secret created in cluster (not stored in any file)"
+
+k8s\:setup:
+	kubectl apply -f kubernetes/namespace.yaml
+	kubectl apply -f kubernetes/configmap.yaml
+	$(MAKE) k8s\:credentials
+	kubectl apply -f kubernetes/external-secrets/secret-store.yaml
+	kubectl apply -f kubernetes/external-secrets/external-secret.yaml
+	@echo "Waiting for ESO to sync secrets..."
+	kubectl wait externalsecret/velo-secret -n velo --for=condition=Ready --timeout=60s
+
+k8s\:deploy:
+	kubectl apply -f kubernetes/api/
+	kubectl apply -f kubernetes/web/
+	kubectl apply -f kubernetes/ingress.yaml
+	@echo ""
+	@echo "Add to /etc/hosts if not already present:"
+	@echo "  $$(minikube ip)  velo.local"
+
+k8s\:down:
+	kubectl delete namespace velo
