@@ -1,8 +1,18 @@
 import { NotificationModel } from "@/models/Notification.model";
+import { NotificationType } from "@/enums";
 import { BaseRepository } from "@/shared/repository";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+
+export interface CreateNotificationData {
+	recipientId: string;
+	workspaceId: string;
+	actorId: string | null;
+	type: NotificationType;
+	title: string;
+	body?: string;
+}
 
 @Injectable()
 export class NotificationsRepository extends BaseRepository<NotificationModel> {
@@ -10,40 +20,32 @@ export class NotificationsRepository extends BaseRepository<NotificationModel> {
 		super(repo);
 	}
 
-	public async findByRecipientId(
+	public async findByRecipientAndWorkspace(
 		recipientId: string,
 		workspaceId: string,
 	): Promise<NotificationModel[]> {
-		return this.repo.find({
-			where: {
-				recipientId,
-				workspaceId,
-			},
+		return this.em.find(this.repo.target, {
+			where: { recipientId, workspaceId },
+			order: { createdAt: "DESC" },
 		});
 	}
 
 	public async countUnread(recipientId: string, workspaceId: string): Promise<number> {
-		return this.repo.count({
-			where: {
-				recipientId,
-				workspaceId,
-			},
+		return this.em.count(this.repo.target, {
+			where: { recipientId, workspaceId, isRead: false },
 		});
 	}
 
-	public async markAsRead(id: string, recipientId: string): Promise<void> {
-		await this.repo.update(
-			{
-				recipientId,
-				id,
-			},
-			{
-				isRead: true,
-			},
-		);
+	public async markAsRead(id: string, recipientId: string): Promise<NotificationModel | null> {
+		const notification = await this.em.findOne(this.repo.target, {
+			where: { id, recipientId },
+		});
+		if (!notification) return null;
+		notification.isRead = true;
+		return this.em.save(notification);
 	}
 
 	public async markAllAsRead(recipientId: string, workspaceId: string): Promise<void> {
-		await this.repo.update({ recipientId, workspaceId, isRead: false }, { isRead: true });
+		await this.em.update(this.repo.target, { recipientId, workspaceId, isRead: false }, { isRead: true });
 	}
 }
