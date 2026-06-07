@@ -1,15 +1,21 @@
 import { WorkspaceMemberRole } from "@/enums";
 import type { WorkspaceMembersRepository } from "@/modules/workspace-members/workspace-members.repository";
 import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
+import { MemberJoinedEvent } from "@/modules/workspace-members/events";
 import type { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
+import type { EventEmitter2 } from "@nestjs/event-emitter";
 
 const mockRepo: Partial<WorkspaceMembersRepository> = {
   create: vi.fn(),
   findAdminsByWorkspaceId: vi.fn(),
 };
+const mockEventEmitter: Partial<EventEmitter2> = { emit: vi.fn(), emitAsync: vi.fn() };
 
 const buildService = () =>
-  new WorkspaceMembersService(mockRepo as WorkspaceMembersRepository);
+  new WorkspaceMembersService(
+    mockRepo as WorkspaceMembersRepository,
+    mockEventEmitter as EventEmitter2,
+  );
 
 describe("WorkspaceMembersService", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -27,7 +33,7 @@ describe("WorkspaceMembersService", () => {
   });
 
   describe("create", () => {
-    it("creates the member record", async () => {
+    it("creates the member record and emits MemberJoinedEvent", async () => {
       const member = {
         id: "mem-1",
         workspaceId: "ws-1",
@@ -40,6 +46,7 @@ describe("WorkspaceMembersService", () => {
         workspaceId: "ws-1",
         userId: "user-1",
         role: WorkspaceMemberRole.MEMBER,
+        actorId: "actor-1",
       });
 
       expect(mockRepo.create).toHaveBeenCalledWith({
@@ -47,6 +54,38 @@ describe("WorkspaceMembersService", () => {
         userId: "user-1",
         role: WorkspaceMemberRole.MEMBER,
       });
+      expect(mockEventEmitter.emitAsync).toHaveBeenCalledWith(
+        MemberJoinedEvent.EVENT,
+        new MemberJoinedEvent("ws-1", "user-1", "actor-1"),
+      );
+      expect(result).toBe(member);
+    });
+  });
+
+  describe("createRootMember", () => {
+    it("forces role to OWNER and passes userId as actorId", async () => {
+      const member = {
+        id: "mem-1",
+        workspaceId: "ws-1",
+        userId: "user-1",
+        role: WorkspaceMemberRole.OWNER,
+      } as WorkspaceMemberModel;
+      vi.mocked(mockRepo.create!).mockResolvedValue(member);
+
+      const result = await buildService().createRootMember({
+        workspaceId: "ws-1",
+        userId: "user-1",
+      });
+
+      expect(mockRepo.create).toHaveBeenCalledWith({
+        workspaceId: "ws-1",
+        userId: "user-1",
+        role: WorkspaceMemberRole.OWNER,
+      });
+      expect(mockEventEmitter.emitAsync).toHaveBeenCalledWith(
+        MemberJoinedEvent.EVENT,
+        new MemberJoinedEvent("ws-1", "user-1", "user-1"),
+      );
       expect(result).toBe(member);
     });
   });

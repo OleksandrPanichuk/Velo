@@ -7,4 +7,5 @@ export interface CreateRootWorkspaceMemberInput {
 
 export interface CreateWorkspaceMemberInput extends CreateRootWorkspaceMemberInput {
 	role: WorkspaceMemberRole;
+	actorId: string;
 }
