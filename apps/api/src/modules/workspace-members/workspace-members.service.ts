@@ -24,4 +24,8 @@ export class WorkspaceMembersService {
 			role: WorkspaceMemberRole.OWNER,
 		});
 	}
+
+	public async findAdminsByWorkspaceId(workspaceId: string): Promise<WorkspaceMemberModel[]> {
+		return this.workspaceMembersRepository.findAdminsByWorkspaceId(workspaceId);
+	}
 }
