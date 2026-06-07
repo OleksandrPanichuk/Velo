@@ -1,11 +1,11 @@
-import { NotificationModel } from "@/models/Notification.model";
 import { PUBSUB } from "@/infrastructure/pubsub/pubsub.constants";
-import { NOTIFICATION_RECEIVED_EVENT } from "./notifications.constants";
+import { NotificationModel } from "@/models/Notification.model";
 import { CurrentUser } from "@/shared/decorators";
 import { Inject } from "@nestjs/common";
 import { Args, Resolver } from "@nestjs/graphql";
-import { UUIDResolver } from "graphql-scalars";
 import type { RedisPubSub } from "graphql-redis-subscriptions";
+import { UUIDResolver } from "graphql-scalars";
+import { NOTIFICATION_RECEIVED_EVENT } from "./notifications.constants";
 import {
 	GetNotificationsQuery,
 	GetUnreadNotificationsCountQuery,
@@ -23,7 +23,7 @@ export class NotificationsResolver {
 	) {}
 
 	@GetNotificationsQuery()
-	public notifications(
+	public async notifications(
 		@CurrentUser("id") userId: string,
 		@Args("workspaceId", { type: () => UUIDResolver }) workspaceId: string,
 	): Promise<NotificationModel[]> {
@@ -31,7 +31,7 @@ export class NotificationsResolver {
 	}
 
 	@GetUnreadNotificationsCountQuery()
-	public unreadNotificationsCount(
+	public async unreadNotificationsCount(
 		@CurrentUser("id") userId: string,
 		@Args("workspaceId", { type: () => UUIDResolver }) workspaceId: string,
 	): Promise<number> {
@@ -39,7 +39,7 @@ export class NotificationsResolver {
 	}
 
 	@MarkNotificationAsReadMutation()
-	public markNotificationAsRead(
+	public async markNotificationAsRead(
 		@CurrentUser("id") userId: string,
 		@Args("id", { type: () => UUIDResolver }) id: string,
 	): Promise<NotificationModel> {

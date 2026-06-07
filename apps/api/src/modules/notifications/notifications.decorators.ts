@@ -1,7 +1,6 @@
 import { NotificationModel } from "@/models/Notification.model";
 import { applyDecorators } from "@nestjs/common";
 import { Mutation, Query, Subscription } from "@nestjs/graphql";
-import { NOTIFICATION_RECEIVED_EVENT } from "./notifications.constants";
 
 export const GetNotificationsQuery = (): MethodDecorator =>
 	applyDecorators(

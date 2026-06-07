@@ -14,6 +14,7 @@ import { MailerModule } from "@/infrastructure/mailer";
 import { PubSubModule } from "@/infrastructure/pubsub";
 import { QueueModule } from "@/infrastructure/queue";
 import { AuthModule } from "@/modules/auth/auth.module";
+import { NotificationsModule } from "@/modules/notifications";
 import { PermissionsModule, PoliciesGuard, WorkspaceContextGuard } from "@/modules/permissions";
 import { UsersModule } from "@/modules/users/users.module";
 import { WorkspacesModule } from "@/modules/workspaces/workspaces.module";
@@ -57,6 +58,7 @@ import { ClsGuard } from "nestjs-cls";
 		HealthModule,
 		LoggerModule,
 		MailerModule,
+		NotificationsModule,
 		PaginationModule,
 		PermissionsModule,
 		PubSubModule,
