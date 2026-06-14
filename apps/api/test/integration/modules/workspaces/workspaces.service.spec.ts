@@ -3,7 +3,6 @@
  *
  * Uses real WorkspacesService + real WorkspaceMembersService wired together.
  * Mocks only repositories and EventEmitter2 (no DB or event bus needed).
- * Validates cross-service coordination: workspace creation triggers root-member setup.
  */
 vi.mock("@nestjs-cls/transactional", () => ({
 	Transactional:
@@ -13,8 +12,7 @@ vi.mock("@nestjs-cls/transactional", () => ({
 	TransactionHost: class {},
 }));
 
-import { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
-import { WorkspaceModel } from "@/models/Workspace.model";
+import { WorkspaceMemberRole } from "@/enums";
 import { WorkspaceMembersRepository } from "@/modules/workspace-members/workspace-members.repository";
 import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
 import { UsersService } from "@/modules/users/users.service";
@@ -25,138 +23,125 @@ import { PaginationService } from "@/shared/pagination";
 import { ConflictException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-
-const mockWorkspacesRepository: Partial<WorkspacesRepository> = {
-	findByUserId: vi.fn(),
-	findBySlug: vi.fn(),
-	create: vi.fn(),
-};
-
-const mockWorkspaceMembersRepository: Partial<WorkspaceMembersRepository> = {
-	create: vi.fn(),
-	findAdminsByWorkspaceId: vi.fn(),
-};
-
-const mockUsersRepository: Partial<UsersRepository> = {
-	findAll: vi.fn(),
-	findById: vi.fn(),
-	findByIds: vi.fn(),
-	update: vi.fn(),
-	createQueryBuilder: vi.fn(),
-};
-
-const mockEventEmitter: Partial<EventEmitter2> = {
-	emitAsync: vi.fn().mockResolvedValue([]),
-};
+import {
+	mockWorkspacesRepository,
+	mockWorkspaceMembersRepository,
+	mockUsersRepository,
+} from "../../../helpers/mocks";
+import { UserFactory, WorkspaceFactory, WorkspaceMemberFactory } from "../../../factories";
 
 let module: TestingModule;
 let workspacesService: WorkspacesService;
-let workspaceMembersService: WorkspaceMembersService;
+let wsRepo: ReturnType<typeof mockWorkspacesRepository>;
+let wmRepo: ReturnType<typeof mockWorkspaceMembersRepository>;
+let usersRepo: ReturnType<typeof mockUsersRepository>;
 
 beforeAll(async () => {
+	wsRepo = mockWorkspacesRepository();
+	wmRepo = mockWorkspaceMembersRepository();
+	usersRepo = mockUsersRepository();
+
 	module = await Test.createTestingModule({
 		providers: [
 			WorkspacesService,
 			WorkspaceMembersService,
 			UsersService,
 			PaginationService,
-			{ provide: WorkspacesRepository, useValue: mockWorkspacesRepository },
-			{ provide: WorkspaceMembersRepository, useValue: mockWorkspaceMembersRepository },
-			{ provide: UsersRepository, useValue: mockUsersRepository },
-			{ provide: EventEmitter2, useValue: mockEventEmitter },
+			{ provide: WorkspacesRepository, useValue: wsRepo },
+			{ provide: WorkspaceMembersRepository, useValue: wmRepo },
+			{ provide: UsersRepository, useValue: usersRepo },
+			{ provide: EventEmitter2, useValue: { emitAsync: vi.fn().mockResolvedValue([]) } },
 		],
 	}).compile();
 
 	workspacesService = module.get(WorkspacesService);
-	workspaceMembersService = module.get(WorkspaceMembersService);
 });
 
-afterAll(async () => {
-	await module.close();
-});
-
+afterAll(() => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("WorkspacesService integration", () => {
 	describe("create", () => {
 		it("throws ConflictException when slug is already taken", async () => {
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue({
-				id: "ws-existing",
-			} as WorkspaceModel);
+			vi.mocked(wsRepo.findBySlug).mockResolvedValue(WorkspaceFactory.build({ slug: "taken" }));
 
 			await expect(
 				workspacesService.create({ name: "My WS", slug: "taken" }, "u1"),
 			).rejects.toThrow(ConflictException);
 
-			expect(mockWorkspacesRepository.create).not.toHaveBeenCalled();
+			expect(wsRepo.create).not.toHaveBeenCalled();
 		});
 
-		it("creates workspace and root member in sequence", async () => {
-			const workspace = { id: "ws-1", name: "My WS", slug: "my-ws" };
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue(null);
-			vi.mocked(mockWorkspacesRepository.create!).mockResolvedValue(workspace as WorkspaceModel);
-			vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({} as WorkspaceMemberModel);
+		it("creates workspace and root member in the correct order", async () => {
+			const workspace = WorkspaceFactory.build({ slug: "new-ws" });
+			vi.mocked(wsRepo.findBySlug).mockResolvedValue(null);
+			vi.mocked(wsRepo.create).mockResolvedValue(workspace);
+			vi.mocked(wmRepo.create).mockResolvedValue(
+				WorkspaceMemberFactory.buildOwner({ workspaceId: workspace.id }),
+			);
 
-			const result = await workspacesService.create({ name: "My WS", slug: "my-ws" }, "u1");
+			const result = await workspacesService.create({ name: workspace.name, slug: "new-ws" }, "u1");
 
 			expect(result).toBe(workspace);
-
-			expect(mockWorkspaceMembersRepository.create).toHaveBeenCalledWith(
+			expect(wmRepo.create).toHaveBeenCalledWith(
 				expect.objectContaining({
-					workspaceId: "ws-1",
+					workspaceId: workspace.id,
 					userId: "u1",
+					role: WorkspaceMemberRole.OWNER,
 				}),
 			);
 		});
 
-		it("emits MemberJoinedEvent when root member is created", async () => {
-			const workspace = { id: "ws-2" };
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue(null);
-			vi.mocked(mockWorkspacesRepository.create!).mockResolvedValue(workspace as WorkspaceModel);
-			vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({} as WorkspaceMemberModel);
+		it("root member is always created as OWNER regardless of input", async () => {
+			const workspace = WorkspaceFactory.build();
+			vi.mocked(wsRepo.findBySlug).mockResolvedValue(null);
+			vi.mocked(wsRepo.create).mockResolvedValue(workspace);
+			vi.mocked(wmRepo.create).mockResolvedValue(WorkspaceMemberFactory.build());
 
-			await workspacesService.create({ name: "WS", slug: "ws-2" }, "u2");
+			await workspacesService.create({ name: "WS", slug: "slug" }, "u1");
 
-			expect(mockEventEmitter.emitAsync).toHaveBeenCalled();
+			expect(wmRepo.create).toHaveBeenCalledWith(
+				expect.objectContaining({ role: WorkspaceMemberRole.OWNER }),
+			);
 		});
 
-		it("updates user jobRole through real UsersService when provided", async () => {
-			const workspace = { id: "ws-3" };
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue(null);
-			vi.mocked(mockWorkspacesRepository.create!).mockResolvedValue(workspace as WorkspaceModel);
-			vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({} as WorkspaceMemberModel);
-			vi.mocked(mockUsersRepository.update!).mockResolvedValue({} as never);
+		it("updates jobRole through real UsersService chain when provided", async () => {
+			const user = UserFactory.build({ id: "u-with-role" });
+			const workspace = WorkspaceFactory.build();
+			vi.mocked(wsRepo.findBySlug).mockResolvedValue(null);
+			vi.mocked(wsRepo.create).mockResolvedValue(workspace);
+			vi.mocked(wmRepo.create).mockResolvedValue(WorkspaceMemberFactory.build());
+			vi.mocked(usersRepo.update).mockResolvedValue(user);
 
 			await workspacesService.create(
-				{ name: "WS", slug: "ws-3", jobRole: "engineer" as never },
-				"u3",
+				{ name: "WS", slug: "slug", jobRole: "developer" as never },
+				user.id,
 			);
 
-			expect(mockUsersRepository.update).toHaveBeenCalledWith("u3", { jobRole: "engineer" });
+			expect(usersRepo.update).toHaveBeenCalledWith(user.id, { jobRole: "developer" });
 		});
 
-		it("does not update jobRole when not provided", async () => {
-			const workspace = { id: "ws-4" };
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue(null);
-			vi.mocked(mockWorkspacesRepository.create!).mockResolvedValue(workspace as WorkspaceModel);
-			vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({} as WorkspaceMemberModel);
+		it("does not call update when jobRole is not provided", async () => {
+			const workspace = WorkspaceFactory.build();
+			vi.mocked(wsRepo.findBySlug).mockResolvedValue(null);
+			vi.mocked(wsRepo.create).mockResolvedValue(workspace);
+			vi.mocked(wmRepo.create).mockResolvedValue(WorkspaceMemberFactory.build());
 
-			await workspacesService.create({ name: "WS", slug: "ws-4" }, "u4");
+			await workspacesService.create({ name: "WS", slug: "slug" }, "u1");
 
-			expect(mockUsersRepository.update).not.toHaveBeenCalled();
+			expect(usersRepo.update).not.toHaveBeenCalled();
 		});
 	});
 
 	describe("findByUserId", () => {
-		it("returns workspaces for the given user", async () => {
-			const workspaces = [{ id: "ws-1" }, { id: "ws-2" }];
-			vi.mocked(mockWorkspacesRepository.findByUserId!).mockResolvedValue(
-				workspaces as WorkspaceModel[],
-			);
+		it("returns all workspaces for a user", async () => {
+			const workspaces = WorkspaceFactory.buildList(3);
+			vi.mocked(wsRepo.findByUserId).mockResolvedValue(workspaces);
 
 			const result = await workspacesService.findByUserId("u1");
 
 			expect(result).toBe(workspaces);
+			expect(result).toHaveLength(3);
 		});
 	});
 });

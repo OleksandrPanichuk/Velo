@@ -6,184 +6,178 @@
  * correctly via EventEmitter2, with no mocks on the service layer.
  */
 import { PUBSUB } from "@/infrastructure/pubsub/pubsub.constants";
-import { NotificationModel } from "@/models/Notification.model";
 import { MemberJoinedEvent } from "@/modules/workspace-members/events";
 import { WorkspaceMembersRepository } from "@/modules/workspace-members/workspace-members.repository";
 import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
 import { NotificationsListener } from "@/modules/notifications/notifications.listener";
 import { NotificationsRepository } from "@/modules/notifications/notifications.repository";
 import { NotificationsService } from "@/modules/notifications/notifications.service";
-import { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
-import { TestingModule, Test } from "@nestjs/testing";
+import { WorkspaceMemberRole } from "@/enums";
+import { Test, TestingModule } from "@nestjs/testing";
 import { EventEmitter2, EventEmitterModule } from "@nestjs/event-emitter";
+import {
+	mockWorkspaceMembersRepository,
+	mockNotificationsRepository,
+	mockPubSub,
+} from "../../../helpers/mocks";
+import { UserFactory, WorkspaceMemberFactory, NotificationFactory } from "../../../factories";
 
-const OWNER_ID = "owner-1";
-const ADMIN_ID = "admin-1";
-const NEW_MEMBER_ID = "new-member-1";
-const WORKSPACE_ID = "ws-1";
-
-const makeAdmin = (userId: string) => ({ userId }) as WorkspaceMemberModel;
-
-const mockWorkspaceMembersRepository: Partial<WorkspaceMembersRepository> = {
-	create: vi.fn(),
-	findAdminsByWorkspaceId: vi.fn(),
-};
-
-const mockNotificationsRepository: Partial<NotificationsRepository> = {
-	create: vi.fn(),
-};
-
-const mockPubSub = { publish: vi.fn() };
+const WORKSPACE_ID = "ws-integration-1";
 
 let module: TestingModule;
 let workspaceMembersService: WorkspaceMembersService;
-let notificationsService: NotificationsService;
+let wmRepo: ReturnType<typeof mockWorkspaceMembersRepository>;
+let notifRepo: ReturnType<typeof mockNotificationsRepository>;
+let pubSub: ReturnType<typeof mockPubSub>;
 
 beforeAll(async () => {
+	wmRepo = mockWorkspaceMembersRepository();
+	notifRepo = mockNotificationsRepository();
+	pubSub = mockPubSub();
+
 	module = await Test.createTestingModule({
 		imports: [EventEmitterModule.forRoot({ wildcard: true, delimiter: "." })],
 		providers: [
 			WorkspaceMembersService,
-			{ provide: WorkspaceMembersRepository, useValue: mockWorkspaceMembersRepository },
+			{ provide: WorkspaceMembersRepository, useValue: wmRepo },
 			NotificationsService,
-			{ provide: NotificationsRepository, useValue: mockNotificationsRepository },
-			{ provide: PUBSUB, useValue: mockPubSub },
+			{ provide: NotificationsRepository, useValue: notifRepo },
+			{ provide: PUBSUB, useValue: pubSub },
 			NotificationsListener,
 		],
 	}).compile();
 
 	workspaceMembersService = module.get(WorkspaceMembersService);
-	notificationsService = module.get(NotificationsService);
-
 	await module.init();
 });
 
-afterAll(async () => {
-	await module.close();
-});
+afterAll(() => module.close());
+beforeEach(() => vi.clearAllMocks());
 
 describe("Notifications event-driven flow", () => {
-	beforeEach(() => vi.clearAllMocks());
+	it("notifies all admins except the new member when a member joins", async () => {
+		const newMember = UserFactory.build();
+		const owner = UserFactory.build();
+		const admin = UserFactory.build();
 
-	it("creates notifications for all admins except the new member when a member joins", async () => {
-		vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({
-			userId: NEW_MEMBER_ID,
-		} as WorkspaceMemberModel);
-
-		vi.mocked(mockWorkspaceMembersRepository.findAdminsByWorkspaceId!).mockResolvedValue([
-			makeAdmin(OWNER_ID),
-			makeAdmin(ADMIN_ID),
-			makeAdmin(NEW_MEMBER_ID),
+		vi.mocked(wmRepo.create).mockResolvedValue(
+			WorkspaceMemberFactory.build({ userId: newMember.id, workspaceId: WORKSPACE_ID }),
+		);
+		vi.mocked(wmRepo.findAdminsByWorkspaceId).mockResolvedValue([
+			WorkspaceMemberFactory.buildOwner({ userId: owner.id, workspaceId: WORKSPACE_ID }),
+			WorkspaceMemberFactory.buildAdmin({ userId: admin.id, workspaceId: WORKSPACE_ID }),
+			WorkspaceMemberFactory.build({ userId: newMember.id, workspaceId: WORKSPACE_ID }),
 		]);
-
-		vi.mocked(mockNotificationsRepository.create!).mockResolvedValue({} as NotificationModel);
-		vi.mocked(mockPubSub.publish).mockResolvedValue(undefined);
+		vi.mocked(notifRepo.create).mockResolvedValue(NotificationFactory.build());
+		vi.mocked(pubSub.publish).mockResolvedValue(undefined);
 
 		await workspaceMembersService.create({
 			workspaceId: WORKSPACE_ID,
-			userId: NEW_MEMBER_ID,
-			actorId: NEW_MEMBER_ID,
-			role: "member" as never,
+			userId: newMember.id,
+			actorId: newMember.id,
+			role: WorkspaceMemberRole.MEMBER,
 		});
 
-		expect(mockNotificationsRepository.create).toHaveBeenCalledTimes(2);
+		expect(notifRepo.create).toHaveBeenCalledTimes(2);
 
-		const calls = vi.mocked(mockNotificationsRepository.create!).mock.calls;
-		const recipientIds = calls.map((c) => c[0].recipientId);
-		expect(recipientIds).toContain(OWNER_ID);
-		expect(recipientIds).toContain(ADMIN_ID);
-		expect(recipientIds).not.toContain(NEW_MEMBER_ID);
+		const recipientIds = vi.mocked(notifRepo.create).mock.calls.map((c) => c[0].recipientId);
+		expect(recipientIds).toContain(owner.id);
+		expect(recipientIds).toContain(admin.id);
+		expect(recipientIds).not.toContain(newMember.id);
 	});
 
 	it("sends no notifications when the only admin is the new member", async () => {
-		vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({
-			userId: NEW_MEMBER_ID,
-		} as WorkspaceMemberModel);
+		const newMember = UserFactory.build();
 
-		vi.mocked(mockWorkspaceMembersRepository.findAdminsByWorkspaceId!).mockResolvedValue([
-			makeAdmin(NEW_MEMBER_ID),
+		vi.mocked(wmRepo.create).mockResolvedValue(
+			WorkspaceMemberFactory.build({ userId: newMember.id }),
+		);
+		vi.mocked(wmRepo.findAdminsByWorkspaceId).mockResolvedValue([
+			WorkspaceMemberFactory.buildOwner({ userId: newMember.id }),
 		]);
 
 		await workspaceMembersService.create({
 			workspaceId: WORKSPACE_ID,
-			userId: NEW_MEMBER_ID,
-			actorId: NEW_MEMBER_ID,
-			role: "member" as never,
+			userId: newMember.id,
+			actorId: newMember.id,
+			role: WorkspaceMemberRole.MEMBER,
 		});
 
-		expect(mockNotificationsRepository.create).not.toHaveBeenCalled();
+		expect(notifRepo.create).not.toHaveBeenCalled();
 	});
 
-	it("sets recipientId, workspaceId, and actorId correctly on each notification", async () => {
-		vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({
-			userId: NEW_MEMBER_ID,
-		} as WorkspaceMemberModel);
+	it("sets correct recipientId, workspaceId, and actorId on each notification", async () => {
+		const newMember = UserFactory.build();
+		const owner = UserFactory.build();
 
-		vi.mocked(mockWorkspaceMembersRepository.findAdminsByWorkspaceId!).mockResolvedValue([
-			makeAdmin(OWNER_ID),
+		vi.mocked(wmRepo.create).mockResolvedValue(
+			WorkspaceMemberFactory.build({ userId: newMember.id, workspaceId: WORKSPACE_ID }),
+		);
+		vi.mocked(wmRepo.findAdminsByWorkspaceId).mockResolvedValue([
+			WorkspaceMemberFactory.buildOwner({ userId: owner.id, workspaceId: WORKSPACE_ID }),
 		]);
-
-		vi.mocked(mockNotificationsRepository.create!).mockResolvedValue({} as NotificationModel);
-		vi.mocked(mockPubSub.publish).mockResolvedValue(undefined);
+		vi.mocked(notifRepo.create).mockResolvedValue(NotificationFactory.build());
+		vi.mocked(pubSub.publish).mockResolvedValue(undefined);
 
 		await workspaceMembersService.create({
 			workspaceId: WORKSPACE_ID,
-			userId: NEW_MEMBER_ID,
-			actorId: NEW_MEMBER_ID,
-			role: "member" as never,
+			userId: newMember.id,
+			actorId: newMember.id,
+			role: WorkspaceMemberRole.MEMBER,
 		});
 
-		expect(mockNotificationsRepository.create).toHaveBeenCalledWith(
+		expect(notifRepo.create).toHaveBeenCalledWith(
 			expect.objectContaining({
-				recipientId: OWNER_ID,
+				recipientId: owner.id,
 				workspaceId: WORKSPACE_ID,
-				actorId: NEW_MEMBER_ID,
+				actorId: newMember.id,
 			}),
 		);
 	});
 
-	it("publishes to pubsub for each notification created", async () => {
-		vi.mocked(mockWorkspaceMembersRepository.create!).mockResolvedValue({
-			userId: NEW_MEMBER_ID,
-		} as WorkspaceMemberModel);
+	it("publishes to pubsub once per notification created", async () => {
+		const newMember = UserFactory.build();
+		const owner = UserFactory.build();
+		const admin = UserFactory.build();
 
-		vi.mocked(mockWorkspaceMembersRepository.findAdminsByWorkspaceId!).mockResolvedValue([
-			makeAdmin(OWNER_ID),
-			makeAdmin(ADMIN_ID),
+		vi.mocked(wmRepo.create).mockResolvedValue(
+			WorkspaceMemberFactory.build({ userId: newMember.id }),
+		);
+		vi.mocked(wmRepo.findAdminsByWorkspaceId).mockResolvedValue([
+			WorkspaceMemberFactory.buildOwner({ userId: owner.id }),
+			WorkspaceMemberFactory.buildAdmin({ userId: admin.id }),
 		]);
-
-		vi.mocked(mockNotificationsRepository.create!).mockResolvedValue({
-			id: "notif-1",
-		} as NotificationModel);
-
-		vi.mocked(mockPubSub.publish).mockResolvedValue(undefined);
+		vi.mocked(notifRepo.create).mockResolvedValue(NotificationFactory.build());
+		vi.mocked(pubSub.publish).mockResolvedValue(undefined);
 
 		await workspaceMembersService.create({
 			workspaceId: WORKSPACE_ID,
-			userId: NEW_MEMBER_ID,
-			actorId: NEW_MEMBER_ID,
-			role: "member" as never,
+			userId: newMember.id,
+			actorId: newMember.id,
+			role: WorkspaceMemberRole.MEMBER,
 		});
 
-		expect(mockPubSub.publish).toHaveBeenCalledTimes(2);
+		expect(pubSub.publish).toHaveBeenCalledTimes(2);
 	});
 
-	it("emits MemberJoinedEvent directly and triggers listener", async () => {
+	it("emitting MemberJoinedEvent directly also triggers the listener", async () => {
 		const eventEmitter = module.get(EventEmitter2);
+		const newMember = UserFactory.build();
+		const owner = UserFactory.build();
 
-		vi.mocked(mockWorkspaceMembersRepository.findAdminsByWorkspaceId!).mockResolvedValue([
-			makeAdmin(OWNER_ID),
+		vi.mocked(wmRepo.findAdminsByWorkspaceId).mockResolvedValue([
+			WorkspaceMemberFactory.buildOwner({ userId: owner.id, workspaceId: WORKSPACE_ID }),
 		]);
-		vi.mocked(mockNotificationsRepository.create!).mockResolvedValue({} as NotificationModel);
-		vi.mocked(mockPubSub.publish).mockResolvedValue(undefined);
+		vi.mocked(notifRepo.create).mockResolvedValue(NotificationFactory.build());
+		vi.mocked(pubSub.publish).mockResolvedValue(undefined);
 
 		await eventEmitter.emitAsync(
 			MemberJoinedEvent.EVENT,
-			new MemberJoinedEvent(WORKSPACE_ID, NEW_MEMBER_ID, NEW_MEMBER_ID),
+			new MemberJoinedEvent(WORKSPACE_ID, newMember.id, newMember.id),
 		);
 
-		expect(mockNotificationsRepository.create).toHaveBeenCalledWith(
-			expect.objectContaining({ recipientId: OWNER_ID }),
+		expect(notifRepo.create).toHaveBeenCalledWith(
+			expect.objectContaining({ recipientId: owner.id }),
 		);
 	});
 });
