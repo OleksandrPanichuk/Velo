@@ -3,7 +3,8 @@ import { NotificationModel } from "@/models/Notification.model";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import type { RedisPubSub } from "graphql-redis-subscriptions";
 import { NOTIFICATION_RECEIVED_EVENT } from "./notifications.constants";
-import type { CreateNotificationData, NotificationsRepository } from "./notifications.repository";
+import type { CreateNotificationData } from "./notifications.repository";
+import { NotificationsRepository } from "./notifications.repository";
 
 @Injectable()
 export class NotificationsService {
