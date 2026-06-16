@@ -1,0 +1,8 @@
+query GetWorkspacesByUserId {
+  getWorkspacesByUserId {
+    id
+    name
+    slug
+    createdAt
+  }
+}

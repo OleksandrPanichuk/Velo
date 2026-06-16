@@ -1,8 +1,8 @@
-import { cn } from "@repo/ui";
+import type { IBaseIconProps } from "@/types/icons.typedefs";
 
-import styles from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.module.css";
+import styles from "./AnimatedCheckIcon.module.css";
 
-export function AnimatedCheckIcon({ className }: { className?: string }) {
+export function AnimatedCheckIcon(props: IBaseIconProps) {
 	return (
 		<svg
 			width="72"
@@ -11,7 +11,7 @@ export function AnimatedCheckIcon({ className }: { className?: string }) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden
-			className={cn(className)}
+			{...props}
 		>
 			<circle
 				className={styles.circlePath}

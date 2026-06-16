@@ -1,0 +1,9 @@
+mutation SignIn($input: SignInInput!) {
+  signIn(input: $input) {
+    id
+    email
+    username
+    fullName
+    isEmailVerified
+  }
+}

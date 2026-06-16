@@ -1,5 +1,5 @@
-import { MemberJobRole } from "@/enums";
-import { UserModel } from "@/models/User.model";
+import { type MemberJobRole } from "@/enums";
+import { type UserModel } from "@/models/User.model";
 import { faker } from "@faker-js/faker";
 
 export const UserFactory = {
@@ -7,7 +7,11 @@ export const UserFactory = {
 		return {
 			id: faker.string.uuid(),
 			email: faker.internet.email().toLowerCase(),
-			username: faker.internet.username().toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 28),
+			username: faker.internet
+				.username()
+				.toLowerCase()
+				.replace(/[^a-z0-9_]/g, "")
+				.slice(0, 28),
 			fullName: faker.person.fullName(),
 			avatarUrl: null,
 			timezone: "UTC",

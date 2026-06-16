@@ -1,0 +1,51 @@
+# Test infrastructure — separate from the dev docker-compose.yml.
+# Uses different ports so both can run side-by-side without conflicts.
+# Start:  docker compose -f docker-compose.test.yml up -d
+# Stop:   docker compose -f docker-compose.test.yml down -v
+
+services:
+  postgres-test:
+    image: postgres:17-alpine
+    container_name: velo_postgres_test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: velo_test
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data  # in-memory FS for speed; data is ephemeral
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d velo_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis-test:
+    image: redis:8-alpine
+    container_name: velo_redis_test
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-test:
+    image: minio/minio:latest
+    container_name: velo_minio_test
+    command: server /data --console-address ":9011"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123456
+    ports:
+      - "9010:9000"
+      - "9011:9011"
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

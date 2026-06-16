@@ -1,6 +1,8 @@
-export function GoogleIcon() {
+import { IBaseIconProps } from "@/types/icons.typedefs";
+
+export function GoogleIcon(props: IBaseIconProps) {
 	return (
-		<svg viewBox="0 0 18 18" aria-hidden="true" className="size-4 shrink-0">
+		<svg viewBox="0 0 18 18" aria-hidden="true" className="size-4 shrink-0" {...props}>
 			<path
 				d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
 				fill="#4285F4"

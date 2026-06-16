@@ -1,26 +1,50 @@
-import { type INestApplication } from "@nestjs/common";
-import { Test, type TestingModule } from "@nestjs/testing";
+/**
+ * Bootstrap smoke test — verifies the test app starts and the GraphQL
+ * endpoint is reachable (200 for introspection, 404 for unknown routes).
+ */
+vi.mock("@sentry/nestjs", () => ({ captureException: vi.fn() }));
+vi.mock("@nestjs-cls/transactional", () => ({
+	Transactional: () => (_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
+		descriptor,
+	TransactionHost: class {},
+	ClsPluginTransactional: class {
+		constructor(_config: unknown) {}
+	},
+}));
+vi.mock("@nestjs-cls/transactional-adapter-typeorm", () => ({
+	TransactionalAdapterTypeOrm: class {
+		constructor(_config: unknown) {}
+	},
+}));
+
+import type { INestApplication } from "@nestjs/common";
 import request from "supertest";
-import { type App } from "supertest/types";
-import { AppModule } from "./../src/app.module";
+import introspectionQuery from "./graphql/app/introspection.graphql";
+import type { TestAppContext } from "./e2e/helpers/create-test-app";
+import { createTestApp } from "./e2e/helpers/create-test-app";
 
-describe("AppController (e2e)", () => {
-	let app: INestApplication<App>;
+let ctx: TestAppContext;
+let app: INestApplication;
 
-	beforeEach(async () => {
-		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [AppModule],
-		}).compile();
+beforeAll(async () => {
+	ctx = await createTestApp();
+	app = ctx.app;
+});
 
-		app = moduleFixture.createNestApplication();
-		await app.init();
+afterAll(async () => app.close());
+
+describe("App bootstrap", () => {
+	it("GraphQL endpoint responds to introspection", async () => {
+		const res = await request(app.getHttpServer())
+			.post("/graphql")
+			.send({ query: introspectionQuery });
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.__typename).toBe("Query");
 	});
 
-	it("/ (GET)", () => {
-		return request(app.getHttpServer()).get("/").expect(200).expect("Hello World!");
-	});
-
-	afterEach(async () => {
-		await app.close();
+	it("unknown routes return 404", async () => {
+		const res = await request(app.getHttpServer()).get("/unknown-route");
+		expect(res.status).toBe(404);
 	});
 });

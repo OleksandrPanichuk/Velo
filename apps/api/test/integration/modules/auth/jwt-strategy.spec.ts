@@ -10,22 +10,22 @@
  * JwtService to sign tokens and a real JwtAccessStrategy to validate them.
  */
 import { AppClsService } from "@/infrastructure/cls";
-import { UsersRepository } from "@/modules/users/users.repository";
 import { AuthService } from "@/modules/auth/auth.service";
 import { JwtAccessStrategy } from "@/modules/auth/auth.strategies/jwt-access.strategy";
+import { UsersRepository } from "@/modules/users/users.repository";
 import { MailQueue } from "@/queues/mail";
 import { UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Test, TestingModule } from "@nestjs/testing";
+import { type TestingModule } from "@nestjs/testing";
+import { UserFactory } from "../../../factories";
 import {
 	TEST_JWT_SECRET,
-	signToken,
-	mockUsersRepository,
-	mockMailQueue,
 	mockClsService,
+	mockMailQueue,
+	mockUsersRepository,
+	signToken,
 } from "../../../helpers";
 import { TestModuleBuilder } from "../../../helpers/module.builder";
-import { UserFactory } from "../../../factories";
 
 let module: TestingModule;
 let authService: AuthService;
@@ -50,7 +50,7 @@ beforeAll(async () => {
 	jwtService = module.get(JwtService);
 });
 
-afterAll(() => module.close());
+afterAll(async () => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("JWT authentication round-trip", () => {
@@ -80,9 +80,9 @@ describe("JWT authentication round-trip", () => {
 		});
 
 		it("throws UnauthorizedException when sub is missing", () => {
-			expect(() =>
-				jwtAccessStrategy.validate({ sub: "", exp: 9999999999, iat: 0 }),
-			).toThrow(UnauthorizedException);
+			expect(() => jwtAccessStrategy.validate({ sub: "", exp: 9999999999, iat: 0 })).toThrow(
+				UnauthorizedException,
+			);
 		});
 	});
 
@@ -94,7 +94,9 @@ describe("JWT authentication round-trip", () => {
 			vi.mocked(usersRepo.findByEmail).mockResolvedValue(null);
 			vi.mocked(usersRepo.create).mockResolvedValue(user);
 			vi.mocked(usersRepo.setRefreshToken).mockResolvedValue(undefined);
-			vi.mocked(module.get(MailQueue).enqueueEmailVerification).mockResolvedValue(undefined as never);
+			vi.mocked(module.get(MailQueue).enqueueEmailVerification).mockResolvedValue(
+				undefined as never,
+			);
 
 			await authService.signUp({
 				email: user.email,
@@ -104,9 +106,7 @@ describe("JWT authentication round-trip", () => {
 			});
 
 			const setCookieHeader: string[] = clsMock.response.setHeader.mock.calls[0][1];
-			const rawToken = setCookieHeader[0]!
-				.split(";")[0]!
-				.replace("velo:access_token=", "");
+			const rawToken = setCookieHeader[0]!.split(";")[0]!.replace("velo:access_token=", "");
 
 			const payload = jwtService.verify<{ sub: string; exp: number; iat: number }>(rawToken, {
 				secret: TEST_JWT_SECRET,
@@ -133,9 +133,7 @@ describe("JWT authentication round-trip", () => {
 			await authService.signIn({ email: user.email, password: plainPassword });
 
 			const setCookieHeader: string[] = clsMock.response.setHeader.mock.calls[0][1];
-			const rawToken = setCookieHeader[0]!
-				.split(";")[0]!
-				.replace("velo:access_token=", "");
+			const rawToken = setCookieHeader[0]!.split(";")[0]!.replace("velo:access_token=", "");
 
 			const payload = jwtService.verify<{ sub: string; exp: number; iat: number }>(rawToken, {
 				secret: TEST_JWT_SECRET,

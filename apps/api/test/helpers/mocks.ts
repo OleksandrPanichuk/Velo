@@ -10,6 +10,7 @@ import type { AppClsService } from "@/infrastructure/cls";
 import type { MailerService } from "@/infrastructure/mailer";
 import type { NotificationsRepository } from "@/modules/notifications/notifications.repository";
 import type { NotificationsService } from "@/modules/notifications/notifications.service";
+import type { PermissionsRepository } from "@/modules/permissions/permissions.repository";
 import type { UsersRepository } from "@/modules/users/users.repository";
 import type { UsersService } from "@/modules/users/users.service";
 import type { WorkspaceMembersRepository } from "@/modules/workspace-members/workspace-members.repository";
@@ -17,8 +18,9 @@ import type { WorkspaceMembersService } from "@/modules/workspace-members/worksp
 import type { WorkspacesRepository } from "@/modules/workspaces/workspaces.repository";
 import type { WorkspacesService } from "@/modules/workspaces/workspaces.service";
 import type { MailQueue } from "@/queues/mail";
+import type { Mocked } from "vitest";
 
-export const mockUsersRepository = (): vi.Mocked<UsersRepository> =>
+export const mockUsersRepository = (): Mocked<UsersRepository> =>
 	({
 		findAll: vi.fn(),
 		findById: vi.fn(),
@@ -43,7 +45,7 @@ export const mockUsersRepository = (): vi.Mocked<UsersRepository> =>
 		createUserWithOAuth: vi.fn(),
 	}) as never;
 
-export const mockWorkspacesRepository = (): vi.Mocked<WorkspacesRepository> =>
+export const mockWorkspacesRepository = (): Mocked<WorkspacesRepository> =>
 	({
 		findAll: vi.fn(),
 		findById: vi.fn(),
@@ -56,7 +58,7 @@ export const mockWorkspacesRepository = (): vi.Mocked<WorkspacesRepository> =>
 		createQueryBuilder: vi.fn(),
 	}) as never;
 
-export const mockWorkspaceMembersRepository = (): vi.Mocked<WorkspaceMembersRepository> =>
+export const mockWorkspaceMembersRepository = (): Mocked<WorkspaceMembersRepository> =>
 	({
 		findAll: vi.fn(),
 		findById: vi.fn(),
@@ -68,7 +70,7 @@ export const mockWorkspaceMembersRepository = (): vi.Mocked<WorkspaceMembersRepo
 		createQueryBuilder: vi.fn(),
 	}) as never;
 
-export const mockNotificationsRepository = (): vi.Mocked<NotificationsRepository> =>
+export const mockNotificationsRepository = (): Mocked<NotificationsRepository> =>
 	({
 		findAll: vi.fn(),
 		findById: vi.fn(),
@@ -83,7 +85,12 @@ export const mockNotificationsRepository = (): vi.Mocked<NotificationsRepository
 		createQueryBuilder: vi.fn(),
 	}) as never;
 
-export const mockUsersService = (): vi.Mocked<UsersService> =>
+export const mockPermissionsRepository = (): Mocked<PermissionsRepository> =>
+	({
+		getMemberRole: vi.fn(),
+	}) as never;
+
+export const mockUsersService = (): Mocked<UsersService> =>
 	({
 		findAll: vi.fn(),
 		findById: vi.fn(),
@@ -92,21 +99,21 @@ export const mockUsersService = (): vi.Mocked<UsersService> =>
 		update: vi.fn(),
 	}) as never;
 
-export const mockWorkspacesService = (): vi.Mocked<WorkspacesService> =>
+export const mockWorkspacesService = (): Mocked<WorkspacesService> =>
 	({
 		findByUserId: vi.fn(),
 		findBySlug: vi.fn(),
 		create: vi.fn(),
 	}) as never;
 
-export const mockWorkspaceMembersService = (): vi.Mocked<WorkspaceMembersService> =>
+export const mockWorkspaceMembersService = (): Mocked<WorkspaceMembersService> =>
 	({
 		create: vi.fn(),
 		createRootMember: vi.fn(),
 		findAdminsByWorkspaceId: vi.fn(),
 	}) as never;
 
-export const mockNotificationsService = (): vi.Mocked<NotificationsService> =>
+export const mockNotificationsService = (): Mocked<NotificationsService> =>
 	({
 		create: vi.fn(),
 		findByRecipientAndWorkspace: vi.fn(),
@@ -115,7 +122,7 @@ export const mockNotificationsService = (): vi.Mocked<NotificationsService> =>
 		markAllAsRead: vi.fn(),
 	}) as never;
 
-export const mockMailQueue = (): vi.Mocked<MailQueue> =>
+export const mockMailQueue = (): Mocked<MailQueue> =>
 	({
 		enqueueEmailVerification: vi.fn(),
 		enqueuePasswordReset: vi.fn(),
@@ -123,7 +130,7 @@ export const mockMailQueue = (): vi.Mocked<MailQueue> =>
 		enqueueSignInAlert: vi.fn(),
 	}) as never;
 
-export const mockMailerService = (): vi.Mocked<MailerService> =>
+export const mockMailerService = (): Mocked<MailerService> =>
 	({
 		send: vi.fn(),
 		sendWelcome: vi.fn(),
@@ -137,7 +144,7 @@ export const mockPubSub = () => ({
 	asyncIterator: vi.fn(),
 });
 
-export const mockClsService = (userId = "user-id"): vi.Mocked<AppClsService> => {
+export const mockClsService = (userId = "user-id"): Mocked<AppClsService> => {
 	const response = { setHeader: vi.fn() };
 	return {
 		get userId() {

@@ -1,7 +1,19 @@
 import { resolve } from "path";
-import { defineConfig } from "vitest/config";
+import { defineConfig, type Plugin } from "vitest/config";
+
+function graphqlPlugin(): Plugin {
+	return {
+		name: "graphql-loader",
+		transform(code, id) {
+			if (id.endsWith(".graphql")) {
+				return `export default ${JSON.stringify(code)};`;
+			}
+		},
+	};
+}
 
 export default defineConfig({
+	plugins: [graphqlPlugin()],
 	test: {
 		globals: true,
 		environment: "node",

@@ -1,0 +1,12 @@
+query GetUsers($take: Int, $skip: Int) {
+  getUsers(take: $take, skip: $skip) {
+    nodes {
+      id
+      email
+      username
+      fullName
+    }
+    totalCount
+    hasNextPage
+  }
+}
