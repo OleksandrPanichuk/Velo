@@ -1,0 +1,108 @@
+# E2E infrastructure — full stack for Playwright browser tests.
+# Uses different ports so dev and test stacks can run side-by-side.
+# Start:  docker compose -f compose-files/docker-compose.e2e.yml up -d --wait
+# Stop:   docker compose -f compose-files/docker-compose.e2e.yml down -v
+
+services:
+  postgres-e2e:
+    image: postgres:17-alpine
+    container_name: velo_postgres_e2e
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: velo_e2e
+    ports:
+      - "5434:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d velo_e2e"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - e2e-network
+
+  redis-e2e:
+    image: redis:8-alpine
+    container_name: velo_redis_e2e
+    ports:
+      - "6381:6379"
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - e2e-network
+
+  minio-e2e:
+    image: minio/minio:latest
+    container_name: velo_minio_e2e
+    command: server /data --console-address ":9021"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123456
+    ports:
+      - "9020:9000"
+      - "9021:9021"
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - e2e-network
+
+  api-e2e:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    container_name: velo_api_e2e
+    working_dir: /app/apps/api
+    command: sh -c "bun install && node_modules/.bin/nest start"
+    env_file:
+      - ../apps/api/.env.test
+    environment:
+      DB_HOST: postgres-e2e
+      DB_PORT: 5432
+      REDIS_HOST: redis-e2e
+      AWS_S3_ENDPOINT: http://minio-e2e:9000
+      WEB_URL: http://localhost:3001
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres-e2e:
+        condition: service_healthy
+      redis-e2e:
+        condition: service_healthy
+      minio-e2e:
+        condition: service_healthy
+    networks:
+      - e2e-network
+
+  web-e2e:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    container_name: velo_web_e2e
+    working_dir: /app/apps/web
+    command: sh -c "bun install && bun run dev"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8081
+      NEXT_PUBLIC_APP_URL: http://localhost:3001
+      API_URL: http://api-e2e:8080
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api-e2e
+    networks:
+      - e2e-network
+
+networks:
+  e2e-network:
+    driver: bridge

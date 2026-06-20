@@ -28,10 +28,10 @@ if [[ ! -f "$ROOT/apps/web/.env.local" ]]; then
 fi
 
 log "Starting infrastructure (postgres, redis, minio)..."
-cd "$ROOT" && docker compose up -d postgres redis minio
+cd "$ROOT" && docker compose -f compose-files/docker-compose.yml up -d postgres redis minio
 
 log "Waiting for postgres to be ready..."
-until docker compose exec -T postgres pg_isready -U postgres -q; do
+until docker compose -f compose-files/docker-compose.yml exec -T postgres pg_isready -U postgres -q; do
   sleep 1
 done
 

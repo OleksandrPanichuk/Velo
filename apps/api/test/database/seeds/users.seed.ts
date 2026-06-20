@@ -1,5 +1,4 @@
 import { WorkspaceMemberRole } from "@/enums";
-import { OAuthAccountModel } from "@/models/OAuthAccount.model";
 import { UserModel } from "@/models/User.model";
 import { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
 import { WorkspaceModel } from "@/models/Workspace.model";

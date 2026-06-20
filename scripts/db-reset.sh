@@ -11,13 +11,13 @@ if [[ "${1:-}" != "--yes" ]]; then
 fi
 
 log "Stopping containers and removing postgres volume..."
-cd "$ROOT" && docker compose down -v --remove-orphans
+cd "$ROOT" && docker compose -f compose-files/docker-compose.yml down -v --remove-orphans
 
 log "Starting postgres, redis, minio..."
-docker compose up -d postgres redis minio
+docker compose -f compose-files/docker-compose.yml up -d postgres redis minio
 
 log "Waiting for postgres to be ready..."
-until docker compose exec -T postgres pg_isready -U postgres -q; do
+until docker compose -f compose-files/docker-compose.yml exec -T postgres pg_isready -U postgres -q; do
   sleep 1
 done
 

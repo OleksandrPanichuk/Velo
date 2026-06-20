@@ -32,69 +32,90 @@ help:
 	@echo "  make k8s:deploy                  - Deploy api, web, and ingress"
 	@echo "  make k8s:down                    - Tear down the entire velo namespace"
 
+COMPOSE        = docker compose -f compose-files/docker-compose.yml
+COMPOSE_TEST   = docker compose -f compose-files/docker-compose.test.yml
+COMPOSE_E2E    = docker compose -f compose-files/docker-compose.e2e.yml
+
 up:
-	docker compose up
+	$(COMPOSE) up
 
 down:
-	docker compose down
+	$(COMPOSE) down
 
 clear:
-	docker compose down -v --remove-orphans
+	$(COMPOSE) down -v --remove-orphans
 
 up-infra:
-	docker compose up postgres redis minio
+	$(COMPOSE) up postgres redis minio
 
 up-no-web:
-	docker compose up postgres redis minio $(API_SERVICE)
+	$(COMPOSE) up postgres redis minio $(API_SERVICE)
 
 # Access services
 nginx:
-	docker compose exec -it nginx sh
+	$(COMPOSE) exec -it nginx sh
 
 api:
-	docker compose exec #(API_SERVICE) sh
+	$(COMPOSE) exec $(API_SERVICE) sh
 
 
 # Database commands
 db:
-	docker compose exec $(DB_SERVICE) psql -U $(DB_USER) -d $(DB_NAME)
+	$(COMPOSE) exec $(DB_SERVICE) psql -U $(DB_USER) -d $(DB_NAME)
 
 db\:migrate:
-	docker compose run --rm $(API_SERVICE) npm run db:migrate
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:migrate
 
 db\:migrate\:revert:
-	docker compose run --rm $(API_SERVICE) npm run db:migrate:revert
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:migrate:revert
 
 db\:migrate\:show:
-	docker compose run --rm $(API_SERVICE) npm run db:migrate:show
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:migrate:show
 
 db\:migration\:create:
 	@test -n "$(MIGRATION)" || (echo "Usage: make db:migration:create MIGRATION=CreateUsers" && exit 1)
-	docker compose run --rm $(API_SERVICE) npm run db:cli -- migration:create migrations/$(MIGRATION)
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:cli -- migration:create migrations/$(MIGRATION)
 
 db\:migration\:generate:
 	@test -n "$(MIGRATION)" || (echo "Usage: make db:migration:generate MIGRATION=InitSchema" && exit 1)
-	docker compose run --rm $(API_SERVICE) npm run db:cli -- migration:generate migrations/$(MIGRATION)
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:cli -- migration:generate migrations/$(MIGRATION)
 
 db\:schema\:log:
-	docker compose run --rm $(API_SERVICE) npm run db:schema:log
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:schema:log
 
 db\:schema\:sync:
-	docker compose run --rm $(API_SERVICE) npm run db:schema:sync
+	$(COMPOSE) run --rm $(API_SERVICE) npm run db:schema:sync
 
 
 # Logs
 logs:
-	docker compose logs -f
+	$(COMPOSE) logs -f
 
 logs-nginx:
-	docker compose logs -f $(NGINX_SERVICE)
+	$(COMPOSE) logs -f $(NGINX_SERVICE)
 
 logs-api:
-	docker compose logs -f $(API_SERVICE)
+	$(COMPOSE) logs -f $(API_SERVICE)
 
 logs-web:
-	docker compose logs -f $(WEB_SERVICE)
+	$(COMPOSE) logs -f $(WEB_SERVICE)
+
+
+# E2E infrastructure
+e2e\:up:
+	$(COMPOSE_E2E) up -d --wait
+
+e2e\:down:
+	$(COMPOSE_E2E) down -v
+
+e2e\:ui:
+	$(COMPOSE_E2E) up -d --wait
+	cd apps/e2e && bunx playwright test --ui
+
+e2e\:test:
+	@test -n "$(file)" || (echo "Usage: make e2e:test file=auth.spec.ts" && exit 1)
+	$(COMPOSE_E2E) up -d --wait
+	cd apps/e2e && bunx playwright test tests/$(file)
 
 
 # Kubernetes (minikube)
