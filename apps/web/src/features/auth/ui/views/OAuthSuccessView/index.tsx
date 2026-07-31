@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button, ButtonSizes, ButtonVariants } from "@repo/ui";
 
 import { ROUTES } from "@/constants";
+import { acceptInvitePath, takePendingInviteToken } from "@/features/invite/utils";
 
 import styles from "./OAuthSuccessView.module.css";
 
@@ -15,6 +16,13 @@ export function OAuthSuccessView() {
 	const router = useRouter();
 
 	useEffect(() => {
+		const pendingInvite = takePendingInviteToken();
+
+		if (pendingInvite) {
+			router.replace(acceptInvitePath(pendingInvite));
+			return;
+		}
+
 		const timer = setTimeout(() => {
 			router.push(ROUTES.onboarding);
 		}, 2800);

@@ -1,5 +1,9 @@
 import { LoginForm } from "@/features/auth/ui/components/LoginForm";
 
-export function LoginView() {
-	return <LoginForm />;
+interface Props {
+	inviteToken?: string;
+}
+
+export function LoginView({ inviteToken }: Props) {
+	return <LoginForm inviteToken={inviteToken} />;
 }

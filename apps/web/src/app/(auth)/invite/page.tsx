@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 
 import { ROUTES } from "@/constants";
-import { RegisterView } from "@/features/auth/ui/views/RegisterView";
+import { AcceptInviteView } from "@/features/invite/ui/views/AcceptInviteView";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createMetadata({
-	title: "Create account",
-	path: ROUTES.auth.register,
+	title: "Accept invite",
+	path: ROUTES.auth.invite,
 	noIndex: true,
 });
 
 export default async function Page({
 	searchParams,
 }: {
-	searchParams: Promise<{ invite?: string }>;
+	searchParams: Promise<{ token?: string }>;
 }) {
-	const { invite } = await searchParams;
-	return <RegisterView inviteToken={invite} />;
+	const { token } = await searchParams;
+	return <AcceptInviteView token={token} />;
 }

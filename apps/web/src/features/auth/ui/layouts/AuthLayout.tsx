@@ -17,7 +17,6 @@ const FEATURES = [
 export async function AuthLayout({ children }: PropsWithChildren) {
 	const currentUser = await getCurrentUserFn();
 
-	console.log("login",currentUser);
 	return (
 		<div className="flex min-h-screen">
 			<aside className="relative hidden w-115 shrink-0 overflow-hidden bg-neutral-950 lg:flex lg:flex-col">

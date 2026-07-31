@@ -10,6 +10,11 @@ export const metadata: Metadata = createMetadata({
 	noIndex: true,
 });
 
-export default function Page() {
-	return <LoginView />;
+export default async function Page({
+	searchParams,
+}: {
+	searchParams: Promise<{ invite?: string }>;
+}) {
+	const { invite } = await searchParams;
+	return <LoginView inviteToken={invite} />;
 }

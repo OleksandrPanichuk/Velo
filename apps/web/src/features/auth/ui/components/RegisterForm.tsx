@@ -11,11 +11,16 @@ import { Mail, User } from "lucide-react";
 
 import { OAuthProvider, ROUTES } from "@/constants";
 import { type RegisterInput, RegisterInputSchema } from "@/features/auth/schemas";
+import { acceptInvitePath, withInviteToken } from "@/features/invite/utils";
 import { useSignUpMutation } from "@/graphql/hooks";
 
 import { OAuthButton } from "./OAuthButton";
 
-export function RegisterForm() {
+interface Props {
+	inviteToken?: string;
+}
+
+export function RegisterForm({ inviteToken }: Props) {
 	const [serverError, setServerError] = useState<string | null>(null);
 	const router = useRouter();
 
@@ -39,7 +44,7 @@ export function RegisterForm() {
 			const { confirmPassword, ...input } = value;
 			try {
 				await signUp({ variables: { input } });
-				router.push(ROUTES.root);
+				router.push(inviteToken ? acceptInvitePath(inviteToken) : ROUTES.root);
 			} catch (err) {
 				const message =
 					err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -60,8 +65,12 @@ export function RegisterForm() {
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				<OAuthButton provider={OAuthProvider.Google}>Continue with Google</OAuthButton>
-				<OAuthButton provider={OAuthProvider.Github}>Continue with GitHub</OAuthButton>
+				<OAuthButton provider={OAuthProvider.Google} inviteToken={inviteToken}>
+					Continue with Google
+				</OAuthButton>
+				<OAuthButton provider={OAuthProvider.Github} inviteToken={inviteToken}>
+					Continue with GitHub
+				</OAuthButton>
 			</div>
 
 			<div className="flex items-center gap-3">
@@ -160,7 +169,7 @@ export function RegisterForm() {
 			<p className="text-text-tertiary text-center text-sm">
 				Already have an account?{" "}
 				<Link
-					href={ROUTES.auth.login}
+					href={withInviteToken(ROUTES.auth.login, inviteToken)}
 					className="text-brand-500 hover:text-brand-400 font-medium transition-colors duration-100"
 				>
 					Sign in
