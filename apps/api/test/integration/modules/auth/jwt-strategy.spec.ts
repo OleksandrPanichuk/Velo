@@ -53,6 +53,22 @@ beforeAll(async () => {
 afterAll(async () => module.close());
 beforeEach(() => vi.clearAllMocks());
 
+const readAccessTokenCookie = (): string => {
+	const [firstCall] = clsMock.response.setHeader.mock.calls;
+	if (!firstCall) {
+		throw new Error("Expected a Set-Cookie header to have been written to the CLS response");
+	}
+
+	const [, cookies] = firstCall;
+	const accessCookie = cookies.find((cookie) => cookie.startsWith("velo:access_token="));
+	if (!accessCookie) {
+		throw new Error("Expected a velo:access_token cookie in the Set-Cookie header");
+	}
+
+	const [cookiePair] = accessCookie.split(";");
+	return (cookiePair ?? accessCookie).replace("velo:access_token=", "");
+};
+
 describe("JWT authentication round-trip", () => {
 	describe("JwtAccessStrategy.validate()", () => {
 		it("accepts a valid token and returns userId", () => {
@@ -105,8 +121,7 @@ describe("JWT authentication round-trip", () => {
 				password: "Password123!",
 			});
 
-			const setCookieHeader: string[] = clsMock.response.setHeader.mock.calls[0][1];
-			const rawToken = setCookieHeader[0]!.split(";")[0]!.replace("velo:access_token=", "");
+			const rawToken = readAccessTokenCookie();
 
 			const payload = jwtService.verify<{ sub: string; exp: number; iat: number }>(rawToken, {
 				secret: TEST_JWT_SECRET,
@@ -132,8 +147,7 @@ describe("JWT authentication round-trip", () => {
 
 			await authService.signIn({ email: user.email, password: plainPassword });
 
-			const setCookieHeader: string[] = clsMock.response.setHeader.mock.calls[0][1];
-			const rawToken = setCookieHeader[0]!.split(";")[0]!.replace("velo:access_token=", "");
+			const rawToken = readAccessTokenCookie();
 
 			const payload = jwtService.verify<{ sub: string; exp: number; iat: number }>(rawToken, {
 				secret: TEST_JWT_SECRET,

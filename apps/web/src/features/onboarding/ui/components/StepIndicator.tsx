@@ -1,13 +1,13 @@
 import { Check } from "lucide-react";
 
-import type { Step } from "@/features/onboarding/ui/views/OnboardingView";
+import { OnboardingStep } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
 import styles from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.module.css";
 
 interface StepIndicatorProps {
-	current: Step;
+	current: OnboardingStep;
 }
 
-const STEPS = [1, 2, 3] as const;
+const STEPS = [OnboardingStep.Workspace, OnboardingStep.About, OnboardingStep.Ready] as const;
 
 export function StepIndicator({ current }: StepIndicatorProps) {
 	return (

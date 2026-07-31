@@ -25,12 +25,12 @@ vi.mock("@nestjs-cls/transactional-adapter-typeorm", () => ({
 import type { INestApplication } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import request from "supertest";
+import { UserFactory } from "../factories";
 import signInMutation from "../graphql/auth/sign-in.graphql";
 import signUpMutation from "../graphql/auth/sign-up.graphql";
 import verifyEmailMutation from "../graphql/auth/verify-email.graphql";
 import getCurrentUserQuery from "../graphql/users/get-current-user.graphql";
-import getWorkspacesByUserIdQuery from "../graphql/workspaces/get-workspaces-by-user-id.graphql";
-import { UserFactory } from "../factories";
+import getWorkspacesQuery from "../graphql/workspaces/get-workspaces.graphql";
 import { signToken } from "../helpers/auth.helper";
 import type { TestAppContext } from "./helpers/create-test-app";
 import { createTestApp } from "./helpers/create-test-app";
@@ -81,9 +81,9 @@ describe("Auth e2e", () => {
 			expect(res.body.errors).toBeUndefined();
 			expect(res.body.data.signUp.id).toBe(user.id);
 
-			const cookies = res.headers["set-cookie"] as string[];
+			const cookies: string | string[] | undefined = res.headers["set-cookie"];
 			expect(cookies).toBeDefined();
-			const cookieStr = Array.isArray(cookies) ? cookies.join("; ") : cookies;
+			const cookieStr = Array.isArray(cookies) ? cookies.join("; ") : (cookies ?? "");
 			expect(cookieStr).toMatch(/velo:access_token=/);
 			expect(cookieStr).toMatch(/velo:refresh_token=/);
 		});
@@ -147,7 +147,7 @@ describe("Auth e2e", () => {
 
 	describe("protected query (AppAuthGuard)", () => {
 		it("returns UNAUTHENTICATED when accessing protected query without token", async () => {
-			const res = await gql(getWorkspacesByUserIdQuery);
+			const res = await gql(getWorkspacesQuery);
 
 			expect(res.status).toBe(200);
 			expect(res.body.errors).toBeDefined();
@@ -162,11 +162,11 @@ describe("Auth e2e", () => {
 			vi.mocked(ctx.wsRepo.findByUserId).mockResolvedValue([]);
 			vi.mocked(ctx.usersRepo.findById).mockResolvedValue(user);
 
-			const res = await authedGql(token, getWorkspacesByUserIdQuery);
+			const res = await authedGql(token, getWorkspacesQuery);
 
 			expect(res.status).toBe(200);
 			expect(res.body.errors).toBeUndefined();
-			expect(res.body.data.getWorkspacesByUserId).toEqual([]);
+			expect(res.body.data.getWorkspaces).toEqual([]);
 		});
 	});
 

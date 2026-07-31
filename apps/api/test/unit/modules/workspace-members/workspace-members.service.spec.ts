@@ -63,7 +63,7 @@ describe("WorkspaceMembersService", () => {
   });
 
   describe("createRootMember", () => {
-    it("forces role to OWNER and passes userId as actorId", async () => {
+    it("creates the owner membership with role OWNER", async () => {
       const member = {
         id: "mem-1",
         workspaceId: "ws-1",
@@ -77,16 +77,27 @@ describe("WorkspaceMembersService", () => {
         userId: "user-1",
       });
 
+      expect(mockRepo.create).toHaveBeenCalledTimes(1);
       expect(mockRepo.create).toHaveBeenCalledWith({
         workspaceId: "ws-1",
         userId: "user-1",
         role: WorkspaceMemberRole.OWNER,
       });
-      expect(mockEventEmitter.emitAsync).toHaveBeenCalledWith(
-        MemberJoinedEvent.EVENT,
-        new MemberJoinedEvent("ws-1", "user-1", "user-1"),
-      );
       expect(result).toBe(member);
+    });
+
+    it("does not emit MemberJoinedEvent — an owner is not notified about joining their own workspace", async () => {
+      vi.mocked(mockRepo.create!).mockResolvedValue({
+        id: "mem-1",
+        workspaceId: "ws-1",
+        userId: "user-1",
+        role: WorkspaceMemberRole.OWNER,
+      } as WorkspaceMemberModel);
+
+      await buildService().createRootMember({ workspaceId: "ws-1", userId: "user-1" });
+
+      expect(mockEventEmitter.emitAsync).not.toHaveBeenCalled();
+      expect(mockEventEmitter.emit).not.toHaveBeenCalled();
     });
   });
 });

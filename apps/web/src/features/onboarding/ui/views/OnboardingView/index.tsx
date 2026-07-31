@@ -19,8 +19,11 @@ export function OnboardingView() {
 	const [step, setStep] = useState<OnboardingStep>(OnboardingStep.Workspace);
 
 	const handleStep1Continue = async () => {
-		const errors = await form.validateAllFields("submit");
-		if (!errors.some(Boolean)) {
+		const [nameErrors, slugErrors] = await Promise.all([
+			form.validateField("name", "submit"),
+			form.validateField("slug", "submit"),
+		]);
+		if (!nameErrors.length && !slugErrors.length) {
 			setStep(OnboardingStep.About);
 		}
 	};

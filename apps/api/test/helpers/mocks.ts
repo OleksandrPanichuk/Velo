@@ -18,7 +18,7 @@ import type { WorkspaceMembersService } from "@/modules/workspace-members/worksp
 import type { WorkspacesRepository } from "@/modules/workspaces/workspaces.repository";
 import type { WorkspacesService } from "@/modules/workspaces/workspaces.service";
 import type { MailQueue } from "@/queues/mail";
-import type { Mocked } from "vitest";
+import type { Mock, Mocked } from "vitest";
 
 export const mockUsersRepository = (): Mocked<UsersRepository> =>
 	({
@@ -144,8 +144,12 @@ export const mockPubSub = () => ({
 	asyncIterator: vi.fn(),
 });
 
-export const mockClsService = (userId = "user-id"): Mocked<AppClsService> => {
-	const response = { setHeader: vi.fn() };
+export type MockClsService = Omit<Mocked<AppClsService>, "response"> & {
+	readonly response: { setHeader: Mock<(name: string, value: string[]) => void> };
+};
+
+export const mockClsService = (userId = "user-id"): MockClsService => {
+	const response = { setHeader: vi.fn<(name: string, value: string[]) => void>() };
 	return {
 		get userId() {
 			return userId;

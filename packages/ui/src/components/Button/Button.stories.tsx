@@ -27,19 +27,19 @@ export const Default: Story = {
 };
 
 export const Secondary: Story = {
-	args: { children: "Cancel", variant: "secondary" },
+	args: { children: "Cancel", variant: ButtonVariants.Secondary },
 };
 
 export const Ghost: Story = {
-	args: { children: "Archive", variant: "ghost" },
+	args: { children: "Archive", variant: ButtonVariants.Ghost },
 };
 
 export const Outline: Story = {
-	args: { children: "Filter", variant: "outline" },
+	args: { children: "Filter", variant: ButtonVariants.Outline },
 };
 
 export const Destructive: Story = {
-	args: { children: "Delete workspace", variant: "destructive" },
+	args: { children: "Delete workspace", variant: ButtonVariants.Destructive },
 };
 
 export const Loading: Story = {

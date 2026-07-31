@@ -1,18 +1,20 @@
 import { BarChart3, Code2, Layers, Paintbrush } from "lucide-react";
 
+import type { MemberJobRole, WorkspaceSize } from "@/graphql/types";
+
 export const ROLES = [
-	{ id: "developer", label: "Developer", Icon: Code2 },
-	{ id: "designer", label: "Designer", Icon: Paintbrush },
-	{ id: "pm", label: "Product Manager", Icon: BarChart3 },
-	{ id: "other", label: "Other", Icon: Layers },
-] as const;
+	{ id: "DEVELOPER", label: "Developer", Icon: Code2 },
+	{ id: "DESIGNER", label: "Designer", Icon: Paintbrush },
+	{ id: "PM", label: "Product Manager", Icon: BarChart3 },
+	{ id: "OTHER", label: "Other", Icon: Layers },
+] as const satisfies readonly { id: MemberJobRole; label: string; Icon: unknown }[];
 
 export const TEAM_SIZES = [
-	{ id: "small", label: "1–5" },
-	{ id: "medium", label: "6–20" },
-	{ id: "large", label: "21–50" },
-	{ id: "enterprise", label: "50+" },
-] as const;
+	{ id: "SMALL", label: "1–5" },
+	{ id: "MEDIUM", label: "6–20" },
+	{ id: "LARGE", label: "21–50" },
+	{ id: "ENTERPRISE", label: "50+" },
+] as const satisfies readonly { id: WorkspaceSize; label: string }[];
 
 export const MOCK_ISSUES = [
 	{ status: "done", label: "Design system foundation", priority: "high" },

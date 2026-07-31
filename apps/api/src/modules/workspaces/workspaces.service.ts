@@ -27,7 +27,7 @@ export class WorkspacesService {
 		const existingWorkspace = await this.workspacesRepository.findBySlug(dto.slug);
 
 		if (existingWorkspace) {
-			throw new ConflictException("Workspace with this slug already exists. You can try");
+			throw new ConflictException("Workspace with this slug already exists. Please try a different one.");
 		}
 
 		const workspace = await this.workspacesRepository.create({

@@ -1,19 +1,19 @@
-import { Args, Resolver } from "@nestjs/graphql";
-import { WorkspacesService } from "./workspaces.service";
 import { WorkspaceModel } from "@/models/Workspace.model";
-import { CurrentUser } from "@/shared/decorators";
-import { CreateWorkspaceInput } from "@/modules/workspaces/workspaces.dto";
 import {
 	CreateWorkspaceMutation,
-	GetWorkspacesByUserIdQuery,
+	GetWorkspacesQuery,
 } from "@/modules/workspaces/workspaces.decorators";
+import { CreateWorkspaceInput } from "@/modules/workspaces/workspaces.dto";
+import { CurrentUser } from "@/shared/decorators";
+import { Args, Resolver } from "@nestjs/graphql";
+import { WorkspacesService } from "./workspaces.service";
 
 @Resolver()
 export class WorkspacesResolver {
 	constructor(private readonly workspacesService: WorkspacesService) {}
 
-	@GetWorkspacesByUserIdQuery()
-	public async getWorkspacesByUserId(@CurrentUser("id") userId: string): Promise<WorkspaceModel[]> {
+	@GetWorkspacesQuery()
+	public async getWorkspaces(@CurrentUser("id") userId: string): Promise<WorkspaceModel[]> {
 		return this.workspacesService.findByUserId(userId);
 	}
 

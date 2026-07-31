@@ -77,7 +77,7 @@ describe("WorkspacesRepository (real DB)", () => {
 			const result = await wsRepo.findByUserId(SEED.user.id);
 
 			expect(result).toHaveLength(1);
-			expect(result[0].id).toBe(SEED.workspace.id);
+			expect(result[0]?.id).toBe(SEED.workspace.id);
 		});
 
 		it("returns an empty array when the user has no memberships", async () => {
@@ -163,10 +163,13 @@ describe("WorkspaceMembersRepository (real DB)", () => {
 		});
 
 		it("findById returns the seeded membership", async () => {
-			const all = await wmRepo.findAll();
-			const first = all[0];
+			const [first] = await wmRepo.findAll();
+			if (!first) {
+				throw new Error("Expected the seeded workspace membership to exist");
+			}
+
 			const found = await wmRepo.findById(first.id);
-			expect(found!.id).toBe(first.id);
+			expect(found?.id).toBe(first.id);
 		});
 	});
 });

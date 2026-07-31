@@ -7,7 +7,7 @@
  * - createWorkspace goes through the full service chain (slug conflict check,
  *   workspace creation, root member setup)
  * - ConflictException from WorkspacesService surfaces through the resolver
- * - getWorkspacesByUserId returns the full list from the real service
+ * - getWorkspaces returns the full list from the real service
  */
 vi.mock("@nestjs-cls/transactional", () => ({
 	Transactional:
@@ -68,13 +68,13 @@ afterAll(() => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("WorkspacesResolver integration", () => {
-	describe("getWorkspacesByUserId()", () => {
+	describe("getWorkspaces()", () => {
 		it("returns workspaces for the given user through the real service", async () => {
 			const user = UserFactory.buildVerified();
 			const workspaces = WorkspaceFactory.buildList(3);
 			vi.mocked(wsRepo.findByUserId).mockResolvedValue(workspaces);
 
-			const result = await resolver.getWorkspacesByUserId(user.id);
+			const result = await resolver.getWorkspaces(user.id);
 
 			expect(result).toBe(workspaces);
 			expect(wsRepo.findByUserId).toHaveBeenCalledWith(user.id);
@@ -83,7 +83,7 @@ describe("WorkspacesResolver integration", () => {
 		it("returns empty array when user has no workspaces", async () => {
 			vi.mocked(wsRepo.findByUserId).mockResolvedValue([]);
 
-			const result = await resolver.getWorkspacesByUserId("u-no-workspaces");
+			const result = await resolver.getWorkspaces("u-no-workspaces");
 
 			expect(result).toEqual([]);
 		});

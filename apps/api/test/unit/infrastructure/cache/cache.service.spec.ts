@@ -75,7 +75,7 @@ describe("CacheService", () => {
 
 		it("indexes tags when provided", async () => {
 			vi.mocked(mockCache.set!).mockResolvedValue(undefined);
-			vi.mocked(mockCache.mdel!).mockResolvedValue(undefined);
+			vi.mocked(mockCache.mdel!).mockResolvedValue(true);
 
 			const service = buildService();
 			await service.set("key1", "value1", { tags: ["tag-a"] });
@@ -93,7 +93,7 @@ describe("CacheService", () => {
 
 	describe("del", () => {
 		it("deletes key from cache", async () => {
-			vi.mocked(mockCache.del!).mockResolvedValue(undefined);
+			vi.mocked(mockCache.del!).mockResolvedValue(true);
 
 			await buildService().del("key1");
 
@@ -174,7 +174,7 @@ describe("CacheService", () => {
 
 		it("deletes all keys for a tag and returns count", async () => {
 			vi.mocked(mockCache.set!).mockResolvedValue(undefined);
-			vi.mocked(mockCache.mdel!).mockResolvedValue(undefined);
+			vi.mocked(mockCache.mdel!).mockResolvedValue(true);
 
 			const service = buildService();
 			await service.set("k1", "v1", { tags: ["tag-1"] });
@@ -190,7 +190,7 @@ describe("CacheService", () => {
 	describe("invalidateTags", () => {
 		it("invalidates multiple tags", async () => {
 			vi.mocked(mockCache.set!).mockResolvedValue(undefined);
-			vi.mocked(mockCache.mdel!).mockResolvedValue(undefined);
+			vi.mocked(mockCache.mdel!).mockResolvedValue(true);
 
 			const service = buildService();
 			await service.set("k1", "v1", { tags: ["t1"] });

@@ -73,8 +73,8 @@ function applyTestEnv() {
 	process.env.BASE_URL = "http://localhost:8080";
 	process.env.JWT_ACCESS_SECRET = TEST_JWT_SECRET;
 	process.env.JWT_REFRESH_SECRET = TEST_REFRESH_SECRET;
-	process.env.JWT_ACCESS_EXPIRATION = "900";
-	process.env.JWT_REFRESH_EXPIRATION = "604800";
+	process.env.JWT_ACCESS_EXPIRATION = 900;
+	process.env.JWT_REFRESH_EXPIRATION = 604800;
 	process.env.CLIENT_EMAIL_VERIFICATION_URL = "http://localhost:3000/verify-email";
 	process.env.CLIENT_RESET_PASSWORD_URL = "http://localhost:3000/reset-password";
 	process.env.GOOGLE_CLIENT_ID = "google-test-id";

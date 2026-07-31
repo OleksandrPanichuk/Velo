@@ -1,7 +1,8 @@
 import { type CanActivate, type ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import type { Permission } from "@/modules/permissions";
-import { PermissionService, REQUIRE_PERMISSION_KEY } from "@/modules/permissions";
+import type { Permission } from "../permissions.constants";
+import { REQUIRE_PERMISSION_KEY } from "../permissions.decorators";
+import { PermissionService } from "../permissions.service";
 
 /**
  * The enforcement point (PEP) for declarative checks. Reads the permissions

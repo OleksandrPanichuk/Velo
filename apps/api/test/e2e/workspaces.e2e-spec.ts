@@ -5,7 +5,7 @@
  * - createWorkspace requires auth (guard check)
  * - createWorkspace succeeds → returns workspace with id/name
  * - createWorkspace with duplicate slug → error (ConflictException)
- * - getWorkspacesByUserId returns array of workspaces
+ * - getWorkspaces returns array of workspaces
  */
 vi.mock("@sentry/nestjs", () => ({ captureException: vi.fn() }));
 vi.mock("@nestjs-cls/transactional", () => ({
@@ -26,7 +26,7 @@ import type { INestApplication } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import request from "supertest";
 import createWorkspaceMutation from "../graphql/workspaces/create-workspace.graphql";
-import getWorkspacesByUserIdQuery from "../graphql/workspaces/get-workspaces-by-user-id.graphql";
+import getWorkspacesQuery from "../graphql/workspaces/get-workspaces.graphql";
 import { UserFactory, WorkspaceFactory, WorkspaceMemberFactory } from "../factories";
 import { signToken } from "../helpers/auth.helper";
 import type { TestAppContext } from "./helpers/create-test-app";
@@ -62,7 +62,7 @@ function makeToken(userId: string) {
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("Workspaces e2e", () => {
-	describe("getWorkspacesByUserId query", () => {
+	describe("getWorkspaces query", () => {
 		it("returns the user's workspaces", async () => {
 			const user = UserFactory.buildVerified();
 			const workspaces = WorkspaceFactory.buildList(2);
@@ -71,12 +71,12 @@ describe("Workspaces e2e", () => {
 			vi.mocked(ctx.usersRepo.findById).mockResolvedValue(user);
 			vi.mocked(ctx.wsRepo.findByUserId).mockResolvedValue(workspaces);
 
-			const res = await authedGql(token, getWorkspacesByUserIdQuery);
+			const res = await authedGql(token, getWorkspacesQuery);
 
 			expect(res.status).toBe(200);
 			expect(res.body.errors).toBeUndefined();
-			expect(res.body.data.getWorkspacesByUserId).toHaveLength(2);
-			expect(res.body.data.getWorkspacesByUserId[0].id).toBe(workspaces[0].id);
+			expect(res.body.data.getWorkspaces).toHaveLength(2);
+			expect(res.body.data.getWorkspaces[0].id).toBe(workspaces[0]?.id);
 		});
 
 		it("returns an empty array when the user has no workspaces", async () => {
@@ -86,11 +86,11 @@ describe("Workspaces e2e", () => {
 			vi.mocked(ctx.usersRepo.findById).mockResolvedValue(user);
 			vi.mocked(ctx.wsRepo.findByUserId).mockResolvedValue([]);
 
-			const res = await authedGql(token, getWorkspacesByUserIdQuery);
+			const res = await authedGql(token, getWorkspacesQuery);
 
 			expect(res.status).toBe(200);
 			expect(res.body.errors).toBeUndefined();
-			expect(res.body.data.getWorkspacesByUserId).toEqual([]);
+			expect(res.body.data.getWorkspaces).toEqual([]);
 		});
 	});
 

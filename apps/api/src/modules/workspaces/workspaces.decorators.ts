@@ -1,8 +1,8 @@
+import { WorkspaceModel } from "@/models/Workspace.model";
 import { applyDecorators } from "@nestjs/common";
 import { Mutation, Query } from "@nestjs/graphql";
-import { WorkspaceModel } from "@/models/Workspace.model";
 
-export const GetWorkspacesByUserIdQuery = (): MethodDecorator =>
+export const GetWorkspacesQuery = (): MethodDecorator =>
 	applyDecorators(
 		Query(() => [WorkspaceModel], {
 			description:

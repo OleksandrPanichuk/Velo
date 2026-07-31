@@ -5,17 +5,11 @@ import { Button, ButtonSizes, Input } from "@repo/ui";
 import { WorkspaceIcon } from "@/components/icons";
 import { OnboardingFormSchema } from "@/features/onboarding/schemas";
 import type { OnboardingFormApi } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.hooks";
+import { toSlug } from "@/utils/common";
 
 interface WorkspaceStepProps {
 	form: OnboardingFormApi;
 	onContinue: () => void;
-}
-
-function toSlug(name: string): string {
-	return name
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "-")
-		.replace(/^-|-$/g, "");
 }
 
 export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
@@ -53,7 +47,8 @@ export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
 							onBlur={field.handleBlur}
 							onChange={(e) => {
 								field.handleChange(e.target.value);
-								form.setFieldValue("slug", toSlug(e.target.value));
+								const slug = toSlug(e.target.value);
+								if (slug || !e.target.value) form.setFieldValue("slug", slug);
 							}}
 							error={field.state.meta.errors[0]?.message}
 						/>

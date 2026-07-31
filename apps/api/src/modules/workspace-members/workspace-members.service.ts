@@ -29,7 +29,11 @@ export class WorkspaceMembersService {
 	public async createRootMember(
 		dto: CreateRootWorkspaceMemberInput,
 	): Promise<WorkspaceMemberModel> {
-		return this.create({ ...dto, role: WorkspaceMemberRole.OWNER, actorId: dto.userId });
+		return this.workspaceMembersRepository.create({
+			workspaceId: dto.workspaceId,
+			userId: dto.userId,
+			role: WorkspaceMemberRole.OWNER,
+		});
 	}
 
 	public async findAdminsByWorkspaceId(workspaceId: string): Promise<WorkspaceMemberModel[]> {

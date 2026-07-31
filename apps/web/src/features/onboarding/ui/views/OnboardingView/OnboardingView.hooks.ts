@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 
 import { ROUTES } from "@/constants";
-import { OnboardingFormSchema, OnboardingFormValues } from "@/features/onboarding/schemas";
+import { OnboardingFormValues } from "@/features/onboarding/schemas";
 import { useCreateWorkspaceMutation } from "@/graphql/hooks";
 
 export type OnboardingFormApi = ReturnType<typeof useOnboardingForm>["form"];

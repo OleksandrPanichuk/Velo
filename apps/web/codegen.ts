@@ -21,7 +21,11 @@ const config: CodegenConfig = {
 	ignoreNoDocuments: true,
 	generates: {
 		"src/graphql/types.ts": {
-			plugins: ["typescript", "typescript-operations", "@graphql-codegen/typed-document-node"],
+			// `typescript-operations` v6 emits the schema types its operations reference
+			// (inputs, enums) on its own, so pairing it with the `typescript` plugin in a
+			// single output declares every input and enum twice. Operations + documents is
+			// all this file is consumed for, so `typescript` is redundant here.
+			plugins: ["typescript-operations", "@graphql-codegen/typed-document-node"],
 			config: {
 				...sharedConfig,
 				documentVariableSuffix: "",

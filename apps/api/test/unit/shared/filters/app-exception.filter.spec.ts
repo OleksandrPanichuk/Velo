@@ -2,6 +2,7 @@ import { AppExceptionFilter } from "@/shared/filters/app-exception.filter";
 import { ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { QueryFailedError } from "typeorm";
+import type { Mock } from "vitest";
 
 vi.mock("@sentry/nestjs", () => ({ captureException: vi.fn() }));
 
@@ -13,7 +14,7 @@ const mockConfig = {
 
 const buildFilter = () => new AppExceptionFilter(mockConfig as unknown as ConfigService);
 
-const makeHttpHost = (overrides?: Partial<{ status: vi.Mock; json: vi.Mock; url: string }>) => {
+const makeHttpHost = (overrides?: Partial<{ status: Mock; json: Mock; url: string }>) => {
 	const res = {
 		status: vi.fn().mockReturnThis(),
 		json: vi.fn().mockReturnThis(),
