@@ -10,6 +10,15 @@ export const GetWorkspacesQuery = (): MethodDecorator =>
 		}),
 	);
 
+export const GetWorkspaceBySlugQuery = (): MethodDecorator =>
+	applyDecorators(
+		Query(() => WorkspaceModel, {
+			name: "workspace",
+			description:
+				"Retrieve a single workspace by its slug. Only available to members of that workspace; non-members receive a not found error. Requires authentication.",
+		}),
+	);
+
 export const CreateWorkspaceMutation = (): MethodDecorator =>
 	applyDecorators(
 		Mutation(() => WorkspaceModel, {

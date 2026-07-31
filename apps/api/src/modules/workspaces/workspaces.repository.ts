@@ -17,4 +17,10 @@ export class WorkspacesRepository extends BaseRepository<WorkspaceModel> {
 	public async findByUserId(userId: string): Promise<WorkspaceModel[]> {
 		return this.repo.findBy({ members: { userId } });
 	}
+
+	public async findBySlugForMember(slug: string, userId: string): Promise<WorkspaceModel | null> {
+		return this.em.findOne(this.repo.target, {
+			where: { slug, members: { userId } },
+		});
+	}
 }

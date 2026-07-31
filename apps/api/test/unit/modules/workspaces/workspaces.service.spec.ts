@@ -11,11 +11,12 @@ import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-m
 import { UsersService } from "@/modules/users/users.service";
 import { WorkspacesService } from "@/modules/workspaces/workspaces.service";
 import { WorkspacesRepository } from "@/modules/workspaces/workspaces.repository";
-import { ConflictException } from "@nestjs/common";
+import { ConflictException, NotFoundException } from "@nestjs/common";
 
 const mockWorkspacesRepository: Partial<WorkspacesRepository> = {
 	findByUserId: vi.fn(),
 	findBySlug: vi.fn(),
+	findBySlugForMember: vi.fn(),
 	create: vi.fn(),
 };
 
@@ -68,6 +69,36 @@ describe("WorkspacesService", () => {
 			const result = await buildService().findBySlug("missing");
 
 			expect(result).toBeNull();
+		});
+	});
+
+	describe("findBySlugForMember (backs the getWorkspaceBySlug query)", () => {
+		it("returns the workspace when the caller is a member", async () => {
+			const workspace = { id: "ws1", slug: "my-ws" };
+			vi.mocked(mockWorkspacesRepository.findBySlugForMember!).mockResolvedValue(
+				workspace as WorkspaceModel,
+			);
+
+			const result = await buildService().findBySlugForMember("my-ws", "u1");
+
+			expect(mockWorkspacesRepository.findBySlugForMember).toHaveBeenCalledWith("my-ws", "u1");
+			expect(result).toBe(workspace);
+		});
+
+		it("throws NotFoundException when the caller is not a member", async () => {
+			vi.mocked(mockWorkspacesRepository.findBySlugForMember!).mockResolvedValue(null);
+
+			await expect(buildService().findBySlugForMember("my-ws", "outsider")).rejects.toThrow(
+				NotFoundException,
+			);
+		});
+
+		it("throws NotFoundException for an unknown slug", async () => {
+			vi.mocked(mockWorkspacesRepository.findBySlugForMember!).mockResolvedValue(null);
+
+			await expect(buildService().findBySlugForMember("missing", "u1")).rejects.toThrow(
+				NotFoundException,
+			);
 		});
 	});
 

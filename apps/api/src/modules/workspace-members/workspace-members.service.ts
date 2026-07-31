@@ -36,6 +36,17 @@ export class WorkspaceMembersService {
 		});
 	}
 
+	public async findByWorkspaceId(workspaceId: string): Promise<WorkspaceMemberModel[]> {
+		return this.workspaceMembersRepository.findByWorkspaceId(workspaceId);
+	}
+
+	public async findOneByWorkspaceAndUser(
+		workspaceId: string,
+		userId: string,
+	): Promise<WorkspaceMemberModel | null> {
+		return this.workspaceMembersRepository.findOneByWorkspaceAndUser(workspaceId, userId);
+	}
+
 	public async findAdminsByWorkspaceId(workspaceId: string): Promise<WorkspaceMemberModel[]> {
 		return this.workspaceMembersRepository.findAdminsByWorkspaceId(workspaceId);
 	}

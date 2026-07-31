@@ -1,7 +1,7 @@
 import { WorkspaceModel } from "@/models/Workspace.model";
 import { UsersService } from "@/modules/users/users.service";
 import { Transactional } from "@nestjs-cls/transactional";
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { WorkspaceMembersService } from "../workspace-members/workspace-members.service";
 import { CreateWorkspaceInput } from "./workspaces.dto";
 import { WorkspacesRepository } from "./workspaces.repository";
@@ -18,8 +18,26 @@ export class WorkspacesService {
 		return this.workspacesRepository.findByUserId(userId);
 	}
 
+	public async findById(id: string): Promise<WorkspaceModel | null> {
+		return this.workspacesRepository.findById(id);
+	}
+
 	public async findBySlug(slug: string): Promise<WorkspaceModel | null> {
 		return this.workspacesRepository.findBySlug(slug);
+	}
+
+	/**
+	 * Resolve a workspace by slug for a caller who must already be a member of it.
+	 * Non-members get a NotFoundException so slug existence is not disclosed.
+	 */
+	public async findBySlugForMember(slug: string, userId: string): Promise<WorkspaceModel> {
+		const workspace = await this.workspacesRepository.findBySlugForMember(slug, userId);
+
+		if (!workspace) {
+			throw new NotFoundException("Workspace not found");
+		}
+
+		return workspace;
 	}
 
 	@Transactional()

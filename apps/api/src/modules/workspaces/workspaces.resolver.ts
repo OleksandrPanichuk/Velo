@@ -1,6 +1,7 @@
 import { WorkspaceModel } from "@/models/Workspace.model";
 import {
 	CreateWorkspaceMutation,
+	GetWorkspaceBySlugQuery,
 	GetWorkspacesQuery,
 } from "@/modules/workspaces/workspaces.decorators";
 import { CreateWorkspaceInput } from "@/modules/workspaces/workspaces.dto";
@@ -15,6 +16,14 @@ export class WorkspacesResolver {
 	@GetWorkspacesQuery()
 	public async getWorkspaces(@CurrentUser("id") userId: string): Promise<WorkspaceModel[]> {
 		return this.workspacesService.findByUserId(userId);
+	}
+
+	@GetWorkspaceBySlugQuery()
+	public async getWorkspaceBySlug(
+		@Args("slug") slug: string,
+		@CurrentUser("id") userId: string,
+	): Promise<WorkspaceModel> {
+		return this.workspacesService.findBySlugForMember(slug, userId);
 	}
 
 	@CreateWorkspaceMutation()

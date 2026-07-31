@@ -11,6 +11,23 @@ export class WorkspaceMembersRepository extends BaseRepository<WorkspaceMemberMo
 		super(repo);
 	}
 
+	public async findByWorkspaceId(workspaceId: string): Promise<WorkspaceMemberModel[]> {
+		return this.em.find(this.repo.target, {
+			relations: { user: true, workspace: true },
+			where: { workspaceId },
+			order: { joinedAt: "ASC" },
+		});
+	}
+
+	public async findOneByWorkspaceAndUser(
+		workspaceId: string,
+		userId: string,
+	): Promise<WorkspaceMemberModel | null> {
+		return this.em.findOne(this.repo.target, {
+			where: { workspaceId, userId },
+		});
+	}
+
 	public async findAdminsByWorkspaceId(workspaceId: string): Promise<WorkspaceMemberModel[]> {
 		return this.em.find(this.repo.target, {
 			where: {

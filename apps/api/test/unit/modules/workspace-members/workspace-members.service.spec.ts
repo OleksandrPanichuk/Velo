@@ -8,6 +8,8 @@ import type { EventEmitter2 } from "@nestjs/event-emitter";
 const mockRepo: Partial<WorkspaceMembersRepository> = {
   create: vi.fn(),
   findAdminsByWorkspaceId: vi.fn(),
+  findByWorkspaceId: vi.fn(),
+  findOneByWorkspaceAndUser: vi.fn(),
 };
 const mockEventEmitter: Partial<EventEmitter2> = { emit: vi.fn(), emitAsync: vi.fn() };
 
@@ -29,6 +31,38 @@ describe("WorkspaceMembersService", () => {
 
       expect(mockRepo.findAdminsByWorkspaceId).toHaveBeenCalledWith("ws-1");
       expect(result).toBe(members);
+    });
+  });
+
+  describe("findByWorkspaceId", () => {
+    it("delegates to the repository", async () => {
+      const members = [{ id: "mem-1", workspaceId: "ws-1" }];
+      vi.mocked(mockRepo.findByWorkspaceId!).mockResolvedValue(members as never);
+
+      const result = await buildService().findByWorkspaceId("ws-1");
+
+      expect(mockRepo.findByWorkspaceId).toHaveBeenCalledWith("ws-1");
+      expect(result).toBe(members);
+    });
+  });
+
+  describe("findOneByWorkspaceAndUser", () => {
+    it("delegates to the repository", async () => {
+      const member = { id: "mem-1", workspaceId: "ws-1", userId: "user-1" };
+      vi.mocked(mockRepo.findOneByWorkspaceAndUser!).mockResolvedValue(member as never);
+
+      const result = await buildService().findOneByWorkspaceAndUser("ws-1", "user-1");
+
+      expect(mockRepo.findOneByWorkspaceAndUser).toHaveBeenCalledWith("ws-1", "user-1");
+      expect(result).toBe(member);
+    });
+
+    it("returns null when there is no membership", async () => {
+      vi.mocked(mockRepo.findOneByWorkspaceAndUser!).mockResolvedValue(null);
+
+      const result = await buildService().findOneByWorkspaceAndUser("ws-1", "outsider");
+
+      expect(result).toBeNull();
     });
   });
 
