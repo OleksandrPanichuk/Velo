@@ -89,3 +89,34 @@ describe("PermissionService", () => {
 		});
 	});
 });
+describe("PermissionService — workspace context scoping", () => {
+	it("allows a workspaceId matching the active request context", () => {
+		const service = serviceWith({ workspaceId: "ws-1", member: null });
+
+		expect(() => service.assertWorkspace("ws-1")).not.toThrow();
+	});
+
+	it("denies a workspaceId that differs from the active request context", () => {
+		const service = serviceWith({ workspaceId: "ws-1", member: null });
+
+		expect(() => service.assertWorkspace("ws-2")).toThrow(ForbiddenException);
+	});
+
+	it("denies when the request has no workspace context at all", () => {
+		const service = serviceWith(undefined);
+
+		expect(() => service.assertWorkspace("ws-1")).toThrow(ForbiddenException);
+	});
+
+	it("returns the active workspace id", () => {
+		const service = serviceWith({ workspaceId: "ws-1", member: null });
+
+		expect(service.getActiveWorkspaceId()).toBe("ws-1");
+	});
+
+	it("throws rather than defaulting when there is no active workspace", () => {
+		const service = serviceWith(undefined);
+
+		expect(() => service.getActiveWorkspaceId()).toThrow(ForbiddenException);
+	});
+});

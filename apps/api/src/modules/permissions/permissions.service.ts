@@ -31,4 +31,26 @@ export class PermissionService {
 			throw new ForbiddenException(`Missing permission: ${permission}`);
 		}
 	}
+
+	/**
+	 * Asserts `workspaceId` is the workspace the caller's permissions were resolved
+	 * against. Required on any resolver that takes a `workspaceId` argument, since
+	 * `@RequirePermission` only ever checks the `x-workspace-id` workspace.
+	 */
+	public assertWorkspace(workspaceId: string): void {
+		if (this.cls.workspaceContext?.workspaceId !== workspaceId) {
+			throw new ForbiddenException("Workspace mismatch for the active request context");
+		}
+	}
+
+	/** The workspace the request is acting in. Throws when there is none. */
+	public getActiveWorkspaceId(): string {
+		const workspaceId = this.cls.workspaceContext?.workspaceId;
+
+		if (!workspaceId) {
+			throw new ForbiddenException("No active workspace for this request");
+		}
+
+		return workspaceId;
+	}
 }
