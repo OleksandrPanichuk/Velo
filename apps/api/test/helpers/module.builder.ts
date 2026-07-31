@@ -34,6 +34,7 @@ export class TestModuleBuilder {
 			JWT_REFRESH_SECRET: TEST_REFRESH_SECRET,
 			CLIENT_EMAIL_VERIFICATION_URL: "http://localhost/verify",
 			CLIENT_RESET_PASSWORD_URL: "http://localhost/reset",
+			CLIENT_INVITE_URL: "http://localhost/invite",
 			NODE_ENV: "test",
 			SMTP_FROM: "noreply@test.com",
 			SMTP_HOST: "localhost",

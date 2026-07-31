@@ -45,6 +45,18 @@ input ForgotPasswordInput {
   email: String!
 }
 
+"""Input for inviting someone to a workspace"""
+input InviteMemberInput {
+  """The email address to send the invite to"""
+  email: EmailAddress!
+
+  """The role the invitee will get once accepted"""
+  role: WorkspaceInviteRole!
+
+  """The workspace to invite the person into"""
+  workspaceId: UUID!
+}
+
 """The professional role of a workspace member"""
 enum MemberJobRole {
   DESIGNER
@@ -54,6 +66,11 @@ enum MemberJobRole {
 }
 
 type Mutation {
+  """
+  Redeem an invite token as the authenticated user and return the joined workspace. Requires authentication but no workspace context, since the caller is not a member yet.
+  """
+  acceptInvite(token: String!): WorkspaceModel!
+
   """Create a new workspace for the current user. Requires authentication."""
   createWorkspace(input: CreateWorkspaceInput!): WorkspaceModel!
 
@@ -61,6 +78,11 @@ type Mutation {
   Request a password reset email. Always returns true to prevent email enumeration.
   """
   forgotPassword(input: ForgotPasswordInput!): Boolean!
+
+  """
+  Invite someone to a workspace by email. Re-inviting a pending email refreshes the existing invite and resends it.
+  """
+  inviteMember(input: InviteMemberInput!): WorkspaceInviteModel!
 
   """Mark all notifications in a workspace as read."""
   markAllNotificationsAsRead(workspaceId: UUID!): Boolean!
@@ -77,6 +99,9 @@ type Mutation {
   Reset a user's password using the token from the reset email. Returns true on success.
   """
   resetPassword(input: ResetPasswordInput!): Boolean!
+
+  """Revoke a pending invite so its link can no longer be redeemed."""
+  revokeInvite(id: UUID!): Boolean!
 
   """
   Authenticate with email and password. On success, sets HttpOnly access and refresh token cookies and returns the authenticated user.
@@ -152,11 +177,26 @@ type Query {
   """
   getWorkspaces: [WorkspaceModel!]!
 
+  """
+  Retrieve all members of a workspace together with their user profiles. Requires the member.read permission in the active workspace.
+  """
+  members(workspaceId: UUID!): [WorkspaceMemberModel!]!
+
   """Retrieve all notifications for the current user in a workspace."""
   notifications(workspaceId: UUID!): [NotificationModel!]!
 
+  """
+  List the invites for a workspace that are still redeemable — neither accepted nor expired.
+  """
+  pendingInvites(workspaceId: UUID!): [WorkspaceInviteModel!]!
+
   """Count unread notifications for the current user in a workspace."""
   unreadNotificationsCount(workspaceId: UUID!): Float!
+
+  """
+  Retrieve a single workspace by its slug. Only available to members of that workspace; non-members receive a not found error. Requires authentication.
+  """
+  workspace(slug: String!): WorkspaceModel!
 }
 
 """New password and the reset token from the email link"""
@@ -252,6 +292,23 @@ type UserPaginatedModel {
   nodes: [UserModel!]
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+type WorkspaceInviteModel {
+  acceptedAt: DateTime
+  createdAt: DateTime!
+  email: EmailAddress!
+  expiresAt: DateTime!
+  id: UUID!
+  inviter: WorkspaceMemberModel!
+  role: WorkspaceInviteRole!
+  updatedAt: DateTime!
+}
+
+enum WorkspaceInviteRole {
+  ADMIN
+  GUEST
+  MEMBER
 }
 
 type WorkspaceMemberModel {

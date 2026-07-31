@@ -5,6 +5,7 @@ export enum MailTemplate {
 	RESET_PASSWORD = "reset-password",
 	EMAIL_VERIFICATION = "email-verification",
 	SIGN_IN_ALERT = "sign-in-alert",
+	WORKSPACE_INVITE = "workspace-invite",
 }
 
 export interface SendMailInput {
@@ -32,4 +33,12 @@ export interface SignInAlertContext {
 	ipAddress: string;
 	userAgent: string;
 	time: string;
+}
+
+export interface WorkspaceInviteContext {
+	inviteUrl: string;
+	workspaceName: string;
+	inviterName: string;
+	role: string;
+	expiresIn: string;
 }

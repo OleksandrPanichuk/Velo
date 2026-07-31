@@ -1,12 +1,13 @@
 import { WorkspaceInviteRole } from "@/enums/WorkspaceInviteRole.enum";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { DateTimeResolver, EmailAddressResolver } from "graphql-scalars";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { BaseModel } from "./Base.model";
 import { WorkspaceMemberModel } from "./WorkspaceMember.model";
 
 @ObjectType()
 @Entity("workspace_invites")
+@Index(["workspaceId"])
 export class WorkspaceInviteModel extends BaseModel {
 	@Column({ type: "uuid" })
 	workspaceId!: string;
@@ -19,11 +20,11 @@ export class WorkspaceInviteModel extends BaseModel {
 	@Column({ type: "enum", enum: WorkspaceInviteRole, default: WorkspaceInviteRole.MEMBER })
 	role!: WorkspaceInviteRole;
 
-	@Field(() => String)
+	/** Deliberately not a GraphQL field: the token must only ever leave over email. */
 	@Column({ type: "varchar", length: 255, unique: true })
 	token!: string;
 
-	@Field(() => Date)
+	@Field(() => DateTimeResolver)
 	@Column({ type: "timestamp" })
 	expiresAt!: Date;
 

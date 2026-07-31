@@ -22,6 +22,13 @@ export class UsersRepository extends BaseRepository<UserModel> {
 		return this.repo.findOne({ where: { email } });
 	}
 
+	public async findByEmailInsensitive(email: string): Promise<UserModel | null> {
+		return this.repo
+			.createQueryBuilder("user")
+			.where("LOWER(user.email) = LOWER(:email)", { email })
+			.getOne();
+	}
+
 	public async findByEmailVerificationToken(token: string): Promise<UserModel | null> {
 		return this.repo
 			.createQueryBuilder("user")

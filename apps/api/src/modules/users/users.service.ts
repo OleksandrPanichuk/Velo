@@ -23,6 +23,14 @@ export class UsersService {
 		return this.usersRepository.findByIds(ids);
 	}
 
+	public async findByEmail(email: string): Promise<UserModel | null> {
+		return this.usersRepository.findByEmail(email);
+	}
+
+	public async findByEmailInsensitive(email: string): Promise<UserModel | null> {
+		return this.usersRepository.findByEmailInsensitive(email);
+	}
+
 	public async findAllPaginated(
 		paginationArgs: PaginationArgs,
 	): Promise<IPaginatedType<UserModel>> {

@@ -17,6 +17,7 @@ import { AuthModule } from "@/modules/auth/auth.module";
 import { NotificationsModule } from "@/modules/notifications";
 import { PermissionsModule, PoliciesGuard, WorkspaceContextGuard } from "@/modules/permissions";
 import { UsersModule } from "@/modules/users/users.module";
+import { WorkspaceInvitesModule } from "@/modules/workspace-invites/workspace-invites.module";
 import { WorkspacesModule } from "@/modules/workspaces/workspaces.module";
 import { AppExceptionFilter } from "@/shared/filters";
 import { AppAuthGuard, AppThrottlerGuard } from "@/shared/guards";
@@ -73,6 +74,7 @@ import { ClsGuard } from "nestjs-cls";
 			inject: [ConfigService],
 		}),
 		UsersModule,
+		WorkspaceInvitesModule,
 		WorkspacesModule,
 	],
 	providers: [

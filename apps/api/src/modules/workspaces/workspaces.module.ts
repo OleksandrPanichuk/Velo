@@ -10,5 +10,6 @@ import { WorkspacesService } from "./workspaces.service";
 @Module({
 	imports: [TypeOrmModule.forFeature([WorkspaceModel]), WorkspaceMembersModule, UsersModule],
 	providers: [WorkspacesRepository, WorkspacesResolver, WorkspacesService],
+	exports: [WorkspacesService],
 })
 export class WorkspacesModule {}

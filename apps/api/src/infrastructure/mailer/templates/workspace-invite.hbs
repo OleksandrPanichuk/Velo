@@ -1,0 +1,17 @@
+{{#> layout title="You have been invited to a Velo workspace"}}
+  <h1>Join {{workspaceName}} on Velo</h1>
+  <p>
+    <strong>{{inviterName}}</strong> invited you to join the <strong>{{workspaceName}}</strong>
+    workspace as a <strong>{{role}}</strong>.
+  </p>
+  <a href="{{inviteUrl}}" class="btn">Accept invitation</a>
+  <p>
+    This invitation will expire in <strong>{{expiresIn}}</strong>. If you weren't expecting it,
+    you can safely ignore this email.
+  </p>
+  <hr class="divider" />
+  <p class="footnote">
+    If the button above doesn't work, copy and paste this URL into your browser:<br />
+    <a href="{{inviteUrl}}">{{inviteUrl}}</a>
+  </p>
+{{/layout}}

@@ -62,6 +62,7 @@ export const envSchema = z
 		// Client URLs for email links
 		CLIENT_EMAIL_VERIFICATION_URL: z.url(),
 		CLIENT_RESET_PASSWORD_URL: z.url(),
+		CLIENT_INVITE_URL: z.url(),
 
 		// OAuth
 		GOOGLE_CLIENT_ID: z.string(),

@@ -5,6 +5,7 @@ import {
 	SendMailInput,
 	SignInAlertContext,
 	WelcomeContext,
+	WorkspaceInviteContext,
 } from "@/infrastructure/mailer";
 import { MAILER_SUBJECTS } from "@/infrastructure/mailer/mailer.constants";
 import { QueueName } from "@/infrastructure/queue";
@@ -63,6 +64,19 @@ export class MailQueue {
 				to,
 				subject: MAILER_SUBJECTS[MailTemplate.SIGN_IN_ALERT],
 				template: MailTemplate.SIGN_IN_ALERT,
+				context: ctx,
+			},
+			MAIL_JOB_OPTIONS,
+		);
+	}
+
+	public async enqueueWorkspaceInvite(to: string, ctx: WorkspaceInviteContext) {
+		return this.queue.add(
+			MailTemplate.WORKSPACE_INVITE,
+			{
+				to,
+				subject: MAILER_SUBJECTS[MailTemplate.WORKSPACE_INVITE],
+				template: MailTemplate.WORKSPACE_INVITE,
 				context: ctx,
 			},
 			MAIL_JOB_OPTIONS,
