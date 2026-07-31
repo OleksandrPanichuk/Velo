@@ -7,3 +7,22 @@ fragment WorkspaceBase on WorkspaceModel {
         originalName
     }
 }
+
+fragment WorkspaceMemberBase on WorkspaceMemberModel {
+    id
+    role
+    joinedAt
+    user {
+        id
+        fullName
+        username
+        avatarUrl
+        email
+    }
+}
+
+fragment WorkspaceDetails on WorkspaceModel {
+    ...WorkspaceBase
+    size
+    createdAt
+}

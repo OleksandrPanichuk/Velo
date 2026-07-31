@@ -1,0 +1,9 @@
+mutation MarkNotificationAsRead($id: UUID!) {
+    markNotificationAsRead(id: $id) {
+        ...NotificationBase
+    }
+}
+
+mutation MarkAllNotificationsAsRead($workspaceId: UUID!) {
+    markAllNotificationsAsRead(workspaceId: $workspaceId)
+}

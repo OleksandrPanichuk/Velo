@@ -1,0 +1,5 @@
+query GetPendingInvites($workspaceId: UUID!) {
+    pendingInvites(workspaceId: $workspaceId) {
+        ...WorkspaceInviteBase
+    }
+}

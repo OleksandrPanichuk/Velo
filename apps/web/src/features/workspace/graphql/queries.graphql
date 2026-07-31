@@ -3,3 +3,21 @@ query GetWorkspaces {
         ...WorkspaceBase
     }
 }
+
+query GetWorkspaceBySlug($slug: String!) {
+    workspace(slug: $slug) {
+        ...WorkspaceBase
+    }
+}
+
+query GetMembers($workspaceId: UUID!) {
+    members(workspaceId: $workspaceId) {
+        ...WorkspaceMemberBase
+    }
+}
+
+query GetWorkspaceDetails($slug: String!) {
+    workspace(slug: $slug) {
+        ...WorkspaceDetails
+    }
+}

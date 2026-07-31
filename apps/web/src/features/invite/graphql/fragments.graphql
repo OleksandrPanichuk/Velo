@@ -1,0 +1,11 @@
+fragment WorkspaceInviteBase on WorkspaceInviteModel {
+    id
+    email
+    role
+    expiresAt
+    acceptedAt
+    createdAt
+    inviter {
+        ...WorkspaceMemberBase
+    }
+}

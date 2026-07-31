@@ -33,5 +33,6 @@ export async function getServerApolloLink() {
 
 export function getClientApolloLink() {
 	const uri = getClientUri();
+
 	return ApolloLink.from([makeAuthLink(uri), new HttpLink({ uri, credentials: "include" })]);
 }

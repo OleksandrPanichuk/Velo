@@ -1,0 +1,15 @@
+fragment NotificationBase on NotificationModel {
+    id
+    type
+    title
+    body
+    isRead
+    createdAt
+    workspaceId
+    actor {
+        id
+        fullName
+        username
+        avatarUrl
+    }
+}

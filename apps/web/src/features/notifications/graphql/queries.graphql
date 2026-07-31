@@ -1,0 +1,5 @@
+query GetNotifications($workspaceId: UUID!) {
+    notifications(workspaceId: $workspaceId) {
+        ...NotificationBase
+    }
+}

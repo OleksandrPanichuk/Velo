@@ -1,0 +1,15 @@
+mutation InviteMember($input: InviteMemberInput!) {
+    inviteMember(input: $input) {
+        ...WorkspaceInviteBase
+    }
+}
+
+mutation RevokeInvite($id: UUID!) {
+    revokeInvite(id: $id)
+}
+
+mutation AcceptInvite($token: String!) {
+    acceptInvite(token: $token) {
+        ...WorkspaceBase
+    }
+}

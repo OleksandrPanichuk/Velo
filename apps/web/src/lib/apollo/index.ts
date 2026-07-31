@@ -15,3 +15,5 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(async () 
 		link: await getServerApolloLink(),
 	});
 });
+
+export { WORKSPACE_ID_HEADER, workspaceContext } from "./workspace-context";

@@ -14,6 +14,9 @@ export const ROUTES = {
 	},
 	workspace: {
 		root: (slug: string) => `/${slug}`,
+		inbox: (slug: string) => `/${slug}/inbox`,
+		members: (slug: string) => `/${slug}/members`,
+		settings: (slug: string) => `/${slug}/settings`,
 	},
 } as const;
 
