@@ -1,8 +1,17 @@
+import { Public } from "@/shared/decorators";
 import { Controller, Get } from "@nestjs/common";
-import { HealthCheck, HealthCheckResult, HealthCheckService, TypeOrmHealthIndicator } from "@nestjs/terminus";
+import {
+	HealthCheck,
+	HealthCheckResult,
+	HealthCheckService,
+	TypeOrmHealthIndicator,
+} from "@nestjs/terminus";
+import { SkipThrottle } from "@nestjs/throttler";
 import { RedisHealthIndicator } from "./redis.health";
 import { S3HealthIndicator } from "./s3.health";
 
+@Public()
+@SkipThrottle()
 @Controller("health")
 export class HealthController {
 	constructor(
