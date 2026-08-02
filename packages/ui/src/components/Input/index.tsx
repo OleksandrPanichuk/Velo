@@ -10,6 +10,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	endAdornment?: React.ReactNode;
 	containerClassName?: string;
 	labelClassName?: string;
+	overlayMessage?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -25,6 +26,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			disabled,
 			containerClassName,
 			labelClassName,
+			overlayMessage,
 			...props
 		},
 		ref,
@@ -37,7 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			[props["aria-describedby"], errorId ?? hintId].filter(Boolean).join(" ") || undefined;
 
 		return (
-			<div className={cn("flex w-full flex-col gap-1.5 h-full", containerClassName)}>
+			<div className={cn("relative flex w-full flex-col gap-1.5 h-full", containerClassName)}>
 				{label && (
 					<label
 						htmlFor={inputId}
@@ -80,12 +82,24 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					)}
 				</div>
 				{error && (
-					<p id={errorId} className="text-xs text-red-500">
+					<p
+						id={errorId}
+						className={cn(
+							"text-xs text-red-500",
+							overlayMessage && "absolute top-full left-0 w-full",
+						)}
+					>
 						{error}
 					</p>
 				)}
 				{hint && !error && (
-					<p id={hintId} className="text-text-tertiary text-xs">
+					<p
+						id={hintId}
+						className={cn(
+							"text-text-tertiary text-xs",
+							overlayMessage && "absolute top-full left-0 w-full",
+						)}
+					>
 						{hint}
 					</p>
 				)}

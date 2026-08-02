@@ -33,7 +33,6 @@ export class RegisterPage extends BasePage {
 		await this.email.fill(user.email);
 		await this.password.fill(user.password);
 		await this.confirmPassword.fill(user.password);
-		await this.confirmPassword.blur();
 		await this.submit.click();
 	}
 
