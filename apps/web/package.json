@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@apollo/client": "^4.1.9",
@@ -42,7 +44,8 @@
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.7"
   },
   "ignoreScripts": [
     "sharp",

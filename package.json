@@ -12,7 +12,8 @@
     "test:e2e:ui": "turbo run test:e2e:ui --filter=e2e",
     "test:e2e:report": "turbo run test:e2e:report --filter=e2e",
     "test:e2e:infra:up": "docker compose -f compose-files/docker-compose.e2e.yml up -d --wait postgres-e2e redis-e2e minio-e2e mailpit-e2e",
-    "test:e2e:infra:down": "docker compose -f compose-files/docker-compose.e2e.yml down -v"
+    "test:e2e:infra:down": "docker compose -f compose-files/docker-compose.e2e.yml down -v",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
