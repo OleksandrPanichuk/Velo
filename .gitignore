@@ -48,3 +48,7 @@ docs
 # IDE
 /.zed
 /.vscode
+
+# Playwright artifacts
+test-results/
+playwright-report/
