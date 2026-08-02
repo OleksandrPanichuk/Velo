@@ -1,3 +1,4 @@
+import { RateLimits } from "@/constants";
 import { seconds } from "@repo/primitives";
 import { z } from "zod";
 
@@ -23,6 +24,9 @@ export const envSchema = z
 		CACHE_DEFAULT_TTL: z.coerce.number().int().positive().default(seconds(60)),
 		CACHE_L1_TTL_MS: z.coerce.number().int().positive().default(seconds(10)),
 		CACHE_L1_LRU_SIZE: z.coerce.number().int().positive().default(2000),
+
+		THROTTLE_LIMIT: z.coerce.number().int().positive().default(RateLimits.GLOBAL.limit),
+		THROTTLE_TTL_MS: z.coerce.number().int().positive().default(RateLimits.GLOBAL.ttl),
 
 		// S3
 		AWS_S3_ENDPOINT: z.string().default("http://localhost:9000"),
