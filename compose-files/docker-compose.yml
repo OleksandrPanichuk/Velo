@@ -59,7 +59,7 @@ services:
       - /app/node_modules
       - /app/apps/api/node_modules
     working_dir: /app/apps/api
-    command: sh -c "bun install && node_modules/.bin/nest start --watch"
+    command: sh -c "bun install && bun run db:migrate && node_modules/.bin/nest start --watch"
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis

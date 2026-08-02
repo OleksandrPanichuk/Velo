@@ -81,7 +81,7 @@ services:
       dockerfile: apps/api/Dockerfile
     container_name: velo_api_e2e
     working_dir: /app/apps/api
-    command: sh -c "bun install && node_modules/.bin/nest start"
+    command: sh -c "bun install && bun run db:migrate && node_modules/.bin/nest start"
     env_file:
       - ../apps/api/.env.test
     environment:

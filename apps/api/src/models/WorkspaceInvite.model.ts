@@ -8,6 +8,7 @@ import { WorkspaceMemberModel } from "./WorkspaceMember.model";
 @ObjectType()
 @Entity("workspace_invites")
 @Index(["workspaceId"])
+@Index("UQ_workspace_invites_pending_email", { synchronize: false })
 export class WorkspaceInviteModel extends BaseModel {
 	@Column({ type: "uuid" })
 	workspaceId!: string;

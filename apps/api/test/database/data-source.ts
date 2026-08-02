@@ -35,7 +35,8 @@ export function createTestDataSource(): DataSource {
 		password: process.env.DB_PASSWORD ?? "postgres",
 		database: process.env.DB_NAME ?? "velo_test",
 		entities: TEST_ENTITIES,
-		synchronize: true,
+		synchronize: false,
+		migrations: [`${__dirname}/../../migrations/*{.ts,.js}`],
 		logging: false,
 	});
 }

@@ -1,5 +1,4 @@
 import type { Env } from "@/config";
-import { NodeEnv } from "@repo/primitives";
 import { type ConfigService } from "@nestjs/config";
 import { type TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { join } from "path";
@@ -12,5 +11,5 @@ export const getTypeOrmConfig = (config: ConfigService<Env>): TypeOrmModuleOptio
 	password: config.get("DB_PASSWORD"),
 	database: config.get("DB_NAME"),
 	entities: [`${join(__dirname, "..")}/**/*.{entity,model}{.ts,.js}`],
-	synchronize: config.get("NODE_ENV") !== NodeEnv.PRODUCTION,
+	synchronize: false,
 });
