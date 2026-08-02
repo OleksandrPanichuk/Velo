@@ -6,6 +6,7 @@ import { XCircle } from "lucide-react";
 import { ROUTES } from "@/constants";
 
 import { InviteMessage } from "./InviteMessage";
+import { MissingInviteTokenHarness } from "./MissingInviteToken.harness";
 
 export function MissingInviteToken() {
 	return (
@@ -15,7 +16,9 @@ export function MissingInviteToken() {
 			description="This invite link is missing its token. Ask whoever invited you to send the link again."
 		>
 			<Button variant={ButtonVariants.Outline} size={ButtonSizes.Large} asChild fullWidth>
-				<Link href={ROUTES.auth.login}>Back to sign in</Link>
+				<Link data-qa={MissingInviteTokenHarness.BackToLogin} href={ROUTES.auth.login}>
+					Back to sign in
+				</Link>
 			</Button>
 		</InviteMessage>
 	);

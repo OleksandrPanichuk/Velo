@@ -13,6 +13,7 @@ import type { UserFieldsFragment, WorkspaceBaseFragment } from "@/graphql/types"
 import { WorkspaceSwitcher } from "../WorkspaceSwitcher";
 import { WorkspaceUserMenu } from "../WorkspaceUserMenu";
 import { WORKSPACE_NAV_GROUPS } from "./WorkspaceSidebar.constants";
+import { WorkspaceSidebarHarness } from "./WorkspaceSidebar.harness";
 
 type WorkspaceSidebarProps = {
 	workspace: WorkspaceBaseFragment;
@@ -45,9 +46,13 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 
 	return (
 		<>
-			<header className="border-border bg-surface sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b px-4 md:hidden">
+			<header
+				data-qa={WorkspaceSidebarHarness.MobileHeader}
+				className="border-border bg-surface sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b px-4 md:hidden"
+			>
 				<button
 					type="button"
+					data-qa={WorkspaceSidebarHarness.MobileOpen}
 					aria-label="Open navigation"
 					aria-expanded={isOpen}
 					onClick={() => setIsOpen(true)}
@@ -55,12 +60,18 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 				>
 					<Menu className="size-5" />
 				</button>
-				<span className="text-text-primary truncate text-sm font-semibold">{workspace.name}</span>
+				<span
+					data-qa={WorkspaceSidebarHarness.WorkspaceName}
+					className="text-text-primary truncate text-sm font-semibold"
+				>
+					{workspace.name}
+				</span>
 			</header>
 
 			{isOpen && (
 				<button
 					type="button"
+					data-qa={WorkspaceSidebarHarness.MobileOverlay}
 					aria-label="Close navigation"
 					onClick={() => setIsOpen(false)}
 					className="fixed inset-0 z-30 bg-neutral-950/50 md:hidden"
@@ -68,6 +79,7 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 			)}
 
 			<aside
+				data-qa={WorkspaceSidebarHarness.Root}
 				inert={!isOpen && !isDesktop}
 				className={cn(
 					"bg-surface-subtle border-border fixed inset-y-0 left-0 z-40 flex w-64 max-w-[85vw] shrink-0 -translate-x-full flex-col border-r transition-transform duration-200 md:sticky md:top-0 md:z-auto md:h-svh md:max-w-none md:translate-x-0 md:transition-none",
@@ -82,6 +94,7 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 					/>
 					<button
 						type="button"
+						data-qa={WorkspaceSidebarHarness.MobileClose}
 						aria-label="Close navigation"
 						onClick={() => setIsOpen(false)}
 						className="text-text-secondary hover:bg-surface-muted hover:text-text-primary rounded-md p-1.5 transition-colors duration-100 md:hidden"
@@ -90,7 +103,7 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 					</button>
 				</div>
 
-				<nav className="flex-1 overflow-y-auto px-2 py-2">
+				<nav data-qa={WorkspaceSidebarHarness.Nav} className="flex-1 overflow-y-auto px-2 py-2">
 					{WORKSPACE_NAV_GROUPS.map((group) => (
 						<div key={group.id} className="mb-4 last:mb-0">
 							{group.label && (
@@ -107,6 +120,7 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 										return (
 											<li key={item.label}>
 												<span
+													data-qa={WorkspaceSidebarHarness.NavPlaceholder}
 													aria-disabled="true"
 													className="text-text-tertiary flex cursor-not-allowed items-center gap-2.5 rounded-md px-2 py-1.5 text-sm select-none"
 												>
@@ -126,6 +140,7 @@ export function WorkspaceSidebar({ workspace, workspaces, currentUser }: Workspa
 									return (
 										<li key={item.label}>
 											<Link
+												data-qa={WorkspaceSidebarHarness.NavLink}
 												href={href}
 												aria-current={active ? "page" : undefined}
 												className={cn(

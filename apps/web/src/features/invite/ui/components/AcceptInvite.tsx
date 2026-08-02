@@ -16,6 +16,7 @@ import {
 } from "@/features/invite/utils";
 import { useAcceptInviteMutation } from "@/graphql/hooks";
 
+import { AcceptInviteHarness } from "./AcceptInvite.harness";
 import { InviteMessage } from "./InviteMessage";
 
 interface Props {
@@ -94,7 +95,10 @@ function AcceptInviteFailureMessage({ failure, token, email }: FailureProps) {
 				}
 			>
 				<Button size={ButtonSizes.Large} asChild fullWidth>
-					<Link href={withInviteToken(ROUTES.auth.login, token)}>
+					<Link
+						data-qa={AcceptInviteHarness.SignInWithInvitedAddress}
+						href={withInviteToken(ROUTES.auth.login, token)}
+					>
 						Sign in with the invited address
 					</Link>
 				</Button>
@@ -122,7 +126,9 @@ function AcceptInviteFailureMessage({ failure, token, email }: FailureProps) {
 				description="If you already joined, you can open the workspace from your workspace list."
 			>
 				<Button size={ButtonSizes.Large} asChild fullWidth>
-					<Link href={ROUTES.root}>Go to my workspaces</Link>
+					<Link data-qa={AcceptInviteHarness.GoToMyWorkspaces} href={ROUTES.root}>
+						Go to my workspaces
+					</Link>
 				</Button>
 			</InviteMessage>
 		);
@@ -154,7 +160,9 @@ function AcceptInviteFailureMessage({ failure, token, email }: FailureProps) {
 function BackToAppButton() {
 	return (
 		<Button variant={ButtonVariants.Outline} size={ButtonSizes.Large} asChild fullWidth>
-			<Link href={ROUTES.root}>Back to Velo</Link>
+			<Link data-qa={AcceptInviteHarness.BackToApp} href={ROUTES.root}>
+				Back to Velo
+			</Link>
 		</Button>
 	);
 }

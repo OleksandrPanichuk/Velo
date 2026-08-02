@@ -8,6 +8,8 @@ import {
 	useRevokeInvite,
 } from "@/features/invite/ui/views/InviteManagement/InviteManagement.hooks";
 
+import { InviteManagementHarness } from "./InviteManagement.harness";
+
 interface InviteManagementProps {
 	workspaceId: string;
 }
@@ -23,7 +25,7 @@ export function InviteManagement({ workspaceId }: InviteManagementProps) {
 	const { revoke, revokingId, serverError: revokeError } = useRevokeInvite(workspaceId, refetch);
 
 	return (
-		<div className="flex flex-col gap-8">
+		<div data-qa={InviteManagementHarness.Root} className="flex flex-col gap-8">
 			<section className="flex flex-col gap-3">
 				<div className="flex flex-col gap-1">
 					<h2 className="text-text-primary text-sm font-semibold">Invite people</h2>

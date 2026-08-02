@@ -4,9 +4,14 @@ import { Compass } from "lucide-react";
 
 import { ROUTES } from "@/constants";
 
+import { NotFoundHarness } from "./not-found.harness";
+
 export default function NotFound() {
 	return (
-		<div className="bg-surface flex min-h-svh flex-1 flex-col items-center justify-center gap-5 px-6 text-center">
+		<div
+			data-qa={NotFoundHarness.Root}
+			className="bg-surface flex min-h-svh flex-1 flex-col items-center justify-center gap-5 px-6 text-center"
+		>
 			<span className="bg-brand-muted text-brand-600 dark:text-brand-300 flex size-12 items-center justify-center rounded-xl">
 				<Compass className="size-6" />
 			</span>

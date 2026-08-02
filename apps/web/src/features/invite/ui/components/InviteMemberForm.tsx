@@ -7,6 +7,8 @@ import { INVITE_ROLE_VALUES, InviteMemberFormSchema } from "@/features/invite/sc
 import type { InviteFormApi } from "@/features/invite/ui/views/InviteManagement/InviteManagement.hooks";
 import { MEMBER_ROLE_LABELS } from "@/features/workspace/constants";
 
+import { InviteMemberFormHarness } from "./InviteMemberForm.harness";
+
 interface InviteMemberFormProps {
 	form: InviteFormApi;
 	loading: boolean;
@@ -33,17 +35,19 @@ export function InviteMemberForm({
 }: InviteMemberFormProps) {
 	return (
 		<form
+			data-qa={InviteMemberFormHarness.Form}
 			className="flex flex-col gap-3"
 			onSubmit={(event) => {
 				event.preventDefault();
 				void form.handleSubmit();
 			}}
 		>
-			<div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
 				<div className="flex-1">
 					<form.Field name="email" validators={{ onSubmit: InviteMemberFormSchema.shape.email }}>
 						{(field) => (
 							<Input
+								data-qa={InviteMemberFormHarness.Email}
 								type="email"
 								placeholder="teammate@company.com"
 								startAdornment={<Mail />}
@@ -59,29 +63,43 @@ export function InviteMemberForm({
 
 				<form.Field name="role">
 					{(field) => (
-						<Select
-							className="sm:w-40"
-							aria-label="Invite role"
-							isSearchable={false}
-							options={ROLE_OPTIONS}
-							value={ROLE_OPTIONS.find((role) => role.value === field.state.value)}
-							onChange={(option) => {
-								const role = resolveRole(option);
-								if (role) field.handleChange(role);
-							}}
-						/>
+						<div data-qa={InviteMemberFormHarness.Role} className="sm:w-40">
+							<Select
+								aria-label="Invite role"
+								isSearchable={false}
+								options={ROLE_OPTIONS}
+								value={ROLE_OPTIONS.find((role) => role.value === field.state.value)}
+								onChange={(option) => {
+									const role = resolveRole(option);
+									if (role) field.handleChange(role);
+								}}
+								className="min-h-0"
+							/>
+						</div>
 					)}
 				</form.Field>
 
-				<Button type="submit" size={ButtonSizes.Large} loading={loading}>
+				<Button
+					data-qa={InviteMemberFormHarness.Submit}
+					type="submit"
+					size={ButtonSizes.Large}
+					loading={loading}
+				>
 					Send invite
 				</Button>
 			</div>
 
-			{serverError && <p className="text-xs text-red-500">{serverError}</p>}
+			{serverError && (
+				<p data-qa={InviteMemberFormHarness.Error} className="text-xs text-red-500">
+					{serverError}
+				</p>
+			)}
 
 			{!serverError && invitedEmail && (
-				<p className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+				<p
+					data-qa={InviteMemberFormHarness.Success}
+					className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400"
+				>
 					<Check className="size-3.5" />
 					Invite sent to {invitedEmail}
 				</p>

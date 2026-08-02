@@ -9,6 +9,8 @@ import {
 } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
 import type { OnboardingFormApi } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.hooks";
 
+import { AboutStepHarness } from "./AboutStep.harness";
+
 interface AboutStepProps {
 	form: OnboardingFormApi;
 	onContinue: () => void;
@@ -16,7 +18,7 @@ interface AboutStepProps {
 
 export function AboutStep({ form, onContinue }: AboutStepProps) {
 	return (
-		<div className="flex flex-col gap-8">
+		<div data-qa={AboutStepHarness.Root} className="flex flex-col gap-8">
 			<div className="flex flex-col items-center gap-5 text-center">
 				<div className="bg-brand-500/10 ring-brand-500/20 relative flex size-16 items-center justify-center rounded-2xl ring-1">
 					<Users className="text-brand-500 size-7" strokeWidth={1.5} />
@@ -27,7 +29,10 @@ export function AboutStep({ form, onContinue }: AboutStepProps) {
 				</div>
 
 				<div className="flex flex-col gap-1.5">
-					<h1 className="text-text-primary text-2xl font-semibold tracking-tight">
+					<h1
+						data-qa={AboutStepHarness.Title}
+						className="text-text-primary text-2xl font-semibold tracking-tight"
+					>
 						Tell us about yourself
 					</h1>
 					<p className="text-text-secondary text-sm leading-relaxed">
@@ -52,6 +57,7 @@ export function AboutStep({ form, onContinue }: AboutStepProps) {
 										<button
 											key={id}
 											type="button"
+											data-qa={AboutStepHarness.RoleOption}
 											onClick={() => field.handleChange(id)}
 											className={`flex flex-col items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-150 ${
 												active
@@ -95,6 +101,7 @@ export function AboutStep({ form, onContinue }: AboutStepProps) {
 										<button
 											key={id}
 											type="button"
+											data-qa={AboutStepHarness.TeamSizeOption}
 											onClick={() => field.handleChange(id)}
 											className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-150 ${
 												active
@@ -113,10 +120,16 @@ export function AboutStep({ form, onContinue }: AboutStepProps) {
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				<Button size={ButtonSizes.Large} onClick={onContinue} fullWidth>
+				<Button
+					data-qa={AboutStepHarness.Continue}
+					size={ButtonSizes.Large}
+					onClick={onContinue}
+					fullWidth
+				>
 					Continue
 				</Button>
 				<Button
+					data-qa={AboutStepHarness.Skip}
 					size={ButtonSizes.Large}
 					variant={ButtonVariants.Ghost}
 					onClick={onContinue}

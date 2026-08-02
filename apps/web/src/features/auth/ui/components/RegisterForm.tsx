@@ -15,6 +15,7 @@ import { acceptInvitePath, withInviteToken } from "@/features/invite/utils";
 import { useSignUpMutation } from "@/graphql/hooks";
 
 import { OAuthButton } from "./OAuthButton";
+import { RegisterFormHarness } from "./RegisterForm.harness";
 
 interface Props {
 	inviteToken?: string;
@@ -65,10 +66,18 @@ export function RegisterForm({ inviteToken }: Props) {
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				<OAuthButton provider={OAuthProvider.Google} inviteToken={inviteToken}>
+				<OAuthButton
+					provider={OAuthProvider.Google}
+					inviteToken={inviteToken}
+					data-qa={RegisterFormHarness.GoogleButton}
+				>
 					Continue with Google
 				</OAuthButton>
-				<OAuthButton provider={OAuthProvider.Github} inviteToken={inviteToken}>
+				<OAuthButton
+					provider={OAuthProvider.Github}
+					inviteToken={inviteToken}
+					data-qa={RegisterFormHarness.GithubButton}
+				>
 					Continue with GitHub
 				</OAuthButton>
 			</div>
@@ -80,6 +89,7 @@ export function RegisterForm({ inviteToken }: Props) {
 			</div>
 
 			<form
+				data-qa={RegisterFormHarness.Form}
 				className="flex flex-col gap-4"
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -89,6 +99,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="fullName">
 					{(field) => (
 						<Input
+							data-qa={RegisterFormHarness.FullName}
 							label="Full name"
 							type="text"
 							placeholder="Alex Johnson"
@@ -105,6 +116,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="username">
 					{(field) => (
 						<Input
+							data-qa={RegisterFormHarness.Username}
 							label="Username"
 							type="text"
 							placeholder="alexjohnson"
@@ -121,6 +133,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="email">
 					{(field) => (
 						<Input
+							data-qa={RegisterFormHarness.Email}
 							label="Email"
 							type="email"
 							placeholder="you@example.com"
@@ -137,6 +150,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="password">
 					{(field) => (
 						<PasswordInput
+							data-qa={RegisterFormHarness.Password}
 							autoComplete="new-password"
 							value={field.state.value}
 							onBlur={field.handleBlur}
@@ -149,6 +163,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="confirmPassword">
 					{(field) => (
 						<PasswordInput
+							data-qa={RegisterFormHarness.ConfirmPassword}
 							label="Confirm password"
 							autoComplete="new-password"
 							value={field.state.value}
@@ -159,9 +174,20 @@ export function RegisterForm({ inviteToken }: Props) {
 					)}
 				</form.Field>
 
-				{serverError && <p className="text-sm text-red-500">{serverError}</p>}
+				{serverError && (
+					<p data-qa={RegisterFormHarness.ServerError} className="text-sm text-red-500">
+						{serverError}
+					</p>
+				)}
 
-				<Button type="submit" size={ButtonSizes.Large} fullWidth loading={loading} className="mt-1">
+				<Button
+					data-qa={RegisterFormHarness.Submit}
+					type="submit"
+					size={ButtonSizes.Large}
+					fullWidth
+					loading={loading}
+					className="mt-1"
+				>
 					Create account
 				</Button>
 			</form>
@@ -169,6 +195,7 @@ export function RegisterForm({ inviteToken }: Props) {
 			<p className="text-text-tertiary text-center text-sm">
 				Already have an account?{" "}
 				<Link
+					data-qa={RegisterFormHarness.LoginLink}
 					href={withInviteToken(ROUTES.auth.login, inviteToken)}
 					className="text-brand-500 hover:text-brand-400 font-medium transition-colors duration-100"
 				>

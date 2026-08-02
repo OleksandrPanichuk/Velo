@@ -6,6 +6,8 @@ import { getWorkspaceDetailsFn } from "@/features/workspace/server";
 import { env } from "@/lib/env";
 import { formatDate } from "@/utils/date";
 
+import { WorkspaceSettingsViewHarness } from "./WorkspaceSettingsView.harness";
+
 interface WorkspaceSettingsViewProps {
 	slug: string;
 }
@@ -28,15 +30,24 @@ export async function WorkspaceSettingsView({ slug }: WorkspaceSettingsViewProps
 	];
 
 	return (
-		<div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-8">
+		<div
+			data-qa={WorkspaceSettingsViewHarness.Root}
+			className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-8"
+		>
 			<header className="flex flex-col gap-1">
-				<h1 className="text-text-primary text-xl font-semibold tracking-tight">
+				<h1
+					data-qa={WorkspaceSettingsViewHarness.Heading}
+					className="text-text-primary text-xl font-semibold tracking-tight"
+				>
 					Workspace settings
 				</h1>
 				<p className="text-text-secondary text-sm">Details for {workspace.name}.</p>
 			</header>
 
-			<div className="border-border bg-surface flex items-start gap-3 rounded-xl border p-4">
+			<div
+				data-qa={WorkspaceSettingsViewHarness.ReadOnlyNotice}
+				className="border-border bg-surface flex items-start gap-3 rounded-xl border p-4"
+			>
 				<Lock className="text-text-tertiary mt-0.5 size-4 shrink-0" />
 				<div className="flex flex-col gap-1">
 					<p className="text-text-primary text-sm font-medium">Editing is not available yet</p>
@@ -51,12 +62,18 @@ export async function WorkspaceSettingsView({ slug }: WorkspaceSettingsViewProps
 				{details.map(({ label, value }) => (
 					<div
 						key={label}
+						data-qa={WorkspaceSettingsViewHarness.DetailRow}
 						className="border-border flex flex-col gap-1 border-b px-4 py-3 last:border-b-0 sm:flex-row sm:items-center sm:gap-4"
 					>
-						<dt className="text-text-secondary text-xs font-medium sm:w-40 sm:shrink-0">
+						<dt
+							data-qa={WorkspaceSettingsViewHarness.DetailLabel}
+							className="text-text-secondary text-xs font-medium sm:w-40 sm:shrink-0"
+						>
 							{label}
 						</dt>
-						<dd className="text-text-primary text-sm">{value}</dd>
+						<dd data-qa={WorkspaceSettingsViewHarness.DetailValue} className="text-text-primary text-sm">
+							{value}
+						</dd>
 					</div>
 				))}
 			</dl>

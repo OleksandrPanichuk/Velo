@@ -10,6 +10,8 @@ import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { ROUTES } from "@/constants";
 import { useVerifyEmailMutation } from "@/graphql/hooks";
 
+import { VerifyEmailViewHarness } from "./VerifyEmailView.harness";
+
 type Status = "verifying" | "success" | "error";
 
 interface Props {
@@ -37,7 +39,10 @@ export function VerifyEmailView({ token }: Props) {
 
 	if (status === "verifying") {
 		return (
-			<div className="flex flex-col items-center gap-4 text-center">
+			<div
+				data-qa={VerifyEmailViewHarness.Verifying}
+				className="flex flex-col items-center gap-4 text-center"
+			>
 				<Loader2 className="text-brand-500 size-10 animate-spin" />
 				<div className="flex flex-col gap-1">
 					<h2 className="text-text-primary text-2xl font-semibold tracking-tight">
@@ -51,7 +56,10 @@ export function VerifyEmailView({ token }: Props) {
 
 	if (status === "success") {
 		return (
-			<div className="flex flex-col items-center gap-6 text-center">
+			<div
+				data-qa={VerifyEmailViewHarness.Success}
+				className="flex flex-col items-center gap-6 text-center"
+			>
 				<CheckCircle2 className="text-brand-500 size-10" />
 				<div className="flex flex-col gap-1">
 					<h2 className="text-text-primary text-2xl font-semibold tracking-tight">
@@ -62,17 +70,25 @@ export function VerifyEmailView({ token }: Props) {
 					</p>
 				</div>
 				<Button size={ButtonSizes.Large} asChild fullWidth>
-					<Link href={ROUTES.auth.login}>Continue to sign in</Link>
+					<Link data-qa={VerifyEmailViewHarness.ContinueToLogin} href={ROUTES.auth.login}>
+						Continue to sign in
+					</Link>
 				</Button>
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex flex-col items-center gap-6 text-center">
+		<div
+			data-qa={VerifyEmailViewHarness.Error}
+			className="flex flex-col items-center gap-6 text-center"
+		>
 			<XCircle className="size-10 text-red-500" />
 			<div className="flex flex-col gap-1">
-				<h2 className="text-text-primary text-2xl font-semibold tracking-tight">
+				<h2
+					data-qa={VerifyEmailViewHarness.Title}
+					className="text-text-primary text-2xl font-semibold tracking-tight"
+				>
 					{token ? "Verification failed" : "Invalid link"}
 				</h2>
 				<p className="text-text-secondary text-sm">
@@ -83,7 +99,9 @@ export function VerifyEmailView({ token }: Props) {
 			</div>
 			<div className="flex w-full flex-col gap-2.5">
 				<Button variant={ButtonVariants.Outline} size={ButtonSizes.Large} asChild fullWidth>
-					<Link href={ROUTES.auth.login}>Back to sign in</Link>
+					<Link data-qa={VerifyEmailViewHarness.BackToLogin} href={ROUTES.auth.login}>
+						Back to sign in
+					</Link>
 				</Button>
 			</div>
 		</div>
