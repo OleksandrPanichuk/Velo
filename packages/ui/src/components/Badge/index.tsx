@@ -13,6 +13,7 @@ const badgeVariants = cva(
 				[BadgeVariants.Default]:
 					"bg-brand-subtle text-brand-700 dark:bg-brand-950 dark:text-brand-300",
 				[BadgeVariants.Secondary]: "bg-surface-muted text-text-secondary",
+				[BadgeVariants.Neutral]: "bg-surface-muted text-text-primary font-medium",
 				[BadgeVariants.Outline]: "border border-border bg-transparent text-text-secondary",
 				[BadgeVariants.Success]:
 					"bg-green-50 text-green-700 dark:bg-green-950/60 dark:text-green-400",
@@ -38,6 +39,7 @@ const badgeVariants = cva(
 const dotColorMap: Record<BadgeVariants, string> = {
 	[BadgeVariants.Default]: "bg-brand-500",
 	[BadgeVariants.Secondary]: "bg-text-tertiary",
+	[BadgeVariants.Neutral]: "bg-text-secondary",
 	[BadgeVariants.Outline]: "bg-text-tertiary",
 	[BadgeVariants.Success]: "bg-green-500",
 	[BadgeVariants.Warning]: "bg-yellow-500",

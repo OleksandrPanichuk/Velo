@@ -10,7 +10,7 @@ interface RoleBadgeProps {
 }
 
 const ROLE_VARIANTS: Record<WorkspaceMemberRole, BadgeVariants> = {
-	OWNER: BadgeVariants.Default,
+	OWNER: BadgeVariants.Neutral,
 	ADMIN: BadgeVariants.Warning,
 	MEMBER: BadgeVariants.Secondary,
 	GUEST: BadgeVariants.Outline,

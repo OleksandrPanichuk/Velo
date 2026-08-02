@@ -4,6 +4,8 @@ import ReactSelect, { Props as SelectProps } from "react-select";
 
 import { cn } from "../../lib/cn";
 
+const CONTROL_HEIGHT = "2rem";
+
 export interface CustomSelectProps extends SelectProps {
 	label?: string;
 	error?: string;
@@ -41,7 +43,7 @@ export function Select({
 				classNames={{
 					control: ({ isFocused, isDisabled }) =>
 						cn(
-							"min-h-9 w-full rounded-md border border-border bg-surface px-3 py-1 text-sm shadow-sm transition-colors",
+							"w-full rounded-md border border-border bg-surface px-3 py-0 text-sm shadow-sm transition-colors",
 							isFocused
 								? "outline-none ring-2 ring-brand-500 ring-offset-1 ring-offset-surface border-transparent"
 								: "hover:border-neutral-400 dark:hover:border-neutral-600",
@@ -51,9 +53,9 @@ export function Select({
 					placeholder: () => "text-text-secondary",
 					input: () => "text-text-primary",
 					singleValue: () => "text-text-primary",
-					valueContainer: () => "gap-1 py-0.5",
+					valueContainer: () => "gap-1 p-0",
 					menu: () =>
-						"mt-1 rounded-md border border-border bg-surface-default shadow-md animate-in fade-in zoom-in-95",
+						"mt-1 rounded-md border border-border bg-surface-overlay shadow-md animate-in fade-in zoom-in-95",
 					menuList: () => "p-1",
 					noOptionsMessage: () => "px-2 py-2 text-xs text-text-secondary",
 					loadingMessage: () => "px-2 py-2 text-xs text-text-secondary",
@@ -65,14 +67,17 @@ export function Select({
 						),
 					multiValue: () => "bg-surface-muted rounded items-center px-1 mr-1",
 					multiValueLabel: () => "text-xs text-text-primary px-1",
-					multiValueRemove: () => "hover:bg-surface-hover hover:text-red-500 rounded-r-sm p-0.5",
+					multiValueRemove: () => "hover:bg-surface-muted hover:text-red-500 rounded-r-sm p-0.5",
 					indicatorSeparator: () => "bg-border hidden",
-					dropdownIndicator: () => "text-text-secondary hover:text-text-primary cursor-pointer p-1",
-					clearIndicator: () => "text-text-secondary hover:text-red-500 cursor-pointer p-1",
+					dropdownIndicator: () => "text-text-secondary hover:text-text-primary cursor-pointer p-0.5",
+					clearIndicator: () => "text-text-secondary hover:text-red-500 cursor-pointer p-0.5",
 					...props.classNames,
 				}}
 				styles={{
 					menuPortal: (base) => ({ ...base, zIndex: 60 }),
+					control: (base) => ({ ...base, minHeight: CONTROL_HEIGHT, height: CONTROL_HEIGHT }),
+					valueContainer: (base) => ({ ...base, padding: 0 }),
+					indicatorsContainer: (base) => ({ ...base, padding: 0 }),
 					...props.styles,
 				}}
 				unstyled

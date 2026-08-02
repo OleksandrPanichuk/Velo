@@ -1,6 +1,7 @@
 export enum BadgeVariants {
 	Default = "default",
 	Secondary = "secondary",
+	Neutral = "neutral",
 	Outline = "outline",
 	Success = "success",
 	Warning = "warning",
