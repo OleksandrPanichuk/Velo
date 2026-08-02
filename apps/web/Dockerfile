@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:22-alpine AS base
 
 RUN npm install -g bun && corepack disable
@@ -7,12 +8,15 @@ WORKDIR /app
 COPY package.json bun.lock ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/api/package.json ./apps/api/
+COPY apps/e2e/package.json ./apps/e2e/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/primitives/package.json ./packages/primitives/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 
-RUN env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy \
+    bun install --frozen-lockfile --network-concurrency 8
 
 COPY apps/web ./apps/web
 COPY packages ./packages
