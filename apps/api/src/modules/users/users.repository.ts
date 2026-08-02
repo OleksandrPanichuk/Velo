@@ -136,8 +136,8 @@ export class UsersRepository extends BaseRepository<UserModel> {
 	}
 
 	private async generateUsername(email: string): Promise<string> {
-		const base = email
-			.split("@")[0]!
+		const [localPart = ""] = email.split("@");
+		const base = localPart
 			.replace(/[^a-z0-9_]/gi, "")
 			.slice(0, 28)
 			.toLowerCase();

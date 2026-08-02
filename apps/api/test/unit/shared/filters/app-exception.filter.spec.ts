@@ -1,6 +1,6 @@
 import { AppExceptionFilter } from "@/shared/filters/app-exception.filter";
-import { ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { type ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
+import { type ConfigService } from "@nestjs/config";
 import { QueryFailedError } from "typeorm";
 import type { Mock } from "vitest";
 
@@ -61,9 +61,7 @@ describe("AppExceptionFilter", () => {
 			buildFilter().catch(dbError, host);
 
 			expect(res.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
-			expect(res.json).toHaveBeenCalledWith(
-				expect.objectContaining({ error: "DATABASE_ERROR" }),
-			);
+			expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: "DATABASE_ERROR" }));
 		});
 
 		it("responds with 409 for unique constraint violation (code 23505)", () => {

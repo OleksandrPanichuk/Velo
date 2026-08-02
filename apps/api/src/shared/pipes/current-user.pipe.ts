@@ -24,7 +24,10 @@ export interface OptionalCurrentUserPipeInput {
 }
 
 @Injectable()
-export class OptionalCurrentUserPipe implements PipeTransform<OptionalCurrentUserPipeInput, Promise<unknown>> {
+export class OptionalCurrentUserPipe implements PipeTransform<
+	OptionalCurrentUserPipeInput,
+	Promise<unknown>
+> {
 	constructor(private readonly usersService: UsersService) {}
 
 	public async transform({ userId, key }: OptionalCurrentUserPipeInput): Promise<unknown> {

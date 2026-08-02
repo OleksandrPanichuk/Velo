@@ -1,5 +1,6 @@
-import { Lock } from "lucide-react";
 import { notFound } from "next/navigation";
+
+import { Lock } from "lucide-react";
 
 import { WORKSPACE_SIZE_LABELS } from "@/features/workspace/constants";
 import { getWorkspaceDetailsFn } from "@/features/workspace/server";
@@ -21,7 +22,10 @@ export async function WorkspaceSettingsView({ slug }: WorkspaceSettingsViewProps
 
 	const details = [
 		{ label: "Name", value: workspace.name },
-		{ label: "URL", value: `${env.NEXT_PUBLIC_APP_URL.replace(/^https?:\/\//, "")}/${workspace.slug}` },
+		{
+			label: "URL",
+			value: `${env.NEXT_PUBLIC_APP_URL.replace(/^https?:\/\//, "")}/${workspace.slug}`,
+		},
 		{
 			label: "Team size",
 			value: workspace.size ? WORKSPACE_SIZE_LABELS[workspace.size] : "Not set",
@@ -52,8 +56,8 @@ export async function WorkspaceSettingsView({ slug }: WorkspaceSettingsViewProps
 				<div className="flex flex-col gap-1">
 					<p className="text-text-primary text-sm font-medium">Editing is not available yet</p>
 					<p className="text-text-secondary text-xs leading-relaxed">
-						The API has no mutation for updating a workspace, so these values are read-only. Once
-						it ships, this page will let you change them.
+						The API has no mutation for updating a workspace, so these values are read-only. Once it
+						ships, this page will let you change them.
 					</p>
 				</div>
 			</div>
@@ -71,7 +75,10 @@ export async function WorkspaceSettingsView({ slug }: WorkspaceSettingsViewProps
 						>
 							{label}
 						</dt>
-						<dd data-qa={WorkspaceSettingsViewHarness.DetailValue} className="text-text-primary text-sm">
+						<dd
+							data-qa={WorkspaceSettingsViewHarness.DetailValue}
+							className="text-text-primary text-sm"
+						>
 							{value}
 						</dd>
 					</div>

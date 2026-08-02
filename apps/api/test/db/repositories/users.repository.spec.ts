@@ -47,10 +47,7 @@ beforeAll(async () => {
 			TypeOrmModule.forRoot(getTestTypeOrmOptions()),
 			TypeOrmModule.forFeature([UserModel, OAuthAccountModel]),
 		],
-		providers: [
-			UsersRepository,
-			{ provide: TransactionHost, useValue: { tx: undefined } },
-		],
+		providers: [UsersRepository, { provide: TransactionHost, useValue: { tx: undefined } }],
 	}).compile();
 
 	repo = module.get(UsersRepository);

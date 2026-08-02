@@ -1,7 +1,7 @@
 import { Loader } from "@/infrastructure/dataloader";
 import { UserModel } from "@/models/User.model";
 import { OptionalCurrentUser, Public } from "@/shared/decorators";
-import { IPaginatedType, PaginationArgs } from "@/shared/pagination";
+import { PaginatedResult, PaginationArgs } from "@/shared/pagination";
 import { Args, Resolver } from "@nestjs/graphql";
 import DataLoader from "dataloader";
 import { GetCurrentUserQuery, GetUserByIdQuery, GetUsersQuery } from "./users.decorators";
@@ -15,7 +15,7 @@ export class UsersResolver {
 	@GetUsersQuery()
 	public async getUsers(
 		@Args() paginationArgs: PaginationArgs,
-	): Promise<IPaginatedType<UserModel>> {
+	): Promise<PaginatedResult<UserModel>> {
 		return this.usersService.findAllPaginated(paginationArgs);
 	}
 

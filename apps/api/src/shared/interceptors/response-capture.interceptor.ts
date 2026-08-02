@@ -16,6 +16,6 @@ export class ResponseCaptureInterceptor implements NestInterceptor {
 			const res = context.switchToHttp().getResponse<ServerResponse>();
 			if (res) this.cls.setResponse(res);
 		}
-		return next.handle();
+		return next.handle() as Observable<unknown>;
 	}
 }

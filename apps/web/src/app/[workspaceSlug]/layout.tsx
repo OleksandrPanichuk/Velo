@@ -1,6 +1,6 @@
-import type { PropsWithChildren } from "react";
-
 import { notFound, redirect } from "next/navigation";
+
+import type { PropsWithChildren } from "react";
 
 import { ROUTES } from "@/constants";
 import { getCurrentUserFn } from "@/features/users/server";

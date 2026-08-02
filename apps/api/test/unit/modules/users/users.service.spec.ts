@@ -1,7 +1,7 @@
-import { UserModel } from "@/models/User.model";
+import { type UserModel } from "@/models/User.model";
 import { UsersService } from "@/modules/users/users.service";
-import { UsersRepository } from "@/modules/users/users.repository";
-import { PaginationService } from "@/shared/pagination";
+import { type UsersRepository } from "@/modules/users/users.repository";
+import { type PaginationService } from "@/shared/pagination";
 
 const mockUsersRepository: Partial<UsersRepository> = {
 	findAll: vi.fn(),
@@ -72,7 +72,7 @@ describe("UsersService", () => {
 		it("creates query builder and delegates to pagination service", async () => {
 			const qb = {} as never;
 			const paginated = { edges: [], nodes: [], totalCount: 0, pageInfo: {} as never };
-			vi.mocked(mockUsersRepository.createQueryBuilder!).mockResolvedValue(qb);
+			vi.mocked(mockUsersRepository.createQueryBuilder!).mockReturnValue(qb);
 			vi.mocked(mockPaginationService.paginate!).mockResolvedValue(paginated);
 
 			const paginationArgs = { first: 10 };

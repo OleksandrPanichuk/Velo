@@ -5,10 +5,8 @@
  * Mocks only repositories and EventEmitter2 (no DB or event bus needed).
  */
 vi.mock("@nestjs-cls/transactional", () => ({
-	Transactional:
-		() =>
-		(_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
-			descriptor,
+	Transactional: () => (_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
+		descriptor,
 	TransactionHost: class {},
 }));
 
@@ -21,7 +19,7 @@ import { WorkspacesService } from "@/modules/workspaces/workspaces.service";
 import { UsersRepository } from "@/modules/users/users.repository";
 import { PaginationService } from "@/shared/pagination";
 import { ConflictException } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import {
 	mockWorkspacesRepository,
@@ -57,7 +55,7 @@ beforeAll(async () => {
 	workspacesService = module.get(WorkspacesService);
 });
 
-afterAll(() => module.close());
+afterAll(async () => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("WorkspacesService integration", () => {

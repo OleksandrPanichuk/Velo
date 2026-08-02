@@ -1,5 +1,5 @@
 import { NotificationType } from "@/enums";
-import { NotificationModel } from "@/models/Notification.model";
+import { type NotificationModel } from "@/models/Notification.model";
 import { NOTIFICATION_RECEIVED_EVENT } from "@/modules/notifications/notifications.constants";
 import type { NotificationsRepository } from "@/modules/notifications/notifications.repository";
 import { NotificationsService } from "@/modules/notifications/notifications.service";
@@ -53,7 +53,9 @@ describe("NotificationsService", () => {
 	describe("findByRecipientAndWorkspace", () => {
 		it("delegates to the repository", async () => {
 			const notifications = [{ id: "n1" }, { id: "n2" }];
-			vi.mocked(mockRepo.findByRecipientAndWorkspace!).mockResolvedValue(notifications as NotificationModel[]);
+			vi.mocked(mockRepo.findByRecipientAndWorkspace!).mockResolvedValue(
+				notifications as NotificationModel[],
+			);
 
 			const result = await buildService().findByRecipientAndWorkspace("user-1", "ws-1");
 

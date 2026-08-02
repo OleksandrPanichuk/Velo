@@ -39,7 +39,10 @@ export class WorkspaceInvitesService {
 		return this.workspaceInvitesRepository.findPendingByWorkspaceId(workspaceId);
 	}
 
-	public async invite(dto: InviteMemberInput, inviterUserId: string): Promise<WorkspaceInviteModel> {
+	public async invite(
+		dto: InviteMemberInput,
+		inviterUserId: string,
+	): Promise<WorkspaceInviteModel> {
 		const email = dto.email.toLowerCase();
 
 		const workspace = await this.workspacesService.findById(dto.workspaceId);

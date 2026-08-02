@@ -14,7 +14,7 @@ import { PermissionService } from "./permissions.service";
 @Global()
 @Module({
 	imports: [TypeOrmModule.forFeature([WorkspaceMemberModel])],
-	providers: [PermissionsRepository, PermissionService, WorkspaceContextGuard, PoliciesGuard],
-	exports: [PermissionService, WorkspaceContextGuard, PoliciesGuard],
+	providers: [PermissionService, PermissionsRepository, PoliciesGuard, WorkspaceContextGuard],
+	exports: [PermissionService, PoliciesGuard, WorkspaceContextGuard],
 })
 export class PermissionsModule {}

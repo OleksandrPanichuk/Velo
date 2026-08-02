@@ -3,7 +3,7 @@ import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 
 @Injectable()
 export class SanitizationPipe implements PipeTransform {
-	public transform(value: unknown, metadata: ArgumentMetadata): unknown {
+	public transform(value: unknown, _metadata: ArgumentMetadata): unknown {
 		if (value === null || value === undefined) {
 			return value;
 		}

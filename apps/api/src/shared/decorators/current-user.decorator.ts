@@ -38,7 +38,7 @@ const GetOptionalUserData = createParamDecorator(
 
 export function CurrentUser(key: "id"): ParameterDecorator;
 export function CurrentUser(): ParameterDecorator;
-export function CurrentUser<K extends Exclude<SafeUserKey, "id">>(key: K): ParameterDecorator;
+export function CurrentUser<TKey extends Exclude<SafeUserKey, "id">>(key: TKey): ParameterDecorator;
 export function CurrentUser(key?: SafeUserKey): ParameterDecorator {
 	if (key === "id") return GetUserId();
 	return GetUserData(key, CurrentUserPipe);

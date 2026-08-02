@@ -14,14 +14,17 @@
  *     .overrideProvider(UsersRepository, mockUsersRepository())
  *     .compile();
  */
-import { ModuleMetadata, Provider, Type } from "@nestjs/common";
+import { type ModuleMetadata, type Provider, type Type } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { JwtModule } from "@nestjs/jwt";
-import { Test, TestingModule } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { TEST_JWT_SECRET, TEST_REFRESH_SECRET } from "./auth.helper";
 
-type OverrideEntry = { token: Type | string | symbol; value: unknown };
+interface OverrideEntry {
+	token: Type | string | symbol;
+	value: unknown;
+}
 
 export class TestModuleBuilder {
 	private readonly imports: NonNullable<ModuleMetadata["imports"]> = [];

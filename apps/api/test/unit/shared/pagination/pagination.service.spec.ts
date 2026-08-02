@@ -2,7 +2,9 @@ import { PaginationService } from "@/shared/pagination/pagination.service";
 import { encode } from "base-64";
 import type { SelectQueryBuilder } from "typeorm";
 
-type Entity = { id: string };
+interface Entity {
+	id: string;
+}
 
 const makeQb = (entities: Entity[], totalCount = entities.length) => {
 	const qb = {
@@ -50,10 +52,9 @@ describe("PaginationService", () => {
 
 			await buildService().paginate(qb, { first: 10, after: cursor });
 
-			expect(qb.andWhere).toHaveBeenCalledWith(
-				expect.stringContaining("id > :cursorId"),
-				{ cursorId: "1" },
-			);
+			expect(qb.andWhere).toHaveBeenCalledWith(expect.stringContaining("id > :cursorId"), {
+				cursorId: "1",
+			});
 		});
 
 		it("sets hasPreviousPage when after cursor is provided", async () => {

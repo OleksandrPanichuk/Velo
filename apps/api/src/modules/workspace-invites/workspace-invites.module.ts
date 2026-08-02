@@ -11,8 +11,8 @@ import { WorkspaceInvitesService } from "./workspace-invites.service";
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([WorkspaceInviteModel]),
 		MailQueueModule,
+		TypeOrmModule.forFeature([WorkspaceInviteModel]),
 		UsersModule,
 		WorkspaceMembersModule,
 		WorkspacesModule,

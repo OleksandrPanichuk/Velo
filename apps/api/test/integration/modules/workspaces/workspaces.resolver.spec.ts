@@ -10,10 +10,8 @@
  * - getWorkspaces returns the full list from the real service
  */
 vi.mock("@nestjs-cls/transactional", () => ({
-	Transactional:
-		() =>
-		(_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
-			descriptor,
+	Transactional: () => (_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
+		descriptor,
 	TransactionHost: class {},
 }));
 
@@ -27,7 +25,7 @@ import { WorkspacesResolver } from "@/modules/workspaces/workspaces.resolver";
 import { WorkspacesService } from "@/modules/workspaces/workspaces.service";
 import { PaginationService } from "@/shared/pagination";
 import { ConflictException } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import {
 	mockUsersRepository,
@@ -64,7 +62,7 @@ beforeAll(async () => {
 	resolver = module.get(WorkspacesResolver);
 });
 
-afterAll(() => module.close());
+afterAll(async () => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("WorkspacesResolver integration", () => {

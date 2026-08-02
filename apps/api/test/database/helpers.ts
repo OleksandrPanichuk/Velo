@@ -40,9 +40,7 @@ export function getTestTypeOrmOptions(): TypeOrmModuleOptions {
 export async function truncateAll(dataSource: DataSource): Promise<void> {
 	if (!dataSource.entityMetadatas.length) return;
 
-	const tables = dataSource.entityMetadatas
-		.map((e) => `"${e.tableName}"`)
-		.join(", ");
+	const tables = dataSource.entityMetadatas.map((e) => `"${e.tableName}"`).join(", ");
 
 	await dataSource.query(`TRUNCATE TABLE ${tables} CASCADE`);
 }

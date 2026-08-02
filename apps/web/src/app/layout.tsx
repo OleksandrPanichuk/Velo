@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import type { Metadata } from "next";
 
-import { getCurrentUserFn } from "@/features/users/server";
 import { createMetadata } from "@/lib/metadata";
 import { ApolloProvider } from "@/providers";
 
@@ -23,7 +22,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = createMetadata();
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-	const currentUser = await getCurrentUserFn();
 	return (
 		<html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
 			<body className="flex min-h-full flex-col">

@@ -8,6 +8,8 @@ import {
 	type FindOptionsWhere,
 	In,
 	type Repository,
+	type SelectQueryBuilder,
+	type UpdateResult,
 } from "typeorm";
 
 export abstract class BaseRepository<T extends BaseModel> {
@@ -44,11 +46,11 @@ export abstract class BaseRepository<T extends BaseModel> {
 		return this.em.save(entity);
 	}
 
-	public async softDelete(id: string) {
+	public async softDelete(id: string): Promise<UpdateResult> {
 		return this.em.softDelete(this.repo.target, id);
 	}
 
-	public async createQueryBuilder(alias: string) {
+	public createQueryBuilder(alias: string): SelectQueryBuilder<T> {
 		return this.em.createQueryBuilder(this.repo.target, alias);
 	}
 }

@@ -18,8 +18,7 @@ export interface OAuthUserData {
 
 export type OAuthRequest = Request & {
 	user: OAuthUserData;
-}
-
+};
 
 export interface AuthTokens {
 	accessToken: string;

@@ -1,7 +1,7 @@
 import type { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
-import { PermissionService } from "@/modules/permissions";
+import { type PermissionService } from "@/modules/permissions";
 import { WorkspaceMembersResolver } from "@/modules/workspace-members/workspace-members.resolver";
-import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
+import { type WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
 import { ForbiddenException } from "@nestjs/common";
 
 const mockWorkspaceMembersService: Partial<WorkspaceMembersService> = {

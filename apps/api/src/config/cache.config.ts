@@ -24,10 +24,10 @@ export const getCacheConfig = (config: ConfigService<Env>): CacheOptions => {
 				store: new CacheableMemory({ ttl: l1TtlMs, lruSize: l1LruSize }),
 			}),
 			createKeyv(redisUrl, {
-			    namespace: config.getOrThrow<string>("CACHE_KEY_PREFIX")
+				namespace: config.getOrThrow<string>("CACHE_KEY_PREFIX"),
 			}),
 		],
 		ttl: config.get<number>("CACHE_DEFAULT_TTL"),
-		nonBlocking: true
+		nonBlocking: true,
 	};
 };

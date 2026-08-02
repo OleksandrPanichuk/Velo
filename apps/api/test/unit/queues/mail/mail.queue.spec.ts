@@ -94,7 +94,11 @@ describe("MailQueue", () => {
 					to: "user@example.com",
 					subject: MAILER_SUBJECTS[MailTemplate.SIGN_IN_ALERT],
 					template: MailTemplate.SIGN_IN_ALERT,
-					context: { ipAddress: "127.0.0.1", userAgent: "TestBrowser/1.0", time: "2024-01-01T00:00:00Z" },
+					context: {
+						ipAddress: "127.0.0.1",
+						userAgent: "TestBrowser/1.0",
+						time: "2024-01-01T00:00:00Z",
+					},
 				},
 				MAIL_JOB_OPTIONS,
 			);

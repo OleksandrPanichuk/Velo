@@ -1,5 +1,5 @@
 export class MemberJoinedEvent {
-	static readonly EVENT = "member.joined";
+	public static readonly EVENT = "member.joined";
 
 	constructor(
 		public readonly workspaceId: string,
