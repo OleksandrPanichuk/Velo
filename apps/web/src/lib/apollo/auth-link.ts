@@ -7,6 +7,14 @@ import { Refresh, SignOut } from "@/graphql/types";
 
 const UNAUTHENTICATED = "UNAUTHENTICATED";
 
+const PUBLIC_AUTH_OPERATIONS = new Set([
+	"SignIn",
+	"SignUp",
+	"VerifyEmail",
+	"ForgotPassword",
+	"ResetPassword",
+]);
+
 let refreshPromise: Promise<boolean> | null = null;
 
 async function attemptRefresh(uri: string): Promise<boolean> {
@@ -38,6 +46,8 @@ async function signOutAndRedirect(uri: string): Promise<void> {
 export function makeAuthLink(uri: string) {
 	return new ErrorLink(({ error, operation, forward }) => {
 		if (!CombinedGraphQLErrors.is(error)) return;
+
+		if (operation.operationName && PUBLIC_AUTH_OPERATIONS.has(operation.operationName)) return;
 
 		const isUnauthenticated = error.errors.some((e) => e.extensions?.["code"] === UNAUTHENTICATED);
 
