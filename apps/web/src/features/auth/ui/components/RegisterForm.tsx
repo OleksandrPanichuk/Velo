@@ -99,6 +99,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="fullName">
 					{(field) => (
 						<Input
+							overlayMessage
 							data-qa={RegisterFormHarness.FullName}
 							label="Full name"
 							type="text"
@@ -116,6 +117,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="username">
 					{(field) => (
 						<Input
+							overlayMessage
 							data-qa={RegisterFormHarness.Username}
 							label="Username"
 							type="text"
@@ -133,6 +135,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="email">
 					{(field) => (
 						<Input
+							overlayMessage
 							data-qa={RegisterFormHarness.Email}
 							label="Email"
 							type="email"
@@ -150,6 +153,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="password">
 					{(field) => (
 						<PasswordInput
+							overlayMessage
 							data-qa={RegisterFormHarness.Password}
 							autoComplete="new-password"
 							value={field.state.value}
@@ -163,6 +167,7 @@ export function RegisterForm({ inviteToken }: Props) {
 				<form.Field name="confirmPassword">
 					{(field) => (
 						<PasswordInput
+							overlayMessage
 							data-qa={RegisterFormHarness.ConfirmPassword}
 							label="Confirm password"
 							autoComplete="new-password"

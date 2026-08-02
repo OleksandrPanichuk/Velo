@@ -113,6 +113,7 @@ export function ResetPasswordForm({ token }: Props) {
 				<form.Field name="password">
 					{(field) => (
 						<Input
+							overlayMessage
 							data-qa={ResetPasswordFormHarness.Password}
 							label="New password"
 							type={showPassword ? "text" : "password"}
@@ -139,6 +140,7 @@ export function ResetPasswordForm({ token }: Props) {
 				<form.Field name="confirmPassword">
 					{(field) => (
 						<Input
+							overlayMessage
 							data-qa={ResetPasswordFormHarness.ConfirmPassword}
 							label="Confirm new password"
 							type={showConfirm ? "text" : "password"}

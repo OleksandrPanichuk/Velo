@@ -31,7 +31,6 @@ export class ResetPasswordPage extends BasePage {
 	async resetTo(password: string) {
 		await this.password.fill(password);
 		await this.confirmPassword.fill(password);
-		await this.confirmPassword.blur();
 		await this.submit.click();
 	}
 
