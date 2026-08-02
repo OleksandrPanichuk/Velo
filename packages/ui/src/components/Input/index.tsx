@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			[props["aria-describedby"], errorId ?? hintId].filter(Boolean).join(" ") || undefined;
 
 		return (
-			<div className={cn("flex w-full flex-col gap-1.5", containerClassName)}>
+			<div className={cn("flex w-full flex-col gap-1.5 h-full", containerClassName)}>
 				{label && (
 					<label
 						htmlFor={inputId}
@@ -46,7 +46,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						{label}
 					</label>
 				)}
-				<div className="relative flex items-center">
+				<div className="relative flex items-center h-full">
 					{startAdornment && (
 						<span className="text-text-tertiary absolute left-2.5 flex items-center [&_svg]:size-4">
 							{startAdornment}
