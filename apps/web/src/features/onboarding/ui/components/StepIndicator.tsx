@@ -3,6 +3,8 @@ import { Check } from "lucide-react";
 import { OnboardingStep } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
 import styles from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.module.css";
 
+import { StepIndicatorHarness } from "./StepIndicator.harness";
+
 interface StepIndicatorProps {
 	current: OnboardingStep;
 }
@@ -11,10 +13,11 @@ const STEPS = [OnboardingStep.Workspace, OnboardingStep.About, OnboardingStep.Re
 
 export function StepIndicator({ current }: StepIndicatorProps) {
 	return (
-		<div className="flex items-center">
+		<div data-qa={StepIndicatorHarness.Root} className="flex items-center">
 			{STEPS.map((s, i) => (
 				<div key={s} className="flex items-center">
 					<div
+						data-qa={StepIndicatorHarness.Step}
 						className={`flex size-8 items-center justify-center rounded-full text-xs font-medium transition-all duration-300 ${
 							current === s
 								? "bg-brand-500 text-white shadow-lg shadow-violet-500/30"

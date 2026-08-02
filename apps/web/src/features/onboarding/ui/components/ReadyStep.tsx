@@ -7,6 +7,8 @@ import {
 } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
 import styles from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.module.css";
 
+import { ReadyStepHarness } from "./ReadyStep.harness";
+
 interface ReadyStepProps {
 	workspaceName: string;
 	workspaceSlug: string;
@@ -27,7 +29,7 @@ export function ReadyStep({
 	onBack,
 }: ReadyStepProps) {
 	return (
-		<div className="flex flex-col items-center gap-8 text-center">
+		<div data-qa={ReadyStepHarness.Root} className="flex flex-col items-center gap-8 text-center">
 			<div className="relative flex items-center justify-center">
 				<div className={`${styles.dot1} absolute size-2 rounded-sm`} aria-hidden />
 				<div className={`${styles.dot2} absolute size-2 rounded-sm`} aria-hidden />
@@ -40,7 +42,10 @@ export function ReadyStep({
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<h1 className="text-text-primary text-2xl font-semibold tracking-tight">
+				<h1
+					data-qa={ReadyStepHarness.Title}
+					className="text-text-primary text-2xl font-semibold tracking-tight"
+				>
 					Your workspace is ready
 				</h1>
 				<p className="text-text-secondary text-sm leading-relaxed">
@@ -91,9 +96,12 @@ export function ReadyStep({
 
 			{error && (
 				<div className="flex flex-col items-center gap-1.5">
-					<p className="text-sm text-red-500">{error}</p>
+					<p data-qa={ReadyStepHarness.Error} className="text-sm text-red-500">
+						{error}
+					</p>
 					<button
 						type="button"
+						data-qa={ReadyStepHarness.ChangeWorkspaceName}
 						onClick={onBack}
 						className="text-brand-500 hover:text-brand-600 text-xs underline-offset-2 hover:underline"
 					>
@@ -102,7 +110,13 @@ export function ReadyStep({
 				</div>
 			)}
 
-			<Button size={ButtonSizes.Large} fullWidth onClick={onComplete} disabled={loading}>
+			<Button
+				data-qa={ReadyStepHarness.Complete}
+				size={ButtonSizes.Large}
+				fullWidth
+				onClick={onComplete}
+				disabled={loading}
+			>
 				{loading ? <Spinner /> : "Open workspace"}
 			</Button>
 		</div>

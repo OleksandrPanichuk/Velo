@@ -14,6 +14,7 @@ import { LoginInputSchema } from "@/features/auth/schemas";
 import { acceptInvitePath, withInviteToken } from "@/features/invite/utils";
 import { useSignInMutation } from "@/graphql/hooks";
 
+import { LoginFormHarness } from "./LoginForm.harness";
 import { OAuthButton } from "./OAuthButton";
 
 interface Props {
@@ -53,10 +54,18 @@ export function LoginForm({ inviteToken }: Props) {
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				<OAuthButton provider={OAuthProvider.Google} inviteToken={inviteToken}>
+				<OAuthButton
+					provider={OAuthProvider.Google}
+					inviteToken={inviteToken}
+					data-qa={LoginFormHarness.GoogleButton}
+				>
 					Continue with Google
 				</OAuthButton>
-				<OAuthButton provider={OAuthProvider.Github} inviteToken={inviteToken}>
+				<OAuthButton
+					provider={OAuthProvider.Github}
+					inviteToken={inviteToken}
+					data-qa={LoginFormHarness.GithubButton}
+				>
 					Continue with GitHub
 				</OAuthButton>
 			</div>
@@ -68,6 +77,7 @@ export function LoginForm({ inviteToken }: Props) {
 			</div>
 
 			<form
+				data-qa={LoginFormHarness.Form}
 				className="flex flex-col gap-4"
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -77,6 +87,7 @@ export function LoginForm({ inviteToken }: Props) {
 				<form.Field name="email">
 					{(field) => (
 						<Input
+							data-qa={LoginFormHarness.Email}
 							label="Email"
 							type="email"
 							placeholder="you@example.com"
@@ -93,6 +104,7 @@ export function LoginForm({ inviteToken }: Props) {
 				<form.Field name="password">
 					{(field) => (
 						<PasswordInput
+							data-qa={LoginFormHarness.Password}
 							value={field.state.value}
 							onBlur={field.handleBlur}
 							onChange={(e) => field.handleChange(e.target.value)}
@@ -103,6 +115,7 @@ export function LoginForm({ inviteToken }: Props) {
 
 				<div className="flex justify-end">
 					<Link
+						data-qa={LoginFormHarness.ForgotPasswordLink}
 						href={ROUTES.auth.forgotPassword}
 						className="text-text-secondary hover:text-text-primary text-xs transition-colors duration-100"
 					>
@@ -110,9 +123,19 @@ export function LoginForm({ inviteToken }: Props) {
 					</Link>
 				</div>
 
-				{serverError && <p className="text-sm text-red-500">{serverError}</p>}
+				{serverError && (
+					<p data-qa={LoginFormHarness.ServerError} className="text-sm text-red-500">
+						{serverError}
+					</p>
+				)}
 
-				<Button type="submit" size={ButtonSizes.Large} fullWidth loading={loading}>
+				<Button
+					data-qa={LoginFormHarness.Submit}
+					type="submit"
+					size={ButtonSizes.Large}
+					fullWidth
+					loading={loading}
+				>
 					Sign in
 				</Button>
 			</form>
@@ -120,6 +143,7 @@ export function LoginForm({ inviteToken }: Props) {
 			<p className="text-text-tertiary text-center text-sm">
 				Don&apos;t have an account?{" "}
 				<Link
+					data-qa={LoginFormHarness.RegisterLink}
 					href={withInviteToken(ROUTES.auth.register, inviteToken)}
 					className="text-brand-500 hover:text-brand-400 font-medium transition-colors duration-100"
 				>

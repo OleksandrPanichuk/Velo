@@ -7,6 +7,8 @@ import { OnboardingFormSchema } from "@/features/onboarding/schemas";
 import type { OnboardingFormApi } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.hooks";
 import { toSlug } from "@/utils/common";
 
+import { WorkspaceStepHarness } from "./WorkspaceStep.harness";
+
 interface WorkspaceStepProps {
 	form: OnboardingFormApi;
 	onContinue: () => void;
@@ -14,7 +16,7 @@ interface WorkspaceStepProps {
 
 export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
 	return (
-		<div className="flex flex-col gap-8">
+		<div data-qa={WorkspaceStepHarness.Root} className="flex flex-col gap-8">
 			<div className="flex flex-col items-center gap-5 text-center">
 				<div className="bg-brand-500/10 ring-brand-500/20 relative flex size-16 items-center justify-center rounded-2xl ring-1">
 					<WorkspaceIcon />
@@ -25,7 +27,10 @@ export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
 				</div>
 
 				<div className="flex flex-col gap-1.5">
-					<h1 className="text-text-primary text-2xl font-semibold tracking-tight">
+					<h1
+						data-qa={WorkspaceStepHarness.Title}
+						className="text-text-primary text-2xl font-semibold tracking-tight"
+					>
 						Name your workspace
 					</h1>
 					<p className="text-text-secondary text-sm leading-relaxed">
@@ -40,6 +45,7 @@ export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
 				<form.Field name="name" validators={{ onSubmit: OnboardingFormSchema.shape.name }}>
 					{(field) => (
 						<Input
+							data-qa={WorkspaceStepHarness.Name}
 							label="Workspace name"
 							placeholder="Acme Corp"
 							autoFocus
@@ -70,6 +76,7 @@ export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
 									velo.app/
 								</span>
 								<input
+									data-qa={WorkspaceStepHarness.Slug}
 									type="text"
 									value={field.state.value}
 									onBlur={field.handleBlur}
@@ -79,14 +86,21 @@ export function WorkspaceStep({ form, onContinue }: WorkspaceStepProps) {
 								/>
 							</div>
 							{field.state.meta.errors[0] && (
-								<p className="text-xs text-red-500">{field.state.meta.errors[0].message}</p>
+								<p data-qa={WorkspaceStepHarness.SlugError} className="text-xs text-red-500">
+									{field.state.meta.errors[0].message}
+								</p>
 							)}
 						</div>
 					)}
 				</form.Field>
 			</div>
 
-			<Button size={ButtonSizes.Large} fullWidth onClick={onContinue}>
+			<Button
+				data-qa={WorkspaceStepHarness.Continue}
+				size={ButtonSizes.Large}
+				fullWidth
+				onClick={onContinue}
+			>
 				Continue
 			</Button>
 		</div>

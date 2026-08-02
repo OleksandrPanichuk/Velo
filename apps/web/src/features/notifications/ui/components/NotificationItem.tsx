@@ -6,6 +6,8 @@ import { UserPlus } from "lucide-react";
 import type { NotificationBaseFragment } from "@/graphql/types";
 import { formatDateTime } from "@/utils/date";
 
+import { NotificationItemHarness } from "./NotificationItem.harness";
+
 interface NotificationItemProps {
 	notification: NotificationBaseFragment;
 	onMarkAsRead: (id: string) => void;
@@ -16,6 +18,7 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
 
 	return (
 		<li
+			data-qa={NotificationItemHarness.Root}
 			className={`border-border flex items-start gap-3 border-b px-4 py-3 last:border-b-0 ${
 				isRead ? "bg-transparent" : "bg-brand-500/5"
 			}`}
@@ -35,6 +38,7 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
 				)}
 				{!isRead && (
 					<span
+						data-qa={NotificationItemHarness.UnreadMarker}
 						className="bg-brand-500 ring-surface absolute -top-0.5 -right-0.5 size-2.5 rounded-full ring-2"
 						aria-hidden
 					/>
@@ -43,6 +47,7 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
 
 			<div className="flex min-w-0 flex-1 flex-col gap-0.5">
 				<p
+					data-qa={NotificationItemHarness.Title}
 					className={`text-sm ${isRead ? "text-text-secondary" : "text-text-primary font-medium"}`}
 				>
 					{!isRead && <span className="sr-only">Unread: </span>}
@@ -58,6 +63,7 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
 
 			{!isRead && (
 				<Button
+					data-qa={NotificationItemHarness.MarkAsRead}
 					variant={ButtonVariants.Ghost}
 					size={ButtonSizes.Small}
 					onClick={() => onMarkAsRead(notification.id)}

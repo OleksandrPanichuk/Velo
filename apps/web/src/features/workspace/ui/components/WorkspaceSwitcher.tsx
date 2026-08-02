@@ -18,6 +18,8 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { ROUTES } from "@/constants";
 import type { WorkspaceBaseFragment } from "@/graphql/types";
 
+import { WorkspaceSwitcherHarness } from "./WorkspaceSwitcher.harness";
+
 type WorkspaceSwitcherProps = {
 	workspace: WorkspaceBaseFragment;
 	workspaces: WorkspaceBaseFragment[];
@@ -28,6 +30,7 @@ export function WorkspaceSwitcher({ workspace, workspaces, className }: Workspac
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
+				data-qa={WorkspaceSwitcherHarness.Trigger}
 				className={cn(
 					"hover:bg-surface-muted focus-visible:ring-brand-500 flex items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors duration-100 outline-none focus-visible:ring-2",
 					className,
@@ -39,20 +42,31 @@ export function WorkspaceSwitcher({ workspace, workspaces, className }: Workspac
 					fallback={workspace.name}
 					className="rounded-md"
 				/>
-				<span className="text-text-primary min-w-0 flex-1 truncate text-left text-sm font-semibold">
+				<span
+					data-qa={WorkspaceSwitcherHarness.Name}
+					className="text-text-primary min-w-0 flex-1 truncate text-left text-sm font-semibold"
+				>
 					{workspace.name}
 				</span>
 				<ChevronsUpDown className="text-text-tertiary size-3.5 shrink-0" />
 			</DropdownMenuTrigger>
 
-			<DropdownMenuContent align="start" className="w-60">
+			<DropdownMenuContent
+				data-qa={WorkspaceSwitcherHarness.Menu}
+				align="start"
+				className="w-60"
+			>
 				<DropdownMenuLabel className="text-text-tertiary text-xs font-medium">
 					Workspaces
 				</DropdownMenuLabel>
 
 				{workspaces.map((item) => (
 					<DropdownMenuItem key={item.id} asChild>
-						<Link href={ROUTES.workspace.root(item.slug)} className="cursor-pointer gap-2">
+						<Link
+							data-qa={WorkspaceSwitcherHarness.Option}
+							href={ROUTES.workspace.root(item.slug)}
+							className="cursor-pointer gap-2"
+						>
 							<Avatar
 								size={AvatarSizes.XSmall}
 								src={item.logo?.url}
@@ -68,7 +82,11 @@ export function WorkspaceSwitcher({ workspace, workspaces, className }: Workspac
 				<DropdownMenuSeparator />
 
 				<DropdownMenuItem asChild>
-					<Link href={ROUTES.onboarding} className="text-text-secondary cursor-pointer gap-2">
+					<Link
+						data-qa={WorkspaceSwitcherHarness.CreateWorkspace}
+						href={ROUTES.onboarding}
+						className="text-text-secondary cursor-pointer gap-2"
+					>
 						<Plus className="size-3.5" />
 						Create workspace
 					</Link>

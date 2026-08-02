@@ -6,6 +6,7 @@ import { Users } from "lucide-react";
 import { ROUTES } from "@/constants";
 import { withInviteToken } from "@/features/invite/utils";
 
+import { InviteAuthPromptHarness } from "./InviteAuthPrompt.harness";
 import { InviteMessage } from "./InviteMessage";
 
 interface Props {
@@ -20,10 +21,20 @@ export function InviteAuthPrompt({ token }: Props) {
 			description="Create your account to join the workspace. Use the email address the invite was sent to."
 		>
 			<Button size={ButtonSizes.Large} asChild fullWidth>
-				<Link href={withInviteToken(ROUTES.auth.register, token)}>Create account</Link>
+				<Link
+					data-qa={InviteAuthPromptHarness.CreateAccount}
+					href={withInviteToken(ROUTES.auth.register, token)}
+				>
+					Create account
+				</Link>
 			</Button>
 			<Button variant={ButtonVariants.Outline} size={ButtonSizes.Large} asChild fullWidth>
-				<Link href={withInviteToken(ROUTES.auth.login, token)}>I already have an account</Link>
+				<Link
+					data-qa={InviteAuthPromptHarness.SignIn}
+					href={withInviteToken(ROUTES.auth.login, token)}
+				>
+					I already have an account
+				</Link>
 			</Button>
 		</InviteMessage>
 	);

@@ -13,6 +13,8 @@ import { ROUTES } from "@/constants";
 import { ResetPasswordInputSchema } from "@/features/auth/schemas";
 import { useResetPasswordMutation } from "@/graphql/hooks";
 
+import { ResetPasswordFormHarness } from "./ResetPasswordForm.harness";
+
 interface Props {
 	token: string | undefined;
 }
@@ -48,7 +50,7 @@ export function ResetPasswordForm({ token }: Props) {
 
 	if (!token) {
 		return (
-			<div className="flex flex-col gap-6">
+			<div data-qa={ResetPasswordFormHarness.InvalidToken} className="flex flex-col gap-6">
 				<div className="flex flex-col gap-1">
 					<h2 className="text-text-primary text-2xl font-semibold tracking-tight">Invalid link</h2>
 					<p className="text-text-secondary text-sm">
@@ -56,6 +58,7 @@ export function ResetPasswordForm({ token }: Props) {
 					</p>
 				</div>
 				<Link
+					data-qa={ResetPasswordFormHarness.RequestNewLink}
 					href={ROUTES.auth.forgotPassword}
 					className="text-text-secondary hover:text-text-primary text-center text-sm transition-colors duration-100"
 				>
@@ -67,7 +70,7 @@ export function ResetPasswordForm({ token }: Props) {
 
 	if (done) {
 		return (
-			<div className="flex flex-col gap-6">
+			<div data-qa={ResetPasswordFormHarness.Success} className="flex flex-col gap-6">
 				<div className="flex flex-col gap-1">
 					<h2 className="text-text-primary text-2xl font-semibold tracking-tight">
 						Password updated
@@ -76,7 +79,12 @@ export function ResetPasswordForm({ token }: Props) {
 						Your password has been reset. You can now sign in with your new password.
 					</p>
 				</div>
-				<Button size={ButtonSizes.Large} fullWidth onClick={() => router.push(ROUTES.auth.login)}>
+				<Button
+					data-qa={ResetPasswordFormHarness.SuccessContinue}
+					size={ButtonSizes.Large}
+					fullWidth
+					onClick={() => router.push(ROUTES.auth.login)}
+				>
 					Continue to sign in
 				</Button>
 			</div>
@@ -95,6 +103,7 @@ export function ResetPasswordForm({ token }: Props) {
 			</div>
 
 			<form
+				data-qa={ResetPasswordFormHarness.Form}
 				className="flex flex-col gap-4"
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -104,6 +113,7 @@ export function ResetPasswordForm({ token }: Props) {
 				<form.Field name="password">
 					{(field) => (
 						<Input
+							data-qa={ResetPasswordFormHarness.Password}
 							label="New password"
 							type={showPassword ? "text" : "password"}
 							placeholder="••••••••"
@@ -129,6 +139,7 @@ export function ResetPasswordForm({ token }: Props) {
 				<form.Field name="confirmPassword">
 					{(field) => (
 						<Input
+							data-qa={ResetPasswordFormHarness.ConfirmPassword}
 							label="Confirm new password"
 							type={showConfirm ? "text" : "password"}
 							placeholder="••••••••"
@@ -151,9 +162,14 @@ export function ResetPasswordForm({ token }: Props) {
 					)}
 				</form.Field>
 
-				{serverError && <p className="text-sm text-red-500">{serverError}</p>}
+				{serverError && (
+					<p data-qa={ResetPasswordFormHarness.ServerError} className="text-sm text-red-500">
+						{serverError}
+					</p>
+				)}
 
 				<Button
+					data-qa={ResetPasswordFormHarness.Submit}
 					type="submit"
 					size={ButtonSizes.Large}
 					fullWidth
@@ -165,6 +181,7 @@ export function ResetPasswordForm({ token }: Props) {
 			</form>
 
 			<Link
+				data-qa={ResetPasswordFormHarness.BackToLogin}
 				href={ROUTES.auth.login}
 				className="text-text-secondary hover:text-text-primary text-center text-sm transition-colors duration-100"
 			>

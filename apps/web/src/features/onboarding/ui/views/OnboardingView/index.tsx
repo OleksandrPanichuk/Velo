@@ -12,6 +12,7 @@ import { WorkspaceStep } from "@/features/onboarding/ui/components/WorkspaceStep
 import { OnboardingStep } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.constants";
 import { useOnboardingForm } from "@/features/onboarding/ui/views/OnboardingView/OnboardingView.hooks";
 
+import { OnboardingViewHarness } from "./OnboardingView.harness";
 import styles from "./OnboardingView.module.css";
 
 export function OnboardingView() {
@@ -35,7 +36,10 @@ export function OnboardingView() {
 	};
 
 	return (
-		<div className="bg-surface relative flex min-h-screen flex-col overflow-hidden">
+		<div
+			data-qa={OnboardingViewHarness.Root}
+			className="bg-surface relative flex min-h-screen flex-col overflow-hidden"
+		>
 			<div
 				aria-hidden
 				className="absolute inset-0 opacity-40"
@@ -58,6 +62,7 @@ export function OnboardingView() {
 					{step !== OnboardingStep.Workspace ? (
 						<button
 							type="button"
+							data-qa={OnboardingViewHarness.Back}
 							onClick={handleBack}
 							className="text-text-secondary hover:text-text-primary flex items-center gap-1 text-sm transition-colors duration-150"
 						>

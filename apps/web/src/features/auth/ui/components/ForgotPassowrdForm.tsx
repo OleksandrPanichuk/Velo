@@ -10,6 +10,8 @@ import { Mail } from "lucide-react";
 
 import { ROUTES } from "@/constants";
 import { ForgotPasswordInputSchema } from "@/features/auth/schemas";
+
+import { ForgotPasswordFormHarness } from "./ForgotPasswordForm.harness";
 import { useForgotPasswordMutation } from "@/graphql/hooks";
 
 export function ForgotPasswordForm() {
@@ -39,20 +41,26 @@ export function ForgotPasswordForm() {
 
 	if (submitted) {
 		return (
-			<div className="flex flex-col gap-6">
+			<div data-qa={ForgotPasswordFormHarness.Submitted} className="flex flex-col gap-6">
 				<div className="flex flex-col gap-1">
 					<h2 className="text-text-primary text-2xl font-semibold tracking-tight">
 						Check your inbox
 					</h2>
 					<p className="text-text-secondary text-sm">
 						We sent a password reset link to{" "}
-						<span className="text-text-primary font-medium">{form.getFieldValue("email")}</span>
+						<span
+							data-qa={ForgotPasswordFormHarness.SubmittedEmail}
+							className="text-text-primary font-medium"
+						>
+							{form.getFieldValue("email")}
+						</span>
 					</p>
 				</div>
 
 				<p className="text-text-tertiary text-sm">
 					Didn&apos;t receive it? Check your spam folder or{" "}
 					<button
+						data-qa={ForgotPasswordFormHarness.TryAnotherEmail}
 						type="button"
 						onClick={() => setSubmitted(false)}
 						className="text-brand-500 hover:text-brand-400 font-medium transition-colors duration-100"
@@ -63,6 +71,7 @@ export function ForgotPasswordForm() {
 				</p>
 
 				<Link
+					data-qa={ForgotPasswordFormHarness.BackToLogin}
 					href={ROUTES.auth.login}
 					className="text-text-secondary hover:text-text-primary text-center text-sm transition-colors duration-100"
 				>
@@ -84,6 +93,7 @@ export function ForgotPasswordForm() {
 			</div>
 
 			<form
+				data-qa={ForgotPasswordFormHarness.Form}
 				className="flex flex-col gap-4"
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -93,6 +103,7 @@ export function ForgotPasswordForm() {
 				<form.Field name="email">
 					{(field) => (
 						<Input
+							data-qa={ForgotPasswordFormHarness.Email}
 							label="Email"
 							type="email"
 							placeholder="you@example.com"
@@ -106,14 +117,25 @@ export function ForgotPasswordForm() {
 					)}
 				</form.Field>
 
-				{serverError && <p className="text-sm text-red-500">{serverError}</p>}
+				{serverError && (
+					<p data-qa={ForgotPasswordFormHarness.ServerError} className="text-sm text-red-500">
+						{serverError}
+					</p>
+				)}
 
-				<Button type="submit" size={ButtonSizes.Large} fullWidth loading={form.state.isSubmitting}>
+				<Button
+					data-qa={ForgotPasswordFormHarness.Submit}
+					type="submit"
+					size={ButtonSizes.Large}
+					fullWidth
+					loading={form.state.isSubmitting}
+				>
 					Send reset link
 				</Button>
 			</form>
 
 			<Link
+				data-qa={ForgotPasswordFormHarness.BackToLogin}
 				href={ROUTES.auth.login}
 				className="text-text-secondary hover:text-text-primary text-center text-sm transition-colors duration-100"
 			>
