@@ -62,7 +62,7 @@ bun run db:migrate       # run pending migrations
 bun run db:migrate:revert # revert last migration
 bun run db:migrate:show  # list migration status
 bun run db:generate      # generate migration from entity changes
-bun run db:schema:sync   # sync schema without migrations (dev only)
+bun run db:schema:sync   # sync schema without migrations (escape hatch; do not use to build a dev DB)
 ```
 
 ### Makefile shortcuts (from repo root)
@@ -244,6 +244,10 @@ Four test tiers, all using **Vitest**. Run commands from `apps/api`.
 ## Database Migrations
 
 Migrations live in `apps/api/migrations/`. Always use the TypeORM CLI to generate; never hand-write SQL unless absolutely necessary.
+
+`synchronize` is **off in every environment**, so migrations are the only thing that creates schema — dev, test and e2e included. After changing an entity you must generate a migration, or the app will not see your column. The dev and e2e stacks run `db:migrate` before starting the API; `test:db` applies migrations in its global setup.
+
+Generate against a database whose schema came from migrations, never one built by `schema:sync` — otherwise the generated migration silently assumes tables that no migration creates.
 
 ```bash
 # Generate from entity changes
