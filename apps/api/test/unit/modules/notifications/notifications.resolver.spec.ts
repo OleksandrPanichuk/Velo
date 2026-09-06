@@ -1,8 +1,7 @@
-import { NotificationModel } from "@/models/Notification.model";
-import { PUBSUB } from "@/infrastructure/pubsub/pubsub.constants";
+import { type NotificationModel } from "@/models/Notification.model";
 import { NOTIFICATION_RECEIVED_EVENT } from "@/modules/notifications/notifications.constants";
 import { NotificationsResolver } from "@/modules/notifications/notifications.resolver";
-import { NotificationsService } from "@/modules/notifications/notifications.service";
+import { type NotificationsService } from "@/modules/notifications/notifications.service";
 
 const mockNotificationsService: Partial<NotificationsService> = {
 	findByRecipientAndWorkspace: vi.fn(),
@@ -17,10 +16,7 @@ const mockPubSub = {
 };
 
 const buildResolver = () =>
-	new NotificationsResolver(
-		mockNotificationsService as NotificationsService,
-		mockPubSub as never,
-	);
+	new NotificationsResolver(mockNotificationsService as NotificationsService, mockPubSub as never);
 
 describe("NotificationsResolver", () => {
 	beforeEach(() => vi.clearAllMocks());
@@ -34,7 +30,10 @@ describe("NotificationsResolver", () => {
 
 			const result = await buildResolver().notifications("u1", "ws1");
 
-			expect(mockNotificationsService.findByRecipientAndWorkspace).toHaveBeenCalledWith("u1", "ws1");
+			expect(mockNotificationsService.findByRecipientAndWorkspace).toHaveBeenCalledWith(
+				"u1",
+				"ws1",
+			);
 			expect(result).toBe(notifications);
 		});
 	});

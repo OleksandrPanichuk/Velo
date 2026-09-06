@@ -332,9 +332,7 @@ export class S3Service implements OnModuleInit {
 			stream.on("data", (chunk: Buffer) => {
 				totalSize += chunk.length;
 				if (totalSize > maxBytes) {
-					stream.destroy(
-						new BadRequestException(`File exceeds maximum size of ${maxBytes} bytes`),
-					);
+					stream.destroy(new BadRequestException(`File exceeds maximum size of ${maxBytes} bytes`));
 					return;
 				}
 				chunks.push(chunk);
@@ -353,6 +351,7 @@ export class S3Service implements OnModuleInit {
 
 		for (let attempt = 0; attempt < retries; attempt++) {
 			try {
+				// eslint-disable-next-line no-await-in-loop -- retries are sequential by definition
 				return await operation();
 			} catch (error) {
 				lastError = error;
@@ -371,6 +370,7 @@ export class S3Service implements OnModuleInit {
 					this.logger.warn(
 						`Operation failed, retrying in ${delay}ms... (attempt ${attempt + 1}/${retries})`,
 					);
+					// eslint-disable-next-line no-await-in-loop -- backoff must delay this attempt
 					await this.sleep(delay);
 				}
 			}

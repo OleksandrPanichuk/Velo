@@ -8,7 +8,7 @@ import { WorkspacesResolver } from "./workspaces.resolver";
 import { WorkspacesService } from "./workspaces.service";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([WorkspaceModel]), WorkspaceMembersModule, UsersModule],
+	imports: [TypeOrmModule.forFeature([WorkspaceModel]), UsersModule, WorkspaceMembersModule],
 	providers: [WorkspacesRepository, WorkspacesResolver, WorkspacesService],
 	exports: [WorkspacesService],
 })

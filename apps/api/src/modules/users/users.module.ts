@@ -12,9 +12,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 @Module({
 	imports: [TypeOrmModule.forFeature([UserModel, OAuthAccountModel])],
 	providers: [
+		AppAuthGuard,
 		CurrentUserPipe,
 		OptionalCurrentUserPipe,
-		AppAuthGuard,
 		UsersLoader,
 		UsersRepository,
 		UsersResolver,

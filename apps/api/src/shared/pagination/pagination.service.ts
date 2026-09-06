@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { decode, encode } from "base-64";
 import { SelectQueryBuilder } from "typeorm";
-import { IPaginatedType, PaginationArgs } from "./pagination.types";
+import { PaginatedResult, PaginationArgs } from "./pagination.types";
 
 @Injectable()
 export class PaginationService {
 	public async paginate<T extends { id: string | number }>(
 		queryBuilder: SelectQueryBuilder<T>,
 		paginationArgs: PaginationArgs,
-	): Promise<IPaginatedType<T>> {
+	): Promise<PaginatedResult<T>> {
 		const { first = 10, after } = paginationArgs;
 
 		const query = queryBuilder.clone();

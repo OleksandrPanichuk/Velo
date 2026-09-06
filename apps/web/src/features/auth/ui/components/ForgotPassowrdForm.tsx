@@ -10,9 +10,9 @@ import { Mail } from "lucide-react";
 
 import { ROUTES } from "@/constants";
 import { ForgotPasswordInputSchema } from "@/features/auth/schemas";
+import { useForgotPasswordMutation } from "@/graphql/hooks";
 
 import { ForgotPasswordFormHarness } from "./ForgotPasswordForm.harness";
-import { useForgotPasswordMutation } from "@/graphql/hooks";
 
 export function ForgotPasswordForm() {
 	const [submitted, setSubmitted] = useState(false);

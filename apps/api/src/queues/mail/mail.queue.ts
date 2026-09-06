@@ -12,13 +12,16 @@ import { QueueName } from "@/infrastructure/queue";
 import { MAIL_JOB_OPTIONS } from "@/queues/mail/mail.queue.constants";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable } from "@nestjs/common";
-import { Queue } from "bullmq";
+import { type Job, Queue } from "bullmq";
 
 @Injectable()
 export class MailQueue {
 	constructor(@InjectQueue(QueueName.MAIL) private readonly queue: Queue<SendMailInput>) {}
 
-	public async enqueueEmailVerification(to: string, ctx: EmailVerificationContext) {
+	public async enqueueEmailVerification(
+		to: string,
+		ctx: EmailVerificationContext,
+	): Promise<Job<SendMailInput>> {
 		return this.queue.add(
 			MailTemplate.EMAIL_VERIFICATION,
 			{
@@ -31,7 +34,10 @@ export class MailQueue {
 		);
 	}
 
-	public async enqueuePasswordReset(to: string, ctx: ResetPasswordContext) {
+	public async enqueuePasswordReset(
+		to: string,
+		ctx: ResetPasswordContext,
+	): Promise<Job<SendMailInput>> {
 		return this.queue.add(
 			MailTemplate.RESET_PASSWORD,
 			{
@@ -44,7 +50,7 @@ export class MailQueue {
 		);
 	}
 
-	public async enqueueWelcome(to: string, ctx: WelcomeContext) {
+	public async enqueueWelcome(to: string, ctx: WelcomeContext): Promise<Job<SendMailInput>> {
 		return this.queue.add(
 			MailTemplate.WELCOME,
 			{
@@ -57,7 +63,10 @@ export class MailQueue {
 		);
 	}
 
-	public async enqueueSignInAlert(to: string, ctx: SignInAlertContext) {
+	public async enqueueSignInAlert(
+		to: string,
+		ctx: SignInAlertContext,
+	): Promise<Job<SendMailInput>> {
 		return this.queue.add(
 			MailTemplate.SIGN_IN_ALERT,
 			{
@@ -70,7 +79,10 @@ export class MailQueue {
 		);
 	}
 
-	public async enqueueWorkspaceInvite(to: string, ctx: WorkspaceInviteContext) {
+	public async enqueueWorkspaceInvite(
+		to: string,
+		ctx: WorkspaceInviteContext,
+	): Promise<Job<SendMailInput>> {
 		return this.queue.add(
 			MailTemplate.WORKSPACE_INVITE,
 			{

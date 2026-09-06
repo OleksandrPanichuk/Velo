@@ -8,10 +8,10 @@ import { usePathname } from "next/navigation";
 import { Badge, BadgeSizes, BadgeVariants, cn } from "@repo/ui";
 import { Menu, X } from "lucide-react";
 
+import { WorkspaceSwitcher } from "@/features/workspace/ui/components/WorkspaceSwitcher";
+import { WorkspaceUserMenu } from "@/features/workspace/ui/components/WorkspaceUserMenu";
 import type { UserFieldsFragment, WorkspaceBaseFragment } from "@/graphql/types";
 
-import { WorkspaceSwitcher } from "../WorkspaceSwitcher";
-import { WorkspaceUserMenu } from "../WorkspaceUserMenu";
 import { WORKSPACE_NAV_GROUPS } from "./WorkspaceSidebar.constants";
 import { WorkspaceSidebarHarness } from "./WorkspaceSidebar.harness";
 

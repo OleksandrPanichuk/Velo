@@ -1,6 +1,28 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "APP_NAME",
+    "PORT",
+    "BASE_URL",
+    "WEB_URL",
+    "API_URL",
+    "CLIENT_*",
+    "DB_*",
+    "REDIS_*",
+    "CACHE_*",
+    "THROTTLE_*",
+    "JWT_*",
+    "AWS_S3_*",
+    "SMTP_*",
+    "GOOGLE_*",
+    "GITHUB_*",
+    "OAUTH_*",
+    "SENTRY_DSN",
+    "ENABLE_FILE_LOGGING",
+    "NEXT_PUBLIC_*"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [

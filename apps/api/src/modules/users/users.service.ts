@@ -1,6 +1,6 @@
 import { UserModel } from "@/models/User.model";
 import { UsersRepository } from "@/modules/users/users.repository";
-import { IPaginatedType, PaginationArgs, PaginationService } from "@/shared/pagination";
+import { PaginatedResult, PaginationArgs, PaginationService } from "@/shared/pagination";
 import { Injectable } from "@nestjs/common";
 import { DeepPartial } from "typeorm";
 
@@ -33,8 +33,8 @@ export class UsersService {
 
 	public async findAllPaginated(
 		paginationArgs: PaginationArgs,
-	): Promise<IPaginatedType<UserModel>> {
-		const qb = await this.usersRepository.createQueryBuilder("user");
+	): Promise<PaginatedResult<UserModel>> {
+		const qb = this.usersRepository.createQueryBuilder("user");
 		return this.paginationService.paginate(qb, paginationArgs);
 	}
 

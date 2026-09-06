@@ -56,9 +56,7 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
 				{notification.body && (
 					<p className="text-text-secondary text-xs leading-relaxed">{notification.body}</p>
 				)}
-				<span className="text-text-tertiary text-xs">
-					{formatDateTime(notification.createdAt)}
-				</span>
+				<span className="text-text-tertiary text-xs">{formatDateTime(notification.createdAt)}</span>
 			</div>
 
 			{!isRead && (

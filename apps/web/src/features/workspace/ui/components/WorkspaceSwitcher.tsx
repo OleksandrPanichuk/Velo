@@ -5,13 +5,13 @@ import Link from "next/link";
 import {
 	Avatar,
 	AvatarSizes,
+	cn,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-	cn,
 } from "@repo/ui";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 
@@ -51,11 +51,7 @@ export function WorkspaceSwitcher({ workspace, workspaces, className }: Workspac
 				<ChevronsUpDown className="text-text-tertiary size-3.5 shrink-0" />
 			</DropdownMenuTrigger>
 
-			<DropdownMenuContent
-				data-qa={WorkspaceSwitcherHarness.Menu}
-				align="start"
-				className="w-60"
-			>
+			<DropdownMenuContent data-qa={WorkspaceSwitcherHarness.Menu} align="start" className="w-60">
 				<DropdownMenuLabel className="text-text-tertiary text-xs font-medium">
 					Workspaces
 				</DropdownMenuLabel>

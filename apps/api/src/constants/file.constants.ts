@@ -47,14 +47,9 @@ export const ALLOWED_DOCUMENT_TYPES = [
 	MIME_TYPES_MAP[".csv"],
 ] as const;
 
-export const ALLOWED_AUDIO_TYPES = [
-	MIME_TYPES_MAP[".mp3"],
-	MIME_TYPES_MAP[".wav"],
-] as const;
+export const ALLOWED_AUDIO_TYPES = [MIME_TYPES_MAP[".mp3"], MIME_TYPES_MAP[".wav"]] as const;
 
-export const ALLOWED_VIDEO_TYPES = [
-	MIME_TYPES_MAP[".mp4"],
-] as const;
+export const ALLOWED_VIDEO_TYPES = [MIME_TYPES_MAP[".mp4"]] as const;
 
 export const ALLOWED_FILE_TYPES = [
 	...ALLOWED_IMAGE_TYPES,

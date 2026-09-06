@@ -52,7 +52,7 @@ export function CacheInvalidate(options: CacheInvalidateOptions): MethodDecorato
 		const originalMethod = descriptor.value as AnyFunction;
 
 		descriptor.value = async function (this: Record<string, unknown>, ...args: unknown[]) {
-			const result = await originalMethod.apply(this, args) as unknown;
+			const result = (await originalMethod.apply(this, args)) as unknown;
 
 			const cacheService = this.cacheService as CacheService | undefined;
 
@@ -64,6 +64,6 @@ export function CacheInvalidate(options: CacheInvalidateOptions): MethodDecorato
 			return result;
 		};
 
-		return descriptor
+		return descriptor;
 	};
 }

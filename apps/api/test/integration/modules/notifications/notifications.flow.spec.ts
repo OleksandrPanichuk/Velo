@@ -13,7 +13,7 @@ import { NotificationsListener } from "@/modules/notifications/notifications.lis
 import { NotificationsRepository } from "@/modules/notifications/notifications.repository";
 import { NotificationsService } from "@/modules/notifications/notifications.service";
 import { WorkspaceMemberRole } from "@/enums";
-import { Test, TestingModule } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { EventEmitter2, EventEmitterModule } from "@nestjs/event-emitter";
 import {
 	mockWorkspaceMembersRepository,
@@ -51,7 +51,7 @@ beforeAll(async () => {
 	await module.init();
 });
 
-afterAll(() => module.close());
+afterAll(async () => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("Notifications event-driven flow", () => {

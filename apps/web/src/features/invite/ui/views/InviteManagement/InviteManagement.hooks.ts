@@ -4,10 +4,7 @@ import { useState } from "react";
 
 import { useForm } from "@tanstack/react-form";
 
-import {
-	InviteMemberFormSchema,
-	type InviteMemberFormValues,
-} from "@/features/invite/schemas";
+import { InviteMemberFormSchema, type InviteMemberFormValues } from "@/features/invite/schemas";
 import {
 	useGetPendingInvitesQuery,
 	useInviteMemberMutation,

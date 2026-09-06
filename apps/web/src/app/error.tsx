@@ -1,8 +1,7 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
-
 import { Button, ButtonSizes, ButtonVariants } from "@repo/ui";
+import { AlertTriangle } from "lucide-react";
 
 interface ErrorPageProps {
 	reset: () => void;

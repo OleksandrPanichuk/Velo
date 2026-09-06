@@ -29,8 +29,12 @@ export class AppExceptionFilter implements ExceptionFilter {
 
 		if (exception instanceof HttpException) {
 			status = exception.getStatus();
-			const response: any = exception.getResponse();
-			message = response.message || exception.message;
+			const response = exception.getResponse();
+			const responseMessage =
+				typeof response === "object" && response !== null && "message" in response
+					? (response as { message?: unknown }).message
+					: undefined;
+			message = typeof responseMessage === "string" ? responseMessage : exception.message;
 			code = "HTTP_EXCEPTION";
 		} else if (exception instanceof QueryFailedError) {
 			status = HttpStatus.BAD_REQUEST;

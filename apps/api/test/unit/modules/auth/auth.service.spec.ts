@@ -1,10 +1,8 @@
-import { ErrorMessages } from "@/constants";
-import { AppClsService } from "@/infrastructure/cls";
-import { UsersRepository } from "@/modules/users/users.repository";
-import { MailQueue } from "@/queues/mail";
+import { type AppClsService } from "@/infrastructure/cls";
+import { type UsersRepository } from "@/modules/users/users.repository";
+import { type MailQueue } from "@/queues/mail";
 import { BadRequestException, ConflictException, UnauthorizedException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
+import { type JwtService } from "@nestjs/jwt";
 import * as argon2 from "argon2";
 import { AuthService } from "@/modules/auth/auth.service";
 
@@ -70,7 +68,7 @@ const buildService = () =>
 describe("AuthService", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.mocked(mockJwtService.signAsync!).mockResolvedValue("signed-token" as never);
+		vi.mocked(mockJwtService.signAsync!).mockResolvedValue("signed-token");
 	});
 
 	describe("signUp", () => {
@@ -78,7 +76,12 @@ describe("AuthService", () => {
 			vi.mocked(mockUsersRepository.findByEmail!).mockResolvedValue({ id: "u1" } as never);
 
 			await expect(
-				buildService().signUp({ email: "a@b.com", username: "user", fullName: "User", password: "pw" }),
+				buildService().signUp({
+					email: "a@b.com",
+					username: "user",
+					fullName: "User",
+					password: "pw",
+				}),
 			).rejects.toThrow(ConflictException);
 		});
 

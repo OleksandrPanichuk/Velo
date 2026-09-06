@@ -46,6 +46,10 @@ export class NotificationsRepository extends BaseRepository<NotificationModel> {
 	}
 
 	public async markAllAsRead(recipientId: string, workspaceId: string): Promise<void> {
-		await this.em.update(this.repo.target, { recipientId, workspaceId, isRead: false }, { isRead: true });
+		await this.em.update(
+			this.repo.target,
+			{ recipientId, workspaceId, isRead: false },
+			{ isRead: true },
+		);
 	}
 }

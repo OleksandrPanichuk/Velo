@@ -1,6 +1,6 @@
 import { MailTemplate } from "@/infrastructure/mailer/mailer.typedefs";
 import { MailerService } from "@/infrastructure/mailer/mailer.service";
-import { ConfigService } from "@nestjs/config";
+import { type ConfigService } from "@nestjs/config";
 
 vi.mock("nodemailer", () => ({
 	createTransport: vi.fn().mockReturnValue({
@@ -15,7 +15,9 @@ vi.mock("fs", () => ({
 }));
 
 vi.mock("handlebars", () => ({
-	compile: vi.fn().mockReturnValue((ctx: Record<string, unknown>) => `<html>${JSON.stringify(ctx)}</html>`),
+	compile: vi
+		.fn()
+		.mockReturnValue((ctx: Record<string, unknown>) => `<html>${JSON.stringify(ctx)}</html>`),
 	registerHelper: vi.fn(),
 	registerPartial: vi.fn(),
 }));

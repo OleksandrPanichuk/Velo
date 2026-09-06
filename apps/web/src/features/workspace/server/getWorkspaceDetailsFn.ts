@@ -12,10 +12,7 @@ import { isInaccessibleWorkspaceError } from "./getWorkspaceBySlugFn";
 import "server-only";
 
 export const getWorkspaceDetailsFn = cache(async (slug: string) => {
-	const { data, error } = await query<
-		GetWorkspaceDetailsQuery,
-		GetWorkspaceDetailsQueryVariables
-	>({
+	const { data, error } = await query<GetWorkspaceDetailsQuery, GetWorkspaceDetailsQueryVariables>({
 		query: GetWorkspaceDetails,
 		variables: { slug },
 		errorPolicy: "all",

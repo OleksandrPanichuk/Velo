@@ -1,8 +1,6 @@
 vi.mock("@nestjs-cls/transactional", () => ({
-	Transactional:
-		() =>
-		(_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
-			descriptor,
+	Transactional: () => (_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
+		descriptor,
 	TransactionHost: class {},
 }));
 
@@ -11,26 +9,30 @@ import type { UserModel } from "@/models/User.model";
 import type { WorkspaceInviteModel } from "@/models/WorkspaceInvite.model";
 import type { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
 import type { WorkspaceModel } from "@/models/Workspace.model";
-import { UsersService } from "@/modules/users/users.service";
+import { type UsersService } from "@/modules/users/users.service";
 import {
 	WORKSPACE_INVITE_TOKEN_BYTES,
 	WORKSPACE_INVITE_TTL_MS,
 } from "@/modules/workspace-invites/workspace-invites.constants";
-import { WorkspaceInvitesRepository } from "@/modules/workspace-invites/workspace-invites.repository";
+import { type WorkspaceInvitesRepository } from "@/modules/workspace-invites/workspace-invites.repository";
 import { WorkspaceInvitesService } from "@/modules/workspace-invites/workspace-invites.service";
-import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
-import { WorkspacesService } from "@/modules/workspaces/workspaces.service";
-import { MailQueue } from "@/queues/mail";
+import { type WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
+import { type WorkspacesService } from "@/modules/workspaces/workspaces.service";
+import { type MailQueue } from "@/queues/mail";
 import {
 	ConflictException,
 	ForbiddenException,
 	GoneException,
 	NotFoundException,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { type ConfigService } from "@nestjs/config";
 
 const WORKSPACE = { id: "ws-1", name: "Acme", slug: "acme" } as WorkspaceModel;
-const INVITER_MEMBER = { id: "mem-1", workspaceId: "ws-1", userId: "u-inviter" } as WorkspaceMemberModel;
+const INVITER_MEMBER = {
+	id: "mem-1",
+	workspaceId: "ws-1",
+	userId: "u-inviter",
+} as WorkspaceMemberModel;
 const INVITER_USER = { id: "u-inviter", fullName: "Ada Lovelace" } as UserModel;
 
 const mockInvitesRepository: Partial<WorkspaceInvitesRepository> = {
@@ -144,7 +146,9 @@ describe("WorkspaceInvitesService", () => {
 		});
 
 		it("rejects inviting someone who is already a member", async () => {
-			vi.mocked(mockUsersService.findByEmailInsensitive!).mockResolvedValue({ id: "u-existing" } as UserModel);
+			vi.mocked(mockUsersService.findByEmailInsensitive!).mockResolvedValue({
+				id: "u-existing",
+			} as UserModel);
 			vi.mocked(mockMembersService.findOneByWorkspaceAndUser!)
 				.mockResolvedValueOnce(INVITER_MEMBER)
 				.mockResolvedValueOnce({ id: "mem-existing" } as WorkspaceMemberModel);
@@ -239,7 +243,7 @@ describe("WorkspaceInvitesService", () => {
 			vi.mocked(mockInvitesRepository.findByToken!).mockResolvedValue({
 				...pendingInvite(),
 				expiresAt: new Date(Date.now() - 1),
-			} as WorkspaceInviteModel);
+			});
 
 			await expect(buildService().accept("tok", "u-invitee")).rejects.toThrow(GoneException);
 
@@ -250,7 +254,7 @@ describe("WorkspaceInvitesService", () => {
 			vi.mocked(mockInvitesRepository.findByToken!).mockResolvedValue({
 				...pendingInvite(),
 				acceptedAt: new Date(),
-			} as WorkspaceInviteModel);
+			});
 
 			await expect(buildService().accept("tok", "u-invitee")).rejects.toThrow(ConflictException);
 

@@ -1,5 +1,5 @@
 import { MailTemplate } from "@/infrastructure/mailer/mailer.typedefs";
-import { MailerService } from "@/infrastructure/mailer";
+import { type MailerService } from "@/infrastructure/mailer";
 import { MailProcessor } from "@/queues/mail/mail.processor";
 import type { Job } from "bullmq";
 
@@ -9,7 +9,7 @@ const mockMailerService: Partial<MailerService> = {
 
 const buildProcessor = () => new MailProcessor(mockMailerService as MailerService);
 
-const makeJob = (data: object) => ({ id: "job-1", data } as Job);
+const makeJob = (data: object) => ({ id: "job-1", data }) as Job;
 
 describe("MailProcessor", () => {
 	beforeEach(() => vi.clearAllMocks());

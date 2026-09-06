@@ -12,12 +12,9 @@ import { NotificationsRepository } from "@/modules/notifications/notifications.r
 import { NotificationsResolver } from "@/modules/notifications/notifications.resolver";
 import { NotificationsService } from "@/modules/notifications/notifications.service";
 import { NotFoundException } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
+import { Test, type TestingModule } from "@nestjs/testing";
 import { NOTIFICATION_RECEIVED_EVENT } from "@/modules/notifications/notifications.constants";
-import {
-	mockNotificationsRepository,
-	mockPubSub,
-} from "../../../helpers/mocks";
+import { mockNotificationsRepository, mockPubSub } from "../../../helpers/mocks";
 import { NotificationFactory, UserFactory, WorkspaceFactory } from "../../../factories";
 
 let module: TestingModule;
@@ -41,7 +38,7 @@ beforeAll(async () => {
 	resolver = module.get(NotificationsResolver);
 });
 
-afterAll(() => module.close());
+afterAll(async () => module.close());
 beforeEach(() => vi.clearAllMocks());
 
 describe("NotificationsResolver integration", () => {
@@ -88,9 +85,9 @@ describe("NotificationsResolver integration", () => {
 		it("throws NotFoundException through the real service when notification is not found", async () => {
 			vi.mocked(repo.markAsRead).mockResolvedValue(null);
 
-			await expect(
-				resolver.markNotificationAsRead(user.id, "non-existent-id"),
-			).rejects.toThrow(NotFoundException);
+			await expect(resolver.markNotificationAsRead(user.id, "non-existent-id")).rejects.toThrow(
+				NotFoundException,
+			);
 		});
 	});
 
@@ -108,7 +105,7 @@ describe("NotificationsResolver integration", () => {
 	describe("notificationReceived()", () => {
 		it("returns an async iterator for the pubsub event", () => {
 			const fakeIterator = { next: vi.fn() };
-			vi.mocked(pubSub.asyncIterator).mockReturnValue(fakeIterator as never);
+			vi.mocked(pubSub.asyncIterator).mockReturnValue(fakeIterator);
 
 			const result = resolver.notificationReceived();
 

@@ -1,5 +1,5 @@
 import { NotificationType } from "@/enums";
-import { NotificationModel } from "@/models/Notification.model";
+import { type NotificationModel } from "@/models/Notification.model";
 import { faker } from "@faker-js/faker";
 
 export const NotificationFactory = {
@@ -19,7 +19,7 @@ export const NotificationFactory = {
 			workspace: null as never,
 			actor: null,
 			...overrides,
-		} as NotificationModel;
+		};
 	},
 
 	buildRead(overrides: Partial<NotificationModel> = {}): NotificationModel {

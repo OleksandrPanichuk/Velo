@@ -3,10 +3,10 @@ import { Injectable, OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { HealthIndicatorService, type HealthIndicatorResult } from "@nestjs/terminus";
 import Redis from "ioredis";
-import { IHealthIndicator } from "./health.typedefs";
+import { HealthIndicatorContract } from "./health.typedefs";
 
 @Injectable()
-export class RedisHealthIndicator implements OnModuleDestroy, IHealthIndicator {
+export class RedisHealthIndicator implements OnModuleDestroy, HealthIndicatorContract {
 	private readonly redis: Redis;
 
 	constructor(

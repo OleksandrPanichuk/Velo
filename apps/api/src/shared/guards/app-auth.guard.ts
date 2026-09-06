@@ -19,7 +19,9 @@ export class AppAuthGuard extends JwtAccessGuard {
 		]);
 
 		if (isPublic) {
-			return Promise.resolve(super.canActivate(context)).then(() => true).catch(() => true);
+			return Promise.resolve(super.canActivate(context))
+				.then(() => true)
+				.catch(() => true);
 		}
 
 		return super.canActivate(context);

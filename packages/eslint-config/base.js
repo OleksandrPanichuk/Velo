@@ -48,6 +48,6 @@ export const config = [
     },
   },
   {
-    ignores: ["dist/**"],
+    ignores: ["dist/**", "coverage/**", ".next/**", "test-results/**", "playwright-report/**", "eslint.config.*"],
   },
 ];

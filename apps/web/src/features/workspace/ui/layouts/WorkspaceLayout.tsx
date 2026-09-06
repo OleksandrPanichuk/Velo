@@ -10,21 +10,13 @@ type WorkspaceLayoutProps = PropsWithChildren<{
 	currentUser: UserFieldsFragment;
 }>;
 
-export async function WorkspaceLayout({
-	workspace,
-	currentUser,
-	children,
-}: WorkspaceLayoutProps) {
+export async function WorkspaceLayout({ workspace, currentUser, children }: WorkspaceLayoutProps) {
 	const workspaces = await getWorkspacesFn();
 
 	return (
 		<ActiveWorkspaceProvider workspaceId={workspace.id}>
 			<div className="bg-surface flex min-h-svh flex-col md:flex-row">
-				<WorkspaceSidebar
-					workspace={workspace}
-					workspaces={workspaces}
-					currentUser={currentUser}
-				/>
+				<WorkspaceSidebar workspace={workspace} workspaces={workspaces} currentUser={currentUser} />
 				<main className="flex min-w-0 flex-1 flex-col">{children}</main>
 			</div>
 		</ActiveWorkspaceProvider>

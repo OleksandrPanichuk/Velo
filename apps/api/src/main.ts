@@ -1,6 +1,6 @@
 import "./instrument";
 
-import { ValidationPipe } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import compression from "compression";
@@ -37,8 +37,8 @@ async function bootstrap() {
 	app.setGlobalPrefix("api", { exclude: ["health"] });
 
 	await app.listen(PORT, () => {
-		console.log(`Listening on port: ${PORT}`);
+		Logger.log(`Listening on port: ${PORT}`, "Bootstrap");
 	});
 }
 
-bootstrap();
+void bootstrap();

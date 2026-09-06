@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
+import type { Observable } from "rxjs";
 import DataLoader from "dataloader";
 import { NestDataLoader } from "./dataloader.typedefs";
 
@@ -14,7 +15,7 @@ import { NestDataLoader } from "./dataloader.typedefs";
 export class DataLoaderInterceptor implements NestInterceptor {
 	constructor(private readonly moduleRef: ModuleRef) {}
 
-	public async intercept(context: ExecutionContext, next: CallHandler) {
+	public intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
 		const graphqlExecutionContext = GqlExecutionContext.create(context);
 		const ctx = graphqlExecutionContext.getContext();
 
@@ -24,9 +25,9 @@ export class DataLoaderInterceptor implements NestInterceptor {
 			}
 
 			if (!ctx.getLoader) {
-				ctx.getLoader = <ID, Type>(
-					loaderType: new (...args: any[]) => NestDataLoader<ID, Type>,
-				): DataLoader<ID, Type | null> => {
+				ctx.getLoader = <TId, TEntity>(
+					loaderType: new (...args: any[]) => NestDataLoader<TId, TEntity>,
+				): DataLoader<TId, TEntity | null> => {
 					const typeName = loaderType.name;
 
 					if (!ctx.loaders.has(typeName)) {

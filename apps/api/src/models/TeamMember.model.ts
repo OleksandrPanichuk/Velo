@@ -9,24 +9,23 @@ import { DateTimeResolver } from "graphql-scalars";
 @Entity("team_members")
 @Unique(["teamId", "userId"])
 export class TeamMemberModel extends BaseModelWithDeletedAt {
-    @Column({ type: "uuid"})
-    teamId!: string
+	@Column({ type: "uuid" })
+	teamId!: string;
 
-    @Column({ type: "uuid" })
-    userId!: string
+	@Column({ type: "uuid" })
+	userId!: string;
 
-    @Field(() => TeamModel)
-    @ManyToOne(() => TeamModel, (t) => t.members, {onDelete: "CASCADE"})
-    @JoinColumn({name: "teamId"})
-    team!: Relation<TeamModel>
+	@Field(() => TeamModel)
+	@ManyToOne(() => TeamModel, (t) => t.members, { onDelete: "CASCADE" })
+	@JoinColumn({ name: "teamId" })
+	team!: Relation<TeamModel>;
 
-    @Field(() => UserModel)
-    @ManyToOne(() => UserModel, (u) => u.teamMembers, {onDelete: "CASCADE"})
-    @JoinColumn({name: "userId"})
-    user!: Relation<UserModel>
+	@Field(() => UserModel)
+	@ManyToOne(() => UserModel, (u) => u.teamMembers, { onDelete: "CASCADE" })
+	@JoinColumn({ name: "userId" })
+	user!: Relation<UserModel>;
 
-
-    @Field(() => DateTimeResolver)
-    @Column({type: "timestamp", default: () => 'CURRENT_TIMESTAMP'})
-    joinedAt!: Date
+	@Field(() => DateTimeResolver)
+	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+	joinedAt!: Date;
 }

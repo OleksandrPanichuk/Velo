@@ -10,7 +10,10 @@ interface Props {
 
 export function InviteMessage({ icon, title, description, children }: PropsWithChildren<Props>) {
 	return (
-		<div data-qa={InviteMessageHarness.Root} className="flex flex-col items-center gap-6 text-center">
+		<div
+			data-qa={InviteMessageHarness.Root}
+			className="flex flex-col items-center gap-6 text-center"
+		>
 			{icon}
 			<div className="flex flex-col gap-1">
 				<h2

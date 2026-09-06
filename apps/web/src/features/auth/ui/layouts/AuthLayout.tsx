@@ -6,7 +6,6 @@ import { ArrowLeft, CheckCircle2 } from "lucide-react";
 
 import { VeloMark } from "@/components/icons";
 import { ROUTES } from "@/constants";
-import { getCurrentUserFn } from "@/features/users/server";
 
 const FEATURES = [
 	"Issues, cycles, and roadmaps in one place",
@@ -15,8 +14,6 @@ const FEATURES = [
 ] as const;
 
 export async function AuthLayout({ children }: PropsWithChildren) {
-	const currentUser = await getCurrentUserFn();
-
 	return (
 		<div className="flex min-h-screen">
 			<aside className="relative hidden w-115 shrink-0 overflow-hidden bg-neutral-950 lg:flex lg:flex-col">

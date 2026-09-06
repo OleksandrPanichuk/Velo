@@ -31,7 +31,10 @@ export class CreateWorkspaceInput {
 	@IsOptional()
 	readonly size?: WorkspaceSize | null;
 
-	@Field(() => MemberJobRole, { nullable: true, description: "The professional role of the creator" })
+	@Field(() => MemberJobRole, {
+		nullable: true,
+		description: "The professional role of the creator",
+	})
 	@IsEnum(MemberJobRole)
 	@IsOptional()
 	readonly jobRole?: MemberJobRole | null;

@@ -69,7 +69,8 @@ export function Select({
 					multiValueLabel: () => "text-xs text-text-primary px-1",
 					multiValueRemove: () => "hover:bg-surface-muted hover:text-red-500 rounded-r-sm p-0.5",
 					indicatorSeparator: () => "bg-border hidden",
-					dropdownIndicator: () => "text-text-secondary hover:text-text-primary cursor-pointer p-0.5",
+					dropdownIndicator: () =>
+						"text-text-secondary hover:text-text-primary cursor-pointer p-0.5",
 					clearIndicator: () => "text-text-secondary hover:text-red-500 cursor-pointer p-0.5",
 					...props.classNames,
 				}}

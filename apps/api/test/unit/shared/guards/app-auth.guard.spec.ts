@@ -1,8 +1,8 @@
 import { IS_PUBLIC_KEY } from "@/shared/decorators";
 import { AppAuthGuard } from "@/shared/guards/app-auth.guard";
 import { JwtAccessGuard } from "@/modules/auth/auth.guards";
-import { ExecutionContext } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+import { type ExecutionContext } from "@nestjs/common";
+import { type Reflector } from "@nestjs/core";
 
 const mockReflector = { getAllAndOverride: vi.fn() };
 
@@ -31,7 +31,7 @@ describe("AppAuthGuard", () => {
 
 		it("returns true for public routes when super succeeds", async () => {
 			mockReflector.getAllAndOverride.mockReturnValue(true);
-			vi.spyOn(JwtAccessGuard.prototype, "canActivate").mockResolvedValue(true as never);
+			vi.spyOn(JwtAccessGuard.prototype, "canActivate").mockResolvedValue(true);
 
 			const result = await buildGuard().canActivate(makeContext());
 
@@ -40,7 +40,7 @@ describe("AppAuthGuard", () => {
 
 		it("delegates to super.canActivate for protected routes", async () => {
 			mockReflector.getAllAndOverride.mockReturnValue(false);
-			vi.spyOn(JwtAccessGuard.prototype, "canActivate").mockResolvedValue(true as never);
+			vi.spyOn(JwtAccessGuard.prototype, "canActivate").mockResolvedValue(true);
 
 			const ctx = makeContext();
 			const result = await buildGuard().canActivate(ctx);
@@ -61,9 +61,9 @@ describe("AppAuthGuard", () => {
 		it("checks IS_PUBLIC_KEY on handler and class", () => {
 			const ctx = makeContext();
 			mockReflector.getAllAndOverride.mockReturnValue(false);
-			vi.spyOn(JwtAccessGuard.prototype, "canActivate").mockResolvedValue(true as never);
+			vi.spyOn(JwtAccessGuard.prototype, "canActivate").mockResolvedValue(true);
 
-			buildGuard().canActivate(ctx);
+			void buildGuard().canActivate(ctx);
 
 			expect(mockReflector.getAllAndOverride).toHaveBeenCalledWith(IS_PUBLIC_KEY, [
 				ctx.getHandler(),

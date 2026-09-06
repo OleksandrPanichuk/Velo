@@ -14,12 +14,9 @@ export class LoggerInterceptor implements NestInterceptor {
 		this.logger.setContext("HTTP");
 	}
 
-	public async intercept(
-		context: ExecutionContext,
-		next: CallHandler,
-	): Promise<Observable<unknown>> {
+	public intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
 		if (context.getType() !== "http") {
-			return next.handle();
+			return next.handle() as Observable<unknown>;
 		}
 
 		const request = context.switchToHttp().getRequest<Request>();

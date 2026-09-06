@@ -1,9 +1,9 @@
 import { WorkspaceInviteRole } from "@/enums";
 import type { WorkspaceInviteModel } from "@/models/WorkspaceInvite.model";
 import type { WorkspaceModel } from "@/models/Workspace.model";
-import { PermissionService } from "@/modules/permissions";
+import { type PermissionService } from "@/modules/permissions";
 import { WorkspaceInvitesResolver } from "@/modules/workspace-invites/workspace-invites.resolver";
-import { WorkspaceInvitesService } from "@/modules/workspace-invites/workspace-invites.service";
+import { type WorkspaceInvitesService } from "@/modules/workspace-invites/workspace-invites.service";
 import { ForbiddenException } from "@nestjs/common";
 
 const mockInvitesService: Partial<WorkspaceInvitesService> = {

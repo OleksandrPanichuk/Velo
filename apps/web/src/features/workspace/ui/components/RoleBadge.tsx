@@ -18,11 +18,7 @@ const ROLE_VARIANTS: Record<WorkspaceMemberRole, BadgeVariants> = {
 
 export function RoleBadge({ role }: RoleBadgeProps) {
 	return (
-		<Badge
-			data-qa={RoleBadgeHarness.Badge}
-			variant={ROLE_VARIANTS[role]}
-			size={BadgeSizes.Medium}
-		>
+		<Badge data-qa={RoleBadgeHarness.Badge} variant={ROLE_VARIANTS[role]} size={BadgeSizes.Medium}>
 			{MEMBER_ROLE_LABELS[role]}
 		</Badge>
 	);

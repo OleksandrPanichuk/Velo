@@ -1,16 +1,14 @@
 vi.mock("@nestjs-cls/transactional", () => ({
-	Transactional:
-		() =>
-		(_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
-			descriptor,
+	Transactional: () => (_target: unknown, _key: string, descriptor: PropertyDescriptor) =>
+		descriptor,
 	TransactionHost: class {},
 }));
 
-import { WorkspaceModel } from "@/models/Workspace.model";
-import { WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
-import { UsersService } from "@/modules/users/users.service";
+import { type WorkspaceModel } from "@/models/Workspace.model";
+import { type WorkspaceMembersService } from "@/modules/workspace-members/workspace-members.service";
+import { type UsersService } from "@/modules/users/users.service";
 import { WorkspacesService } from "@/modules/workspaces/workspaces.service";
-import { WorkspacesRepository } from "@/modules/workspaces/workspaces.repository";
+import { type WorkspacesRepository } from "@/modules/workspaces/workspaces.repository";
 import { ConflictException, NotFoundException } from "@nestjs/common";
 
 const mockWorkspacesRepository: Partial<WorkspacesRepository> = {
@@ -55,7 +53,9 @@ describe("WorkspacesService", () => {
 	describe("findBySlug", () => {
 		it("returns workspace when found", async () => {
 			const workspace = { id: "ws1", slug: "my-ws" };
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue(workspace as WorkspaceModel);
+			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue(
+				workspace as WorkspaceModel,
+			);
 
 			const result = await buildService().findBySlug("my-ws");
 
@@ -104,11 +104,13 @@ describe("WorkspacesService", () => {
 
 	describe("create", () => {
 		it("throws ConflictException if slug is already taken", async () => {
-			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue({ id: "ws1" } as WorkspaceModel);
+			vi.mocked(mockWorkspacesRepository.findBySlug!).mockResolvedValue({
+				id: "ws1",
+			} as WorkspaceModel);
 
-			await expect(
-				buildService().create({ name: "My WS", slug: "taken" }, "u1"),
-			).rejects.toThrow(ConflictException);
+			await expect(buildService().create({ name: "My WS", slug: "taken" }, "u1")).rejects.toThrow(
+				ConflictException,
+			);
 		});
 
 		it("creates workspace and root member, returns workspace", async () => {
@@ -136,7 +138,10 @@ describe("WorkspacesService", () => {
 			vi.mocked(mockWorkspaceMembersService.createRootMember!).mockResolvedValue({} as never);
 			vi.mocked(mockUsersService.update!).mockResolvedValue({} as never);
 
-			await buildService().create({ name: "My WS", slug: "my-ws", jobRole: "developer" as never }, "u1");
+			await buildService().create(
+				{ name: "My WS", slug: "my-ws", jobRole: "developer" as never },
+				"u1",
+			);
 
 			expect(mockUsersService.update).toHaveBeenCalledWith("u1", { jobRole: "developer" });
 		});

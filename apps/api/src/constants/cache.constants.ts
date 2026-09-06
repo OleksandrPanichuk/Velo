@@ -11,7 +11,7 @@ const T = {
 	tenant: (tid: string) => `t:${tid}`,
 	user: (tid: string, uid: string) => `t:${tid}:user:${uid}`,
 	project: (tid: string, pid: string) => `t:${tid}:project:${pid}`,
-    projectList: (tid: string) => `t:${tid}:projects:list`,
+	projectList: (tid: string) => `t:${tid}:projects:list`,
 } as const;
 
 export const CacheEntries = {
@@ -21,7 +21,7 @@ export const CacheEntries = {
 		ttl: minutes(5),
 	}),
 
-	globalConfig: (configKey: string)=> ({
+	globalConfig: (configKey: string) => ({
 		key: () => `g:config:${configKey}`,
 		tags: () => [T.global()],
 		ttl: minutes(10),
@@ -67,14 +67,13 @@ export const CacheEntries = {
 	projectMembers: (tenantId: string, projectId: string) => ({
 		key: () => `t:${tenantId}:project:${projectId}:members`,
 		tags: () => [T.tenant(tenantId), T.project(tenantId, projectId)],
-        ttl: minutes(1)
+		ttl: minutes(1),
 	}),
 } as const;
 
 export const InvalidationTags = {
-    tenant: (tenantId:string) => [T.tenant(tenantId)],
-    user: (tenantId:string, userId:string) => [T.user(tenantId, userId)],
-    project: (tenantId: string, projectId: string) => [T.project(tenantId, projectId)],
-    projectList: (tenantId:string) => [T.projectList(tenantId)],
-    
-} as const 
+	tenant: (tenantId: string) => [T.tenant(tenantId)],
+	user: (tenantId: string, userId: string) => [T.user(tenantId, userId)],
+	project: (tenantId: string, projectId: string) => [T.project(tenantId, projectId)],
+	projectList: (tenantId: string) => [T.projectList(tenantId)],
+} as const;

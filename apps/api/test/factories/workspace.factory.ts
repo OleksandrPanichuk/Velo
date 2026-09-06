@@ -1,5 +1,5 @@
-import { WorkspaceSize } from "@/enums";
-import { WorkspaceModel } from "@/models/Workspace.model";
+import { type WorkspaceSize } from "@/enums";
+import { type WorkspaceModel } from "@/models/Workspace.model";
 import { faker } from "@faker-js/faker";
 
 export const WorkspaceFactory = {
@@ -18,7 +18,7 @@ export const WorkspaceFactory = {
 			updatedAt: faker.date.recent(),
 			deletedAt: null,
 			...overrides,
-		} as WorkspaceModel;
+		};
 	},
 
 	buildWithSize(size: WorkspaceSize, overrides: Partial<WorkspaceModel> = {}): WorkspaceModel {

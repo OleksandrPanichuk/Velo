@@ -1,11 +1,11 @@
 import type DataLoader from "dataloader";
 
-export interface NestDataLoader<ID, Type> {
-	generateDataLoader(): DataLoader<ID, Type | null>;
+export interface NestDataLoader<TId, TEntity> {
+	generateDataLoader(): DataLoader<TId, TEntity | null>;
 }
 
 export interface NestDataLoaderContext {
-	getLoader: <ID, Type>(
-		type: new (...args: any[]) => NestDataLoader<ID, Type>,
-	) => DataLoader<ID, Type | null>;
+	getLoader: <TId, TEntity>(
+		type: new (...args: any[]) => NestDataLoader<TId, TEntity>,
+	) => DataLoader<TId, TEntity | null>;
 }

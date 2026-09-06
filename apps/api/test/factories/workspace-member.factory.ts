@@ -1,5 +1,5 @@
 import { WorkspaceMemberRole } from "@/enums";
-import { WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
+import { type WorkspaceMemberModel } from "@/models/WorkspaceMember.model";
 import { faker } from "@faker-js/faker";
 import { UserFactory } from "./user.factory";
 import { WorkspaceFactory } from "./workspace.factory";
@@ -17,7 +17,7 @@ export const WorkspaceMemberFactory = {
 			workspace: WorkspaceFactory.build(),
 			user: UserFactory.build(),
 			...overrides,
-		} as WorkspaceMemberModel;
+		};
 	},
 
 	buildOwner(overrides: Partial<WorkspaceMemberModel> = {}): WorkspaceMemberModel {

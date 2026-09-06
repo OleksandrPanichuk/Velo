@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import type { Metadata } from "next";
 
 import { InboxView } from "@/features/notifications/ui/views/InboxView";
 import { getWorkspaceBySlugFn } from "@/features/workspace/server";

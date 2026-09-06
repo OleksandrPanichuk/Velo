@@ -3,10 +3,10 @@ import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { HealthIndicatorService, type HealthIndicatorResult } from "@nestjs/terminus";
-import { IHealthIndicator } from "./health.typedefs";
+import { HealthIndicatorContract } from "./health.typedefs";
 
 @Injectable()
-export class S3HealthIndicator implements IHealthIndicator {
+export class S3HealthIndicator implements HealthIndicatorContract {
 	private readonly client: S3Client;
 
 	constructor(
